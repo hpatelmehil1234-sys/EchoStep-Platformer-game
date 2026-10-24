@@ -1,17 +1,17 @@
-# Optional local audio assets
+# EchoStep audio assets
 
-Pixabay blocked automated access to the supplied music page and license page (HTTP 403) during implementation, so no Pixabay files have been downloaded or bundled. The game continues to work with locally synthesized Web Audio music and effects until optional files are added here.
+The two required Pixabay MP3s are stored locally in this directory and are loaded by the standalone game in `../index.html`.
 
-To enable the local tracks, download each file yourself from its official Pixabay page, verify the current Pixabay Content License and any track-specific terms, and save it using these exact names:
+| Filename | Use | Official source |
+| --- | --- | --- |
+| `space-ambient-sci-fi-121842.mp3` | Looping background music | [Space Ambient Sci-Fi by Lexin_Music](https://pixabay.com/music/suspense-space-ambient-sci-fi-121842/) |
+| `short-success-sound-glockenspiel-treasure-video-game-6346.mp3` | One-shot level completion sound | [Short Success Sound by freesound_community](https://pixabay.com/sound-effects/film-special-effects-short-success-sound-glockenspiel-treasure-video-game-6346/) |
 
-| Filename | Source |
-| --- | --- |
-| `space-ambient-sci-fi-121842.mp3` | [Space Ambient Sci-Fi](https://pixabay.com/music/suspense-space-ambient-sci-fi-121842/) |
-| `ghost-replay.mp3` | Choose a short (0.3–1.5 s) subtle shimmer or time-warp effect from [Pixabay magic sound effects](https://pixabay.com/sound-effects/search/magic/) |
-| `switch-activation.mp3` | Choose a short electronic switch confirmation from [Pixabay sci-fi sound effects](https://pixabay.com/sound-effects/search/sci-fi/) |
-| `hazard-trigger.mp3` | Choose a restrained, short effect matching the patrols and laser hazards present in some levels from [Pixabay laser sound effects](https://pixabay.com/sound-effects/search/laser/) |
-| `level-complete.mp3` | Choose a short electronic victory chime from [Pixabay game-success sound effects](https://pixabay.com/sound-effects/search/game%20success/) |
+Both assets were downloaded from the official Pixabay download links and are described on their pages as free to use under the [Pixabay Content License](https://pixabay.com/service/license-summary/). The license summary permits free use without required attribution but prohibits distributing content on a standalone basis; keep these files as game assets rather than offering them separately. The music page is marked “Content ID Registered,” which may matter when publishing gameplay videos.
 
-Do not hotlink Pixabay or add a downloaded file unless its current license permits the intended use. Music is looped by the browser; use a seamlessly loopable track for the best result. The selected clips should be brief and restrained: ghost shimmer 0.3–1.5 seconds, subtle switch confirmation, quiet hazard warning, and a short victory chime.
+Attribution for reference:
 
-When served by Vite, the files belong in this directory and are available under `/assets/audio/`. Direct `file://` opening deliberately uses the generated fallback instead, because browsers do not reliably allow checking local asset availability from a file URL. Missing or undecodable assets do not interrupt gameplay; the effects fall back to synthesized sounds and music falls back to the built-in ambient loop.
+- Music: Lexin_Music (Aleksey Chistilin), “Space Ambient Sci-Fi,” Pixabay.
+- Victory sound: freesound_community, “Short Success Sound - Glockenspiel / Treasure / Video Game,” Pixabay.
+
+The game expects these exact filenames. Music loops at a subtle default level and starts only after Play. The victory sound is triggered once by the existing level-completion event. If either file is missing or cannot be decoded, the game continues without substituting different music or a different victory sound; other gameplay sound effects retain their existing behavior.

@@ -4,10 +4,10 @@ EchoStep is a self-contained, single-player puzzle-platformer set in an abandone
 
 ## Run
 
-The playable game is `index.html`. It uses built-in browser features: HTML, CSS, JavaScript, the Canvas 2D API, and Web Audio API. Locally synthesized ambient music and gameplay sound effects work without downloads. Optional locally stored audio files can replace the generated music, ghost replay, switch, hazard, and victory sounds; see [`public/assets/audio/README.md`](./public/assets/audio/README.md) for filenames, sources, and license checks. The game does not hotlink external audio.
+The playable game is `index.html`. It uses built-in browser features: HTML, CSS, JavaScript, the Canvas 2D API, and Web Audio API. The locally stored Pixabay music and victory sound are used as the selected soundtrack and level-completion cue; the other gameplay sound effects keep their existing behavior. See [`public/assets/audio/README.md`](./public/assets/audio/README.md) for the asset filenames, sources, and license notes. The game does not hotlink external audio.
 
-1. Open `index.html` in a modern web browser. Double-clicking the file is sufficient for the self-contained synthesized soundtrack; no server, package manager, compiler, or installation is required. Music begins when you start a trial.
-2. To use optional downloaded audio files, serve the workspace with `pnpm --filter @workspace/echostep dev` from the repository root and open the local Vite URL it prints. Downloaded files in `public/assets/audio/` are served at `/assets/audio/`.
+1. To play with the selected local audio files, run `pnpm --filter @workspace/echostep dev` from the repository root and open the local Vite URL it prints. The files in `public/assets/audio/` are served at `/assets/audio/`. Browsers may block local media when `index.html` is opened directly with `file://`.
+2. You can also open `index.html` directly to play the game. The game remains playable if the browser blocks the selected audio files.
 3. Select **Choose a trial** and pick an available level.
 4. Use **A / D** or the **left / right arrow keys** to move, and **Space** to jump.
 5. Follow the plate and gate labels. Press **R** to start a recording and **R** again to stop; press **E** to replay it.

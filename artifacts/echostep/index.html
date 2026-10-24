@@ -923,7 +923,6 @@
         let masterGain = null;
         let musicGain = null;
         let sfxGain = null;
-        let musicSource = null;
         let audioResumePending = false;
         let audioSuspendPending = false;
         let audioAssets = null;
@@ -1017,7 +1016,9 @@
             masterGain.gain.setTargetAtTime(audioSettings.muted ? 0 : 1, audioContext.currentTime, 0.025);
           }
           if (musicGain && audioContext) {
-            const musicActive = audioSettings.musicEnabled && screen === "playing" && !document.hidden;
+            const musicActive = audioSettings.musicEnabled
+              && (screen === "playing" || screen === "victory")
+              && !document.hidden;
             musicGain.gain.setTargetAtTime(musicActive ? audioSettings.music * 0.75 : 0, audioContext.currentTime, 0.025);
           }
           if (sfxGain && audioContext) {
@@ -1035,10 +1036,7 @@
           if (audioAssets) return audioAssets;
           const files = {
             music: ["space-ambient-sci-fi-121842.mp3", true],
-            "ghost-appear": ["ghost-replay.mp3", false],
-            switch: ["switch-activation.mp3", false],
-            hazard: ["hazard-trigger.mp3", false],
-            complete: ["level-complete.mp3", false],
+            complete: ["short-success-sound-glockenspiel-treasure-video-game-6346.mp3", false],
           };
           audioAssets = new Map();
           for (const [name, [filename, loop]] of Object.entries(files)) {
@@ -1050,9 +1048,8 @@
               const asset = audioAssets.get(name);
               if (asset) asset.failed = true;
             });
-            const failed = location.protocol === "file:";
-            const available = failed
-              ? Promise.resolve(false)
+            const available = location.protocol === "file:"
+              ? Promise.resolve(true)
               : fetch(url.href, { method: "HEAD" })
                 .then((response) => response.ok)
                 .catch(() => false);
@@ -1060,7 +1057,7 @@
               element,
               filename,
               loop,
-              failed,
+              failed: false,
               pending: false,
               source: null,
               available,
@@ -1085,51 +1082,8 @@
           asset.source = source;
         }
 
-        function startSynthesizedMusic() {
-          if (!audioContext || musicSource) return false;
-          let source;
-          try {
-            source = audioContext.createBufferSource();
-            source.buffer = createMusicBuffer(audioContext);
-            source.loop = true;
-            source.connect(musicGain);
-            source.start();
-            musicSource = source;
-            audioStatus.textContent = "Built-in synthesized ambient music is playing.";
-            return true;
-          } catch (error) {
-            if (source) source.disconnect();
-            console.error("EchoStep could not start its background music.", error);
-            audioStatus.textContent = "Background music could not start; the game remains playable.";
-            return false;
-          }
-        }
-
-        function createMusicBuffer(context) {
-          const duration = 12;
-          const length = Math.floor(context.sampleRate * duration);
-          const buffer = context.createBuffer(2, length, context.sampleRate);
-          const left = buffer.getChannelData(0);
-          const right = buffer.getChannelData(1);
-          const tau = Math.PI * 2;
-          for (let index = 0; index < length; index += 1) {
-            const phase = index / length;
-            const breath = 0.72 + 0.28 * Math.sin(tau * phase * 2);
-            const fundamental = Math.sin(tau * phase * 660) * 0.34;
-            const fifth = Math.sin(tau * phase * 990) * 0.14;
-            const minorThird = Math.sin(tau * phase * 786) * 0.12;
-            const lowOctave = Math.sin(tau * phase * 330) * 0.16;
-            const upperHarmonic = Math.sin(tau * phase * 1320) * 0.045;
-            const sample = (fundamental + fifth + minorThird + lowOctave + upperHarmonic) * breath * 0.12;
-            left[index] = sample;
-            right[index] = sample * (0.94 + 0.06 * Math.sin(tau * phase * 3));
-          }
-          return buffer;
-        }
-
         function startMusic() {
-          if (!audioContext || !audioSettings.musicEnabled || screen !== "playing") return false;
-          if (musicSource) return true;
+          if (!audioContext || !audioSettings.musicEnabled || !["playing", "victory"].includes(screen)) return false;
           const asset = createAudioAssets().get("music");
           if (!asset.failed && !asset.pending && asset.element.paused === false) return true;
           if (asset.pending) return true;
@@ -1137,52 +1091,53 @@
             asset.pending = true;
             asset.available.then((available) => {
               asset.pending = false;
-              if (available && audioContext?.state === "running" && audioSettings.musicEnabled && screen === "playing") {
+              if (available && audioContext?.state === "running" && audioSettings.musicEnabled
+                && ["playing", "victory"].includes(screen)) {
                 startMusicAsset(asset);
                 return;
               }
               if (!available) {
                 asset.failed = true;
-                if (audioSettings.musicEnabled && screen === "playing" && !document.hidden) {
-                  audioStatus.textContent = `Optional ${asset.filename} is unavailable; using built-in ambient music.`;
-                  startSynthesizedMusic();
+                if (audioSettings.musicEnabled && ["playing", "victory"].includes(screen) && !document.hidden) {
+                  audioStatus.textContent = `Music file ${asset.filename} is missing. Download it from Pixabay to enable background music.`;
                 }
               }
             });
             return true;
           }
-          return startSynthesizedMusic();
+          audioStatus.textContent = `Music file ${asset.filename} could not be played.`;
+          return false;
         }
 
         function startMusicAsset(asset) {
-          if (!audioContext || !audioSettings.musicEnabled || screen !== "playing") return false;
+          if (!audioContext || !audioSettings.musicEnabled || !["playing", "victory"].includes(screen)) return false;
           if (!asset.failed) {
             try {
               connectAudioAsset(asset, musicGain, "music");
               asset.pending = true;
               asset.element.play().then(() => {
                 asset.pending = false;
-                if (!audioSettings.musicEnabled || screen !== "playing" || document.hidden) {
+                if (!audioSettings.musicEnabled || !["playing", "victory"].includes(screen) || document.hidden) {
                   asset.element.pause();
                   return;
                 }
-                audioStatus.textContent = "Local ambient music is playing.";
+                audioStatus.textContent = "Space Ambient Sci-Fi is playing.";
               }, () => {
                 asset.pending = false;
                 asset.failed = true;
-                if (audioSettings.musicEnabled && screen === "playing" && !document.hidden) {
-                  audioStatus.textContent = `Optional ${asset.filename} is unavailable; using built-in ambient music.`;
-                  startSynthesizedMusic();
+                if (audioSettings.musicEnabled && ["playing", "victory"].includes(screen) && !document.hidden) {
+                  audioStatus.textContent = `Music file ${asset.filename} could not be played.`;
                 }
               });
               return true;
             } catch (error) {
               asset.pending = false;
               asset.failed = true;
-              console.warn(`EchoStep could not load optional ${asset.filename}; using built-in ambient music.`, error);
+              console.error(`EchoStep could not play the required background music ${asset.filename}.`, error);
+              audioStatus.textContent = `Music file ${asset.filename} could not be played.`;
             }
           }
-          return startSynthesizedMusic();
+          return false;
         }
 
         function pauseMusic() {
@@ -1267,7 +1222,11 @@
                   playAudioEffect(asset, name, echo);
                 } else {
                   asset.failed = true;
-                  playSynthesizedEffect(name, echo);
+                  if (name === "complete") {
+                    audioStatus.textContent = `Victory sound file ${asset.filename} is missing.`;
+                  } else {
+                    playSynthesizedEffect(name, echo);
+                  }
                 }
               });
               return;
@@ -1276,6 +1235,10 @@
               playAudioEffect(asset, name, echo);
               return;
             }
+          }
+          if (name === "complete" && asset) {
+            audioStatus.textContent = `Victory sound file ${asset.filename} could not be played.`;
+            return;
           }
           playSynthesizedEffect(name, echo);
         }
@@ -1291,13 +1254,22 @@
             }, () => {
               asset.pending = false;
               asset.failed = true;
-              playSynthesizedEffect(name, echo);
+              if (name === "complete") {
+                audioStatus.textContent = `Victory sound file ${asset.filename} could not be played.`;
+              } else {
+                playSynthesizedEffect(name, echo);
+              }
             });
           } catch (error) {
             asset.pending = false;
             asset.failed = true;
-            console.warn(`EchoStep could not load optional ${asset.filename}; using a built-in sound.`, error);
-            playSynthesizedEffect(name, echo);
+            if (name === "complete") {
+              console.error(`EchoStep could not play the required victory sound ${asset.filename}.`, error);
+              audioStatus.textContent = `Victory sound file ${asset.filename} could not be played.`;
+            } else {
+              console.warn(`EchoStep could not load optional ${asset.filename}; using a built-in sound.`, error);
+              playSynthesizedEffect(name, echo);
+            }
           }
         }
 
@@ -1370,11 +1342,6 @@
               asset.element.pause();
               if (asset.source) asset.source.disconnect();
             }
-          }
-          if (musicSource) {
-            musicSource.stop();
-            musicSource.disconnect();
-            musicSource = null;
           }
           audioContext.close().catch((error) => {
             console.error("EchoStep could not close game audio cleanly.", error);
