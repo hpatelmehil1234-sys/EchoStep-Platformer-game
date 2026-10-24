@@ -16,6 +16,8 @@ The playable game is `index.html`. It uses built-in browser features: HTML, CSS,
 8. **Backspace** returns to the latest checkpoint and keeps a completed recording. Falling also returns you to that checkpoint. **Restart** begins the current level again.
 9. The completion screen's **Continue** button loads the next unlocked trial. Completed levels can be replayed from selection.
 
+Each trial's completion time is measured from the start of its run to the exit. The victory screen shows the run time and that trial's personal best in `MM:SS.hh` format. Best times are stored separately by level ID in the browser's `echostep-best-times-v1` local storage entry and are retained across page reloads. Restarting, returning to level selection, or leaving an unfinished run does not save a time.
+
 The game can also be served as a static file using any existing local web server, but this is optional.
 
 ## Controls

@@ -351,6 +351,21 @@
 .echo-victory-card h2 { margin: 14px 0 9px; color: var(--echo-ink); font-size: clamp(34px, 5vw, 44px); font-weight: 500; letter-spacing: -0.06em; line-height: 0.98; }
 .echo-victory-card h2 span { color: var(--echo-lilac); }
 .echo-victory-card__copy { margin: 5px 0 20px; color: var(--echo-muted); font-size: 12px; line-height: 1.55; }
+.echo-victory-times {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--echo-line);
+  border-bottom: 1px solid var(--echo-line);
+}
+.echo-victory-times div { display: grid; gap: 5px; }
+.echo-victory-times span { color: var(--echo-dim); font: 9px ui-monospace, monospace; letter-spacing: 0.08em; }
+.echo-victory-times strong { color: var(--echo-ink); font: 16px ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+.echo-victory-times div + div strong { color: var(--echo-cyan); }
+.echo-new-best { margin: 0 0 12px; color: var(--echo-mint); font: 10px ui-monospace, monospace; letter-spacing: 0.1em; }
 .echo-victory-card .echo-button { width: 100%; justify-content: space-between; }
 .echo-text-button { align-self: center; margin-top: 12px; padding: 8px 12px; border: 0; color: var(--echo-muted); background: transparent; cursor: pointer; font: 11px "Avenir Next", "Segoe UI", Arial, sans-serif; }
 .echo-text-button:hover { color: var(--echo-cyan); }

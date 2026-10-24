@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import EchoStepShell from '@/components/EchoStepShell';
 import PhaserGame from '@/components/PhaserGame';
+import type { LevelCompletion } from '@/game/levelTimes';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
@@ -18,19 +19,33 @@ const queryClient = new QueryClient();
 function Home() {
   const [screen, setScreen] = useState<'title' | 'playing' | 'victory'>('title');
   const [runId, setRunId] = useState(1);
-  const handleVictory = useCallback(() => setScreen('victory'), []);
+  const [completion, setCompletion] = useState<LevelCompletion | null>(null);
+  const handleVictory = useCallback((result: LevelCompletion) => {
+    setCompletion(result);
+    setScreen('victory');
+  }, []);
+  const handleStart = useCallback(() => {
+    setCompletion(null);
+    setScreen('playing');
+  }, []);
   const handleRestart = useCallback(() => {
     setRunId((currentRun) => currentRun + 1);
+    setCompletion(null);
     setScreen('playing');
+  }, []);
+  const handleTitle = useCallback(() => {
+    setCompletion(null);
+    setScreen('title');
   }, []);
 
   return (
     <EchoStepShell
       screen={screen}
       runId={runId}
-      onStart={() => setScreen('playing')}
+      completion={completion}
+      onStart={handleStart}
       onRestart={handleRestart}
-      onTitle={() => setScreen('title')}
+      onTitle={handleTitle}
     >
       {screen !== 'title' && (
         <PhaserGame key={runId} onVictory={handleVictory} />

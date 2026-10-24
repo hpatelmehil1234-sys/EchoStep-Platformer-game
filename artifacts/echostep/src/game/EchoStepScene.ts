@@ -1,7 +1,9 @@
 import Phaser from "phaser";
+import { recordLevelCompletion } from "@/game/levelTimes";
 
 const VIEW_WIDTH = 960;
 const VIEW_HEIGHT = 540;
+const LEVEL_ID = "echostep-main";
 const WORLD_WIDTH = 2_780;
 const WORLD_HEIGHT = 760;
 const RUN_SPEED = 310;
@@ -41,6 +43,9 @@ export default class EchoStepScene extends Phaser.Scene {
   private hasWon = false;
   private lastGroundedAt = Number.NEGATIVE_INFINITY;
   private jumpBufferedUntil = Number.NEGATIVE_INFINITY;
+  private levelStartedAt: number | null = null;
+  private pausedAt: number | null = null;
+  private pausedDuration = 0;
 
   constructor() {
     super("EchoStepScene");
@@ -50,6 +55,9 @@ export default class EchoStepScene extends Phaser.Scene {
     this.hasWon = false;
     this.lastGroundedAt = Number.NEGATIVE_INFINITY;
     this.jumpBufferedUntil = Number.NEGATIVE_INFINITY;
+    this.levelStartedAt = null;
+    this.pausedAt = null;
+    this.pausedDuration = 0;
     this.physics.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
     this.physics.world.gravity.y = 1_450;
     this.cameras.main.setBounds(0, 0, WORLD_WIDTH, VIEW_HEIGHT);
@@ -69,6 +77,10 @@ export default class EchoStepScene extends Phaser.Scene {
     this.cameras.main.setDeadzone(290, 110);
     this.cameras.main.setFollowOffset(-110, 0);
     this.cameras.main.roundPixels = true;
+
+    this.events.on(Phaser.Scenes.Events.PAUSE, this.pauseLevelTimer, this);
+    this.events.on(Phaser.Scenes.Events.RESUME, this.resumeLevelTimer, this);
+    this.levelStartedAt = performance.now();
   }
 
   update() {
@@ -277,6 +289,26 @@ export default class EchoStepScene extends Phaser.Scene {
     this.hasWon = true;
     this.player.setVelocity(0, 0);
     this.physics.pause();
-    this.game.events.emit("echostep-victory");
+    const completedAt = this.pausedAt ?? performance.now();
+    const completionTimeMs = Math.max(
+      0,
+      completedAt - (this.levelStartedAt ?? completedAt) - this.pausedDuration,
+    );
+    this.levelStartedAt = null;
+    this.pausedAt = null;
+    this.game.events.emit("echostep-victory", recordLevelCompletion(LEVEL_ID, completionTimeMs));
+  }
+
+  private pauseLevelTimer() {
+    if (this.levelStartedAt !== null && this.pausedAt === null && !this.hasWon) {
+      this.pausedAt = performance.now();
+    }
+  }
+
+  private resumeLevelTimer() {
+    if (this.pausedAt !== null) {
+      this.pausedDuration += performance.now() - this.pausedAt;
+      this.pausedAt = null;
+    }
   }
 }

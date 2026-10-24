@@ -297,6 +297,12 @@
       .victory-stamp .mark { transform: scale(.65); }
       .victory-title { margin: 14px 0 9px; font-size: clamp(34px, 5vw, 44px); font-weight: 500; letter-spacing: -.06em; line-height: .98; }
       .victory-copy { margin: 5px 0 20px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+      .victory-times { display: grid; width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 10px; padding: 12px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+      .victory-times div { display: grid; gap: 5px; }
+      .victory-times span { color: var(--dim); font: 9px ui-monospace, monospace; letter-spacing: .08em; }
+      .victory-times strong { color: var(--ink); font: 15px ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+      .victory-times div + div strong { color: var(--mint); }
+      .new-best { margin: 0 0 12px; color: var(--mint); font: 10px ui-monospace, monospace; letter-spacing: .1em; }
       .victory-card .button { width: 100%; justify-content: space-between; }
       .text-button { align-self: center; margin-top: 12px; padding: 8px 12px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; }
       .text-button:hover { color: var(--mint); }
@@ -464,6 +470,11 @@
               <p id="victory-eyebrow" class="eyebrow">Trial complete</p>
               <h2 id="victory-title" class="victory-title">You made<br><span>it out.</span></h2>
               <p id="victory-copy" class="victory-copy">The chamber is behind you.</p>
+              <div class="victory-times" aria-label="Level completion times">
+                <div><span>YOUR TIME</span><strong id="your-time"></strong></div>
+                <div><span>BEST TIME</span><strong id="best-time"></strong></div>
+              </div>
+              <p id="new-best" class="new-best" hidden>NEW BEST!</p>
               <button id="continue-button" class="button button-primary" type="button">
                 <span>Continue</span><span class="button-arrow" aria-hidden="true">↗</span>
               </button>
@@ -1005,6 +1016,9 @@
         const victoryTitle = document.querySelector("#victory-title");
         const victoryCopy = document.querySelector("#victory-copy");
         const victoryEyebrow = document.querySelector("#victory-eyebrow");
+        const yourTimeLabel = document.querySelector("#your-time");
+        const bestTimeLabel = document.querySelector("#best-time");
+        const newBestLabel = document.querySelector("#new-best");
         const continueButton = document.querySelector("#continue-button");
         const recordingState = document.querySelector("#recording-state");
         const recordingStatus = document.querySelector("#record-status");
@@ -1026,6 +1040,7 @@
         const ctx = canvas.getContext("2d");
         if (!ctx) throw new Error("This browser could not create a 2D canvas context.");
         const SAVE_KEY = "echostep-progress-v1";
+        const BEST_TIMES_KEY = "echostep-best-times-v1";
         const AUDIO_SETTINGS_KEY = "echostep-audio-v1";
         const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
         let audioSettings = loadAudioSettings();
@@ -1053,6 +1068,9 @@
         let jumpBuffer = 0;
         let coyoteTime = 0;
         let won = false;
+        let runStartedAt = null;
+        let runPausedAt = null;
+        let runPausedDuration = 0;
         let player = null;
         let recording = null;
         let recordingElapsed = 0;
@@ -1542,8 +1560,13 @@
           }
         });
         document.addEventListener("visibilitychange", () => {
-          if (document.hidden) suspendAudio();
-          else if (screen === "playing" && audioContext?.state === "suspended") startAudio();
+          if (document.hidden) {
+            pauseRunTimer();
+            suspendAudio();
+          } else {
+            resumeRunTimer();
+            if (screen === "playing" && audioContext?.state === "suspended") startAudio();
+          }
         });
         window.addEventListener("blur", suspendAudio);
         window.addEventListener("focus", () => {
@@ -1587,6 +1610,78 @@
             console.error("EchoStep could not save progress in this browser.", error);
             levelProgressLabel.textContent = `${completedLevels.length} / ${levels.length} COMPLETED · PROGRESS NOT SAVED`;
           }
+        }
+
+        function loadBestTimes() {
+          let saved;
+          try {
+            saved = localStorage.getItem(BEST_TIMES_KEY);
+          } catch (error) {
+            console.error("EchoStep could not read saved best times.", error);
+            return {};
+          }
+          if (saved === null) return {};
+
+          try {
+            const parsed = JSON.parse(saved);
+            if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+              console.warn("EchoStep ignored best-time data with an unexpected format.");
+              return {};
+            }
+            return Object.fromEntries(
+              Object.entries(parsed).filter(([, time]) =>
+                typeof time === "number" && Number.isFinite(time) && time >= 0),
+            );
+          } catch (error) {
+            console.warn("EchoStep ignored corrupted best-time data.", error);
+            return {};
+          }
+        }
+
+        function saveBestTime(levelId, completionTimeMs) {
+          const bestTimes = loadBestTimes();
+          const previousBest = bestTimes[levelId];
+          const isNewBest = previousBest === undefined || completionTimeMs < previousBest;
+          const bestTimeMs = previousBest === undefined
+            ? completionTimeMs
+            : Math.min(completionTimeMs, previousBest);
+
+          if (isNewBest) {
+            bestTimes[levelId] = completionTimeMs;
+            try {
+              localStorage.setItem(BEST_TIMES_KEY, JSON.stringify(bestTimes));
+            } catch (error) {
+              console.error("EchoStep could not save the level's best time.", error);
+            }
+          }
+
+          return { bestTimeMs, isNewBest };
+        }
+
+        function formatCompletionTime(milliseconds) {
+          const centiseconds = Math.floor(milliseconds / 10);
+          const minutes = Math.floor(centiseconds / 6000);
+          const seconds = Math.floor((centiseconds % 6000) / 100);
+          const remainder = centiseconds % 100;
+          return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}.${String(remainder).padStart(2, "0")}`;
+        }
+
+        function pauseRunTimer() {
+          if (screen === "playing" && runStartedAt !== null && runPausedAt === null) {
+            runPausedAt = performance.now();
+          }
+        }
+
+        function resumeRunTimer() {
+          if (runPausedAt !== null) {
+            runPausedDuration += performance.now() - runPausedAt;
+            runPausedAt = null;
+          }
+        }
+
+        function getRunElapsed(now = performance.now()) {
+          if (runStartedAt === null) return 0;
+          return Math.max(0, (runPausedAt ?? now) - runStartedAt - runPausedDuration);
         }
 
         function isLevelUnlocked(index) {
@@ -1864,15 +1959,22 @@
           redEchoElapsed = 0;
           redEchoHistory = activeLevel.redEcho ? [capturePose(0)] : [];
           won = false;
+          runStartedAt = null;
+          runPausedAt = null;
+          runPausedDuration = 0;
           renderAudioSettings();
           startAudio();
           keys.clear();
           lastFrame = 0;
+          runStartedAt = performance.now();
           scheduleFrame();
         }
 
         function showLevelSelect() {
           screen = "select";
+          runStartedAt = null;
+          runPausedAt = null;
+          runPausedDuration = 0;
           suspendAudio();
           keys.clear();
           recording = null;
@@ -1891,6 +1993,9 @@
 
         function showTitle() {
           screen = "title";
+          runStartedAt = null;
+          runPausedAt = null;
+          runPausedDuration = 0;
           keys.clear();
           recording = null;
           recordedEcho = [];
@@ -2346,6 +2451,14 @@
         function win() {
           if (won) return;
           won = true;
+          const completionTimeMs = getRunElapsed();
+          runStartedAt = null;
+          runPausedAt = null;
+          runPausedDuration = 0;
+          const { bestTimeMs, isNewBest } = saveBestTime(activeLevel.id, completionTimeMs);
+          yourTimeLabel.textContent = formatCompletionTime(completionTimeMs);
+          bestTimeLabel.textContent = formatCompletionTime(bestTimeMs);
+          newBestLabel.hidden = !isNewBest;
           playEffect("complete");
           screen = "victory";
           renderAudioSettings();
