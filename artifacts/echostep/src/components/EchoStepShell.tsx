@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
+import { formatCompletionTime, type LevelCompletion } from '@/game/levelTimes';
 import './echostep.css';
 
 type EchoStepShellProps = {
   screen: 'title' | 'playing' | 'victory';
+  completion: LevelCompletion | null;
   onStart: () => void;
   onRestart: () => void;
   onTitle: () => void;
@@ -22,6 +24,7 @@ function EchoMark() {
 
 export default function EchoStepShell({
   screen,
+  completion,
   onStart,
   onRestart,
   onTitle,
@@ -117,6 +120,21 @@ export default function EchoStepShell({
                   <p className="echo-victory-card__copy" data-testid="status-victory">
                     The test chamber is behind you. Take another run?
                   </p>
+                  {completion && (
+                    <div className="echo-victory-times" data-testid="victory-times">
+                      <div>
+                        <span>YOUR TIME</span>
+                        <strong data-testid="text-your-time">{formatCompletionTime(completion.completionTimeMs)}</strong>
+                      </div>
+                      <div>
+                        <span>BEST TIME</span>
+                        <strong data-testid="text-best-time">{formatCompletionTime(completion.bestTimeMs)}</strong>
+                      </div>
+                    </div>
+                  )}
+                  {completion?.isNewBest && (
+                    <p className="echo-new-best" data-testid="text-new-best">NEW BEST!</p>
+                  )}
                   <button className="echo-button echo-button--primary" onClick={onRestart} data-testid="button-play-again">
                     <span>Play Again</span>
                     <span className="echo-button__arrow" aria-hidden="true">↗</span>

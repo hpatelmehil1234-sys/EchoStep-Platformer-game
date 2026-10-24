@@ -2,9 +2,10 @@ import { useEffect, useRef } from "react";
 import Phaser from "phaser";
 
 import EchoStepScene from "@/game/EchoStepScene";
+import type { LevelCompletion } from "@/game/levelTimes";
 
 type PhaserGameProps = {
-  onVictory: () => void;
+  onVictory: (completion: LevelCompletion) => void;
 };
 
 export default function PhaserGame({ onVictory }: PhaserGameProps) {
@@ -45,7 +46,7 @@ export default function PhaserGame({ onVictory }: PhaserGameProps) {
 
     const debugWindow = window as typeof window & { __ECHOSTEP_GAME__?: Phaser.Game };
     if (import.meta.env.DEV) debugWindow.__ECHOSTEP_GAME__ = game;
-    const handleVictory = () => onVictoryRef.current();
+    const handleVictory = (completion: LevelCompletion) => onVictoryRef.current(completion);
     game.events.on("echostep-victory", handleVictory);
 
     return () => {
