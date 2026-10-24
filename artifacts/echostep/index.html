@@ -601,37 +601,86 @@
             checkpoints: [1160],
           }),
           createTrial({
-            id: "switch-sequence", number: 5, title: "Switch Sequence", difficulty: "Medium",
-            description: "Open two gates in order, with a fresh recording after the midway checkpoint.",
-            hint: "Plate A opens the first gate. The checkpoint clears that echo; record Plate B for the second gate.",
-            worldWidth: 1710, exitX: 1615,
-            platforms: [{ x: 0, y: 500, width: 1710, height: 28 }],
+            id: "switch-sequence", number: 5, title: "Switch Sequence", difficulty: "Hard",
+            description: "Cross two stepped routes and gaps, using a fresh echo for each gate while avoiding a patrol.",
+            hint: "Record a 4–5 second hold on raised Plate A (R, then R to stop). Press E and descend across Gate A. Reach the checkpoint to clear that echo, jump the patrol, then record and replay raised Plate B to cross Gate B.",
+            worldWidth: 2040, exitX: 1960,
+            platforms: [
+              { x: 0, y: 500, width: 205, height: 28 },
+              { x: 250, y: 455, width: 110, height: 22 },
+              { x: 405, y: 410, width: 135, height: 22 },
+              { x: 590, y: 455, width: 120, height: 22 },
+              { x: 760, y: 500, width: 330, height: 28 },
+              { x: 1145, y: 455, width: 110, height: 22 },
+              { x: 1300, y: 410, width: 140, height: 22 },
+              { x: 1495, y: 455, width: 120, height: 22 },
+              { x: 1665, y: 500, width: 375, height: 28 },
+            ],
             switches: [
-              { id: "A", x: 230, y: 500, label: "PLATE A / FIRST" },
-              { id: "B", x: 960, y: 500, label: "PLATE B / SECOND" },
+              { id: "A", x: 440, y: 410, label: "PLATE A / FIRST" },
+              { id: "B", x: 1340, y: 410, label: "PLATE B / SECOND" },
             ],
             doors: [
-              { id: "A", x: 570, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 680 },
-              { id: "B", x: 1310, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1420 },
+              { id: "A", x: 825, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 900 },
+              { id: "B", x: 1730, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1810 },
             ],
-            checkpoints: [710, 1450],
+            checkpoints: [930, 1840],
+            hazards: [{ x: 1000, y: 477, width: 42, height: 23, motion: { axis: "x", distance: 40, period: 3.8 } }],
           }),
-          createTrial({
-            id: "precision-route", number: 6, title: "Precision Route", difficulty: "Medium",
-            description: "Cross a stepped series of generous but deliberate jumps before the echo gate.",
-            hint: "The platforms are spaced for a full jump. Record Plate A on the middle step, then follow the route right.",
-            worldWidth: 1520, exitX: 1425,
+          {
+            id: "precision-route", number: 6, title: "Laser Gauntlet", difficulty: "Very Hard",
+            description: "Clear three echo barriers and a chain of narrow, laser-guarded jumps across three checkpointed sections.",
+            hint: "Build speed across each runway. Record a 6-second hold on each plate with R, stop with R, then press E and race to its barrier. Checkpoints clear each echo; time your jumps through the red beams.",
+            worldWidth: 6000, exitX: 5840, exitSurface: 500,
             platforms: [
-              { x: 0, y: 500, width: 300, height: 28 },
-              { x: 325, y: 455, width: 115, height: 22 },
-              { x: 465, y: 415, width: 145, height: 22 },
-              { x: 635, y: 455, width: 115, height: 22 },
-              { x: 775, y: 500, width: 745, height: 28 },
+              { x: 0, y: 500, width: 145, height: 28 },
+              { x: 365, y: 465, width: 54, height: 22 },
+              { x: 639, y: 430, width: 54, height: 22 },
+              { x: 913, y: 395, width: 78, height: 22 },
+              { x: 1211, y: 430, width: 54, height: 22 },
+              { x: 1485, y: 500, width: 350, height: 28 },
+              { x: 2055, y: 465, width: 54, height: 22 },
+              { x: 2329, y: 430, width: 54, height: 22 },
+              { x: 2603, y: 395, width: 78, height: 22 },
+              { x: 2901, y: 430, width: 54, height: 22 },
+              { x: 3175, y: 465, width: 54, height: 22 },
+              { x: 3449, y: 500, width: 350, height: 28 },
+              { x: 4019, y: 465, width: 54, height: 22 },
+              { x: 4293, y: 430, width: 54, height: 22 },
+              { x: 4567, y: 395, width: 78, height: 22 },
+              { x: 4865, y: 430, width: 54, height: 22 },
+              { x: 5139, y: 465, width: 54, height: 22 },
+              { x: 5413, y: 500, width: 587, height: 28 },
             ],
-            switches: [{ id: "A", x: 505, y: 415, label: "PLATE A / STEP" }],
-            doors: [{ id: "A", x: 1100, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 1210 }],
-            checkpoints: [1240],
-          }),
+            switches: [
+              { id: "A", x: 923, y: 395, label: "PLATE A / FIRST" },
+              { id: "B", x: 2613, y: 395, label: "PLATE B / SECOND" },
+              { id: "C", x: 4577, y: 395, label: "PLATE C / FINAL" },
+            ],
+            doors: [
+              { id: "A", label: "BARRIER A", x: 1590, top: 200, bottom: 500, width: 28, switchId: "A", checkpointX: 1740 },
+              { id: "B", label: "BARRIER B", x: 3550, top: 200, bottom: 500, width: 28, switchId: "B", checkpointX: 3710 },
+              { id: "C", label: "BARRIER C", x: 5560, top: 200, bottom: 500, width: 28, switchId: "C", checkpointX: 5700 },
+            ],
+            hazards: [
+              { type: "laser", x: 1680, y: 466, width: 64, height: 8 },
+              { type: "laser", x: 2220, y: 360, width: 76, height: 8, motion: { axis: "y", distance: 20, period: 3.4 } },
+              { type: "laser", x: 3070, y: 358, width: 8, height: 76 },
+              { type: "laser", x: 4160, y: 360, width: 76, height: 8, motion: { axis: "y", distance: 20, period: 3.2 } },
+              { type: "laser", x: 5035, y: 358, width: 8, height: 76, motion: { axis: "x", distance: 18, period: 3.6 } },
+            ],
+            sections: [
+              { id: "A", left: 0, right: 1835, title: "06 / LASER GAUNTLET — A / FIRST BARRIER", hint: "Reach raised Plate A, record a hold, then replay it while crossing Barrier A. Jump the floor laser before the checkpoint." },
+              { id: "B", left: 1835, right: 3799, title: "06 / LASER GAUNTLET — B / SECOND BARRIER", hint: "Clear the moving horizontal and vertical beams, record a fresh hold on Plate B, and cross Barrier B. This checkpoint clears that recording." },
+              { id: "C", left: 3799, right: 6000, title: "06 / LASER GAUNTLET — C / FINAL BARRIER", hint: "Chain the final narrow jumps, time both lasers, then record a fresh hold on Plate C to open the last barrier and reach the exit." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 1800, surfaceY: 500, section: 1 },
+              { x: 3790, surfaceY: 500, section: 2 },
+            ],
+            exit: { minY: 406, maxY: 500 },
+          },
           createTrial({
             id: "split-paths", number: 7, title: "Split Paths", difficulty: "Medium–Hard",
             description: "Choose a stepped upper route or a lower bridge, then echo the switch on the high path.",
@@ -1249,7 +1298,7 @@
             }
             setPuzzleMessage(
               hazardHit
-                ? "The patrol caught you. Restored at the last checkpoint; your completed recording is safe."
+                ? "A hazard caught you. Restored at the last checkpoint; your completed recording is safe."
                 : interruptedRecording
                 ? "Recording canceled after a fall. Restored at the last checkpoint."
                 : "You fell. Restored at the last checkpoint; your completed recording is safe.",
@@ -1474,6 +1523,25 @@
         function drawHazards() {
           for (const hazard of hazards) {
             const bounds = getHazardBounds(hazard);
+            if (hazard.type === "laser") {
+              ctx.save();
+              ctx.shadowColor = "#ff244f";
+              ctx.shadowBlur = 18;
+              ctx.fillStyle = "rgb(255 36 79 / 34%)";
+              ctx.fillRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
+              ctx.shadowBlur = 7;
+              ctx.fillStyle = "#ff244f";
+              ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+              ctx.shadowBlur = 0;
+              ctx.fillStyle = "#fff1f4";
+              if (bounds.width >= bounds.height) {
+                ctx.fillRect(bounds.x, bounds.y + bounds.height * 0.35, bounds.width, Math.max(2, bounds.height * 0.3));
+              } else {
+                ctx.fillRect(bounds.x + bounds.width * 0.35, bounds.y, Math.max(2, bounds.width * 0.3), bounds.height);
+              }
+              ctx.restore();
+              continue;
+            }
             const spikes = Math.max(2, Math.floor(bounds.width / 12));
             ctx.fillStyle = "rgb(196 137 94 / 14%)";
             ctx.fillRect(bounds.x - 4, bounds.y - 3, bounds.width + 8, bounds.height + 6);
@@ -1513,7 +1581,7 @@
             ctx.fillStyle = "#c4c8bd";
             ctx.font = "9px ui-monospace, monospace";
             ctx.textAlign = "center";
-            ctx.fillText(`ECHO GATE ${door.id}`, centerX, door.top - 18);
+            ctx.fillText(door.label || `ECHO GATE ${door.id}`, centerX, door.top - 18);
           }
 
           for (const pressurePlate of switches) {
