@@ -924,7 +924,6 @@
         let musicGain = null;
         let sfxGain = null;
         let audioResumePending = false;
-        let audioSuspendPending = false;
         let audioAssets = null;
         let musicAssetPending = false;
         const activeVoices = new Set();
@@ -1016,9 +1015,7 @@
             masterGain.gain.setTargetAtTime(audioSettings.muted ? 0 : 1, audioContext.currentTime, 0.025);
           }
           if (musicGain && audioContext) {
-            const musicActive = audioSettings.musicEnabled
-              && (screen === "playing" || screen === "victory")
-              && !document.hidden;
+            const musicActive = audioSettings.musicEnabled;
             musicGain.gain.setTargetAtTime(musicActive ? audioSettings.music * 0.75 : 0, audioContext.currentTime, 0.025);
           }
           if (sfxGain && audioContext) {
@@ -1083,7 +1080,7 @@
         }
 
         function startMusic() {
-          if (!audioContext || !audioSettings.musicEnabled || !["playing", "victory"].includes(screen)) return false;
+          if (!audioContext || !audioSettings.musicEnabled || audioContext.state === "closed") return false;
           const asset = createAudioAssets().get("music");
           if (!asset.failed && !asset.pending && asset.element.paused === false) return true;
           if (asset.pending) return true;
@@ -1091,14 +1088,13 @@
             asset.pending = true;
             asset.available.then((available) => {
               asset.pending = false;
-              if (available && audioContext?.state === "running" && audioSettings.musicEnabled
-                && ["playing", "victory"].includes(screen)) {
+              if (available && audioContext?.state === "running" && audioSettings.musicEnabled) {
                 startMusicAsset(asset);
                 return;
               }
               if (!available) {
                 asset.failed = true;
-                if (audioSettings.musicEnabled && ["playing", "victory"].includes(screen) && !document.hidden) {
+                if (audioSettings.musicEnabled) {
                   audioStatus.textContent = `Music file ${asset.filename} is missing. Download it from Pixabay to enable background music.`;
                 }
               }
@@ -1110,14 +1106,14 @@
         }
 
         function startMusicAsset(asset) {
-          if (!audioContext || !audioSettings.musicEnabled || !["playing", "victory"].includes(screen)) return false;
+          if (!audioContext || !audioSettings.musicEnabled || audioContext.state === "closed") return false;
           if (!asset.failed) {
             try {
               connectAudioAsset(asset, musicGain, "music");
               asset.pending = true;
               asset.element.play().then(() => {
                 asset.pending = false;
-                if (!audioSettings.musicEnabled || !["playing", "victory"].includes(screen) || document.hidden) {
+                if (!audioSettings.musicEnabled) {
                   asset.element.pause();
                   return;
                 }
@@ -1125,7 +1121,7 @@
               }, () => {
                 asset.pending = false;
                 asset.failed = true;
-                if (audioSettings.musicEnabled && ["playing", "victory"].includes(screen) && !document.hidden) {
+                if (audioSettings.musicEnabled) {
                   audioStatus.textContent = `Music file ${asset.filename} could not be played.`;
                 }
               });
@@ -1150,20 +1146,6 @@
           if (musicGain) musicGain.gain.setTargetAtTime(0, audioContext.currentTime, 0.025);
         }
 
-        function suspendAudio() {
-          pauseMusic();
-          if (audioContext && audioContext.state === "running" && !audioSuspendPending) {
-            audioSuspendPending = true;
-            audioContext.suspend().then(() => {
-              audioSuspendPending = false;
-              if (screen === "playing" && !document.hidden && document.hasFocus() && audioContext.state !== "closed") startAudio();
-            }, (error) => {
-              audioSuspendPending = false;
-              console.error("EchoStep could not pause audio.", error);
-            });
-          }
-        }
-
         function startAudio() {
           if (!AudioContextConstructor) {
             audioStatus.textContent = "Web Audio is unavailable; the game is still playable.";
@@ -1178,6 +1160,12 @@
               musicGain.connect(masterGain);
               sfxGain.connect(masterGain);
               masterGain.connect(audioContext.destination);
+              audioContext.addEventListener("statechange", () => {
+                if (audioContext.state !== "running") return;
+                audioResumePending = false;
+                if (audioSettings.musicEnabled) startMusic();
+                renderAudioSettings();
+              });
               renderAudioSettings();
             }
           } catch (error) {
@@ -1189,7 +1177,9 @@
             startMusic();
             return;
           }
-          if (audioResumePending) return;
+          if (audioResumePending) {
+            audioResumePending = false;
+          }
           audioResumePending = true;
           audioContext.resume().then(() => {
             audioResumePending = false;
@@ -1362,8 +1352,10 @@
         musicToggle.addEventListener("click", () => {
           audioSettings.musicEnabled = !audioSettings.musicEnabled;
           renderAudioSettings();
-          if (audioSettings.musicEnabled && screen === "playing") startMusic();
-          else if (!audioSettings.musicEnabled) pauseMusic();
+          if (audioSettings.musicEnabled) {
+            if (audioContext?.state === "running") startMusic();
+            else startAudio();
+          } else if (!audioSettings.musicEnabled) pauseMusic();
           saveAudioSettings();
         });
         sfxToggle.addEventListener("click", () => {
@@ -1382,7 +1374,7 @@
           saveAudioSettings();
         });
         const resumeAudioAfterInteraction = () => {
-          if (audioContext && audioContext.state === "suspended" && screen === "playing") startAudio();
+          if (!audioContext || audioContext.state === "suspended") startAudio();
         };
         document.addEventListener("pointerdown", resumeAudioAfterInteraction, { capture: true });
         document.addEventListener("keydown", resumeAudioAfterInteraction, { capture: true });
@@ -1394,15 +1386,14 @@
           }
         });
         document.addEventListener("visibilitychange", () => {
-          if (document.hidden) suspendAudio();
-          else if (screen === "playing" && audioContext?.state === "suspended") startAudio();
+          if (!document.hidden && audioContext?.state === "suspended") startAudio();
         });
-        window.addEventListener("blur", suspendAudio);
         window.addEventListener("focus", () => {
-          if (screen === "playing" && audioContext?.state === "suspended") startAudio();
+          if (audioContext?.state === "suspended") startAudio();
         });
         window.addEventListener("pagehide", closeAudio, { once: true });
         renderAudioSettings();
+        startAudio();
 
         function loadProgress() {
           let saved;
@@ -1663,8 +1654,6 @@
           runAnimationTime = 0;
           hazardClock = 0;
           won = false;
-          renderAudioSettings();
-          startAudio();
           keys.clear();
           lastFrame = 0;
           scheduleFrame();
@@ -1672,7 +1661,6 @@
 
         function showLevelSelect() {
           screen = "select";
-          suspendAudio();
           keys.clear();
           recording = null;
           echoPlayback = null;
