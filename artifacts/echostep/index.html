@@ -1438,6 +1438,7 @@
           if (!audioContext || audioContext.state === "closed" || activeVoices.size >= 8) return;
           const now = audioContext.currentTime;
           const sounds = {
+            "ui-click": { start: 1_280, end: 760, duration: 0.055, level: 0.055, wave: "triangle" },
             jump: { start: 235, end: 390, duration: 0.15, level: 0.18, wave: "triangle" },
             land: { start: 115, end: 72, duration: 0.12, level: 0.16, wave: "sine" },
             "ghost-appear": { start: 610, end: 390, duration: 0.42, level: 0.13, wave: "sine" },
@@ -1514,11 +1515,37 @@
           });
         }
 
+        function playUiClick() {
+          if (!audioSettings.sfxEnabled || audioSettings.muted || audioSettings.sfx === 0) return;
+          startAudio();
+          playSynthesizedEffect("ui-click", false);
+        }
+
         audioSettingsToggle.addEventListener("click", () => {
           const expanded = audioSettingsToggle.getAttribute("aria-expanded") === "true";
           audioSettingsToggle.setAttribute("aria-expanded", String(!expanded));
           audioSettingsPanel.hidden = expanded;
           topbar.style.marginBottom = expanded ? "" : `${audioSettingsPanel.getBoundingClientRect().height + 12}px`;
+        });
+        document.addEventListener("click", (event) => {
+          if (!(event.target instanceof Element)) return;
+          const control = event.target.closest(
+            'button, input, select, [role="button"], [role="option"], [role="menuitem"], [role="switch"], [role="tab"]',
+          );
+          if (
+            !control
+            || control.matches(":disabled")
+            || control.getAttribute("aria-disabled") === "true"
+          ) return;
+          playUiClick();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (
+            event.target instanceof HTMLInputElement
+            && event.target.type === "range"
+            && !event.target.disabled
+            && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End", "PageUp", "PageDown"].includes(event.key)
+          ) playUiClick();
         });
         audioMuteButton.addEventListener("click", () => {
           audioSettings.muted = !audioSettings.muted;
