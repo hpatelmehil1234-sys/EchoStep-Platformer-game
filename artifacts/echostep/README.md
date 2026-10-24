@@ -45,13 +45,12 @@ Use the **Sound** control in the top bar to enable or disable Music and Sound Ef
 - **8 — Multi-Step Puzzle (Hard):** combine a gap, patrol, checkpoint, and two recordings.
 - **9 — Advanced Echo (Hard):** solve three checkpoint-separated plate and gate sequences.
 - **10 — The Final Trial (Expert):** combine three gates, patrols, platform jumps, and checkpoints.
-- **11–14 — Archive trials (Bonus):** replay the four original chambers after completing the main ten.
 
-The level archive shows each trial's number, name, difficulty, and locked, available, or completed state. Completing a trial unlocks the next one; available and completed trials can be replayed, and the victory panel provides a next-level button. Section labels, plate labels, gate states, patrols, and checkpoint markers are shown in the environment. The status line below the game gives immediate feedback when a plate or gate changes state. Unlock and completion progress is stored locally in the browser under `echostep-progress-v1`; it is not sent over the network.
+The level selector displays the ten primary trials; bonus archive chambers are not included in the current selection or progression. Its CRT preview shows the selected level at native scale, with a horizontal pan slider for inspecting the complete layout. Completing a trial unlocks the next one; available and completed trials can be replayed, and the victory panel provides a next-level button. Section labels, plate labels, gate states, patrols, and checkpoint markers are shown in the environment. The status line below the game gives immediate feedback when a plate or gate changes state. Unlock and completion progress is stored locally in the browser under `echostep-progress-v1`; it is not sent over the network.
 
 ## Compatibility
 
-Use a current browser with Canvas 2D support, such as a recent version of Firefox, Chrome, Edge, or Safari. The game is designed for keyboard play on desktop and scales to narrow screens. No account or network connection is needed.
+Use a current browser with Canvas 2D support, such as a recent version of Firefox, Chrome, Edge, or Safari. The game uses a 960 × 540 logical 16:9 viewport, scaled proportionally to the available browser area, and is designed for keyboard play on desktop and narrow screens. No account or network connection is needed.
 
 ## Project structure
 

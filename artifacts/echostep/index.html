@@ -261,20 +261,28 @@
       .level-card[data-locked="true"] p { color: var(--dim); }
       .level-card .button { min-height: 34px; padding: 0 12px; }
       .selection-footer { display: flex; justify-content: flex-start; margin-top: 18px; }
-      .game-layout { display: flex; width: min(100%, 1180px); flex: 1; flex-direction: column; align-self: center; padding: 30px 0 14px; animation: appear .3s ease-out both; }
-      .game-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; padding: 0 2px 14px; }
+      .game-layout { display: flex; width: min(100%, 1360px); flex: 1; flex-direction: column; align-self: center; padding: 22px 0 0; animation: appear .3s ease-out both; }
+      .game-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; padding: 0 2px 10px; }
       .game-actions { display: flex; gap: 8px; }
       .game-title { margin: 7px 0 0; font-size: clamp(22px, 2.7vw, 30px); font-weight: 500; letter-spacing: -.045em; }
       .button-quiet { min-height: 38px; gap: 8px; padding: 0 12px; border-color: #4a5048; color: var(--muted); background: #20231e; font-size: 11px; }
       .button-quiet:hover { border-color: var(--mint); color: var(--ink); background: #292d27; }
       .restart-icon { font-size: 17px; line-height: 1; }
-      .stage-frame { position: relative; width: min(100%, calc(min(62vh, 650px) * 1.7778)); aspect-ratio: 16 / 9; align-self: center; overflow: hidden; border: 1px solid #403c45; background: #171915; }
+      .stage-frame {
+        position: relative;
+        width: min(100%, calc(min(70dvh, 780px) * 1.77778), calc(max(0px, 100dvh - 330px) * 1.77778));
+        aspect-ratio: 16 / 9;
+        align-self: center;
+        overflow: hidden;
+        background: #171915;
+        box-shadow: inset 0 0 0 1px #403c45;
+      }
       .game-canvas { display: block; width: 100%; height: 100%; }
-      .controls { display: flex; min-height: 58px; align-items: center; gap: 18px; }
+      .controls { display: flex; min-height: 52px; align-items: center; gap: 18px; }
       .controls .control-group { gap: 9px; }
       .controls-label { color: var(--muted); font-size: 10px; }
       .controls-divider { width: 1px; height: 20px; background: var(--line); }
-      .mechanic-panel { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 12px 14px; border: 1px solid var(--line); background: rgb(28 31 26 / 78%); }
+      .mechanic-panel { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 9px 14px; border: 1px solid var(--line); background: rgb(28 31 26 / 78%); }
       .recording-state { display: flex; min-width: 220px; align-items: center; gap: 11px; }
       .record-indicator { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #72776f; }
       .recording-state[data-mode="recording"] .record-indicator { background: #ca8075; box-shadow: 0 0 0 3px rgb(202 128 117 / 13%); }
@@ -329,7 +337,7 @@
         .title-controls { margin-top: 28px; }
         .lab-art { width: 100%; max-width: none; justify-self: stretch; }
         .game-layout { padding-top: 22px; }
-        .stage-frame { width: 100%; }
+        .stage-frame { width: min(100%, calc(max(0px, 100dvh - 330px) * 1.77778)); }
         .controls { flex-wrap: wrap; min-height: 52px; gap: 10px; }
         .selection-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
         .level-select { padding: 42px 0; }
@@ -525,18 +533,18 @@
       h1 {
         margin: 26px 0 18px -4px;
         color: #a51f24;
-        font-size: clamp(68px, 7.9vw, 122px);
+        font-size: clamp(64px, 7.2vw, 108px);
         font-weight: 750;
         letter-spacing: -.085em;
-        line-height: .88;
+        line-height: .92;
         text-shadow: 0 2px #4c1719, 0 4px 1px #170d0e, 0 7px 10px rgb(0 0 0 / 48%), 0 0 18px rgb(184 28 34 / 20%);
       }
       h1 span { color: #bd3434; }
       .lede { color: #d4c9bb; }
       .button-primary {
         position: relative;
-        min-width: 214px;
-        min-height: 52px;
+        min-width: clamp(190px, 22vw, 228px);
+        min-height: 50px;
         border: 1px solid #be5550;
         border-radius: 7px;
         color: #f1d8cd;
@@ -640,8 +648,8 @@
       .console-deck .control-label { color: #9c9b8e; letter-spacing: .16em; }
       .console-deck .key-row { gap: 7px; }
       .console-deck kbd {
-        min-width: 36px;
-        height: 38px;
+        min-width: clamp(30px, 3vw, 36px);
+        height: clamp(34px, 3.2vw, 38px);
         border-color: #555958;
         border-radius: 5px;
         color: #dfb6a7;
@@ -649,13 +657,13 @@
         box-shadow: inset 0 1px rgb(255 255 255 / 13%), 0 3px 0 #111313, 0 0 8px rgb(182 53 48 / 17%);
         font-size: 12px;
       }
-      .console-deck .key-space { min-width: 118px; }
+      .console-deck .key-space { min-width: clamp(94px, 10vw, 118px); }
       .deck-caption { position: absolute; right: 24px; bottom: 5px; color: #9c9b8e; font: 7px ui-monospace, monospace; letter-spacing: .12em; }
       .title-copy .button { text-transform: uppercase; }
       .level-select {
         display: grid;
         width: min(100%, 1380px);
-        grid-template-columns: minmax(0, 1.13fr) minmax(300px, .87fr);
+        grid-template-columns: minmax(0, .94fr) minmax(0, 1.06fr);
         align-content: start;
         gap: 18px;
         padding: clamp(20px, 3vh, 30px) 0;
@@ -669,7 +677,7 @@
           linear-gradient(140deg, #444946, #272c2a 52%, #1b201f);
         box-shadow: inset 0 1px rgb(255 255 255 / 18%), inset 0 -10px 22px rgb(0 0 0 / 30%), 0 12px 28px rgb(0 0 0 / 35%);
       }
-      .selection-heading { align-items: center; margin-bottom: 18px; }
+      .selection-heading { align-items: flex-start; flex-direction: column; gap: 10px; margin-bottom: 18px; }
       .selection-title { color: #e3ddd0; }
       .level-progress { padding: 8px 10px; border: 1px solid #505650; background: rgb(10 14 13 / 42%); white-space: nowrap; }
       .level-grid {
@@ -721,7 +729,7 @@
         position: sticky;
         top: 14px;
         display: flex;
-        min-height: 460px;
+        min-height: 710px;
         flex-direction: column;
         padding: 16px;
         border: 12px solid #353b3b;
@@ -735,7 +743,7 @@
       .archive-monitor__screen {
         position: relative;
         display: flex;
-        min-height: 350px;
+        min-height: 568px;
         flex: 1;
         flex-direction: column;
         overflow: hidden;
@@ -746,7 +754,7 @@
           linear-gradient(90deg, rgb(139 180 140 / 11%) 1px, transparent 1px),
           repeating-linear-gradient(0deg, rgb(142 184 143 / 7%) 0 1px, transparent 1px 4px),
           radial-gradient(ellipse at 52% 52%, rgb(53 91 57 / 53%), rgb(13 28 19 / 98%) 74%);
-        background-size: 40px 40px, 40px 40px, auto, auto;
+        background-size: 64px 64px, 64px 64px, auto, auto;
         box-shadow: inset 0 0 38px rgb(0 0 0 / 66%), inset 0 0 20px rgb(122 190 127 / 11%), 0 0 18px rgb(71 123 78 / 12%);
       }
       .archive-monitor__screen::after {
@@ -756,13 +764,43 @@
         content: "";
         pointer-events: none;
       }
-      #level-preview { display: block; width: 100%; flex: 1; min-height: 270px; }
-      #level-preview .preview-grid-line { stroke: rgb(134 174 138 / 16%); stroke-width: 1; }
-      #level-preview .preview-platform { fill: rgb(144 186 146 / 17%); stroke: #9bb89b; stroke-width: 2; }
-      #level-preview .preview-door { fill: rgb(93 41 38 / 42%); stroke: #bd5b51; stroke-width: 2; }
-      #level-preview .preview-switch { fill: #bfaa6d; stroke: #dfc783; stroke-width: 2; }
-      #level-preview .preview-hazard { stroke: #c5483e; stroke-width: 4; }
-      #level-preview .preview-player { fill: #a6c5a2; stroke: #e2edcf; stroke-width: 2; }
+      #level-preview { display: block; width: 100%; height: 540px; flex: 0 0 540px; min-height: 540px; overflow: hidden; }
+      .preview-pan {
+        z-index: 1;
+        display: flex;
+        min-height: 26px;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        border-top: 1px solid rgb(150 184 151 / 28%);
+        color: #a9c2a2;
+        background: rgb(9 20 13 / 72%);
+        font: 8px ui-monospace, monospace;
+        letter-spacing: .1em;
+      }
+      .preview-pan label { flex: 0 0 auto; }
+      .preview-pan input {
+        width: 100%;
+        min-width: 40px;
+        height: 20px;
+        margin: 0;
+        accent-color: #a9c2a2;
+        cursor: ew-resize;
+      }
+      .preview-pan input:focus-visible { outline: 1px solid #d5e2bf; outline-offset: 2px; }
+      .preview-pan output { min-width: 64px; color: #d1ddbc; text-align: right; white-space: nowrap; }
+      #level-preview .preview-grid-line { stroke: rgb(134 174 138 / 14%); stroke-width: 1; }
+      #level-preview .preview-panel { fill: rgb(92 113 92 / 8%); stroke: rgb(146 180 145 / 18%); stroke-width: 1; }
+      #level-preview .preview-platform { fill: url("#preview-steel"); stroke: #9bb89b; stroke-width: 1.5; }
+      #level-preview .preview-platform-top { stroke: #c0d0b7; stroke-width: 2; }
+      #level-preview .preview-track { stroke: rgb(172 190 160 / 35%); stroke-width: 2; stroke-dasharray: 5 5; }
+      #level-preview .preview-door { fill: url("#preview-gate"); stroke: #bd5b51; stroke-width: 2; }
+      #level-preview .preview-switch { fill: #bfaa6d; stroke: #dfc783; stroke-width: 1.5; }
+      #level-preview .preview-gravity-switch { fill: #a6b590; stroke: #d6dfb4; stroke-width: 1.5; }
+      #level-preview .preview-hazard { fill: rgb(165 47 41 / 52%); stroke: #c5483e; stroke-width: 1.5; }
+      #level-preview .preview-hazard--laser { fill: rgb(179 56 49 / 39%); stroke: #db6354; }
+      #level-preview .preview-checkpoint { fill: #a5b99b; stroke: #d5dbbd; stroke-width: 1.2; }
+      #level-preview .preview-player { fill: #a6c5a2; stroke: #e2edcf; stroke-width: 1.5; }
       #level-preview .preview-exit { fill: rgb(112 154 117 / 15%); stroke: #a7c8a4; stroke-width: 2; }
       .archive-monitor__detail { display: grid; gap: 8px; padding: 12px 4px 2px; }
       .archive-monitor__detail strong { color: #d6d1c1; font-size: 18px; font-weight: 500; }
@@ -773,14 +811,14 @@
         .panel-readouts { top: 17px; right: 17px; }
         .panel-readout { min-width: 112px; font-size: 7px; }
         .level-select { grid-template-columns: minmax(0, 1fr); }
-        .archive-monitor { position: relative; top: auto; min-height: 370px; }
-        .archive-monitor__screen { min-height: 270px; }
+        .archive-monitor { position: relative; top: auto; min-height: 710px; }
+        .archive-monitor__screen { min-height: 568px; }
       }
       @media (max-width: 760px) {
         .shell { padding: 0 18px; }
         .console-wordmark { display: none; }
         .title-screen { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; gap: 12px; padding: 18px 0; }
-        .title-copy { min-height: 430px; padding: 28px 24px; }
+        .title-copy { min-height: 0; padding: 28px 24px; }
         .title-copy .eyebrow { margin-top: 66px; }
         .panel-readouts { top: 20px; right: 20px; }
         .lab-art { width: 100%; aspect-ratio: 1.42; }
@@ -796,7 +834,7 @@
         .brand { min-width: 0; padding: 8px 10px; }
         .topbar { min-height: 58px; }
         .audio-settings-toggle { min-height: 34px; }
-        .title-copy { min-height: 420px; padding: 24px 20px; }
+        .title-copy { min-height: 0; padding: 24px 20px; }
         .panel-readouts { position: static; align-self: flex-end; margin-bottom: 12px; }
         .panel-caution { top: 18px; left: 20px; }
         .title-copy .eyebrow { margin-top: 0; }
@@ -898,7 +936,7 @@
         <div class="selection-bay">
           <div class="selection-heading">
             <div>
-              <p class="eyebrow">Research archive / fourteen trials</p>
+              <p class="eyebrow">Primary test chambers / ten trials</p>
               <h2 id="selection-title" class="selection-title">Choose a level</h2>
               <p class="selection-copy">Each chamber adds a new demand on your recorded movement. Finish a trial to open the next.</p>
             </div>
@@ -912,7 +950,12 @@
         <aside class="archive-monitor" aria-label="Selected trial schematic">
           <div class="archive-monitor__label"><span id="preview-index">FIG. 01 / CHAMBER PREVIEW</span><span>CRT READOUT</span></div>
           <div class="archive-monitor__screen">
-            <svg id="level-preview" viewBox="0 0 640 320" role="img" aria-label="Selected level layout preview" preserveAspectRatio="none"></svg>
+            <svg id="level-preview" viewBox="0 0 640 540" role="img" aria-label="Selected level layout preview" preserveAspectRatio="none"></svg>
+            <div class="preview-pan">
+              <label for="preview-scroll">MAP PAN</label>
+              <input id="preview-scroll" type="range" min="0" max="0" step="1" value="0" aria-label="Pan level map horizontally">
+              <output id="preview-scroll-value" for="preview-scroll">0 / 0</output>
+            </div>
           </div>
           <div class="archive-monitor__detail">
             <strong id="preview-title">First Steps</strong>
@@ -986,13 +1029,14 @@
 
         const WIDTH = 960;
         const HEIGHT = 540;
+        const CAMERA_ZOOM = 1.07;
+        const CAMERA_VIEW_WIDTH = WIDTH / CAMERA_ZOOM;
         const RUN_SPEED = 310;
         const RUN_ACCELERATION = 2100;
         const GROUND_DRAG = 2200;
         const JUMP_SPEED = 600;
         const COYOTE_TIME = 0.12;
         const JUMP_BUFFER = 0.14;
-        const LANDING_TOLERANCE = 12;
         const RESPAWN_Y = 690;
         const MAX_RECORDING_SECONDS = 12;
         const MIN_RECORDING_SECONDS = 0.1;
@@ -1465,6 +1509,7 @@
             description: `Bonus archive trial. ${level.description}`,
           })),
         ];
+        const primaryLevels = levels.slice(0, levels.length - archiveLevels.length);
         let activeLevel = levels[0];
         let WORLD_WIDTH = activeLevel.worldWidth;
         let EXIT_X = activeLevel.exitX;
@@ -1484,6 +1529,8 @@
         const levelGrid = document.querySelector("#level-grid");
         const levelProgressLabel = document.querySelector("#level-progress");
         const levelPreview = document.querySelector("#level-preview");
+        const previewScroll = document.querySelector("#preview-scroll");
+        const previewScrollValue = document.querySelector("#preview-scroll-value");
         const previewIndexLabel = document.querySelector("#preview-index");
         const previewTitleLabel = document.querySelector("#preview-title");
         const previewMetaLabel = document.querySelector("#preview-meta");
@@ -1562,6 +1609,7 @@
         let currentCheckpoint = 0;
         let nextDoorCheckpoint = 0;
         let runAnimationTime = 0;
+        let landingAnimationTime = 0;
         let hazardClock = 0;
         let gravityDirection = 1;
         let gravityPlateStates = [];
@@ -2113,7 +2161,7 @@
             if (!(error instanceof DOMException)) throw error;
             progressPersistenceAvailable = false;
             console.error("EchoStep could not save progress in this browser.", error);
-            levelProgressLabel.textContent = `${completedLevels.length} / ${levels.length} COMPLETED · PROGRESS NOT SAVED`;
+            levelProgressLabel.textContent = `${primaryLevels.filter((level) => completedLevels.includes(level.id)).length} / ${primaryLevels.length} COMPLETED · PROGRESS NOT SAVED`;
           }
         }
 
@@ -2195,89 +2243,196 @@
             || completedLevels.includes(levels[index - 1].id);
         }
 
-        function renderLevelPreview(levelIndex) {
-          const level = levels[levelIndex];
+        let previewViewport = { width: 640, height: 540, maxScroll: 0 };
+
+        function renderLevelPreview(levelIndex, preserveScroll = false) {
+          const level = primaryLevels[levelIndex];
           if (!level) return;
 
           const svgNamespace = "http://www.w3.org/2000/svg";
-          const mapX = (worldX) => 30 + worldX / level.worldWidth * 580;
-          const mapY = (worldY) => 20 + (worldY - 65) / 475 * 270;
-          const appendShape = (tagName, className, attributes) => {
+          const appendShape = (parent, tagName, className, attributes) => {
             const shape = document.createElementNS(svgNamespace, tagName);
             shape.setAttribute("class", className);
             for (const [name, value] of Object.entries(attributes)) {
               shape.setAttribute(name, String(value));
             }
-            levelPreview.append(shape);
+            parent.append(shape);
           };
 
+          const savedScroll = preserveScroll ? Number(previewScroll.value) : 0;
+          previewViewport = {
+            width: Math.max(1, levelPreview.clientWidth),
+            height: Math.max(1, levelPreview.clientHeight),
+            maxScroll: 0,
+          };
+          previewViewport.maxScroll = Math.max(0, Math.ceil(level.worldWidth - previewViewport.width));
+          previewScroll.max = String(previewViewport.maxScroll);
+          previewScroll.value = String(Math.min(savedScroll, previewViewport.maxScroll));
           levelPreview.replaceChildren();
-          for (let gridX = 0; gridX <= 640; gridX += 64) {
-            appendShape("line", "preview-grid-line", { x1: gridX, y1: 0, x2: gridX, y2: 320 });
+          levelPreview.setAttribute(
+            "viewBox",
+            `${previewScroll.value} 0 ${previewViewport.width} ${previewViewport.height}`,
+          );
+          const definitions = document.createElementNS(svgNamespace, "defs");
+          definitions.innerHTML = `
+            <clipPath id="preview-viewport"><rect x="${previewScroll.value}" y="0" width="${previewViewport.width}" height="${previewViewport.height}"></rect></clipPath>
+            <linearGradient id="preview-steel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#9db59a" stop-opacity=".38"></stop>
+              <stop offset=".16" stop-color="#78917a" stop-opacity=".2"></stop>
+              <stop offset="1" stop-color="#344638" stop-opacity=".7"></stop>
+            </linearGradient>
+            <linearGradient id="preview-gate" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#422b2a"></stop>
+              <stop offset=".5" stop-color="#633532"></stop>
+              <stop offset="1" stop-color="#312423"></stop>
+            </linearGradient>
+          `;
+          levelPreview.append(definitions);
+
+          const clipped = document.createElementNS(svgNamespace, "g");
+          clipped.setAttribute("clip-path", "url(#preview-viewport)");
+          levelPreview.append(clipped);
+          const firstGridX = Math.floor(Number(previewScroll.value) / 64) * 64;
+          for (let gridX = firstGridX; gridX <= Number(previewScroll.value) + previewViewport.width; gridX += 64) {
+            appendShape(clipped, "line", "preview-grid-line", { x1: gridX, y1: 0, x2: gridX, y2: previewViewport.height });
           }
-          for (let gridY = 0; gridY <= 320; gridY += 40) {
-            appendShape("line", "preview-grid-line", { x1: 0, y1: gridY, x2: 640, y2: gridY });
+          for (let gridY = 0; gridY <= previewViewport.height; gridY += 64) {
+            appendShape(clipped, "line", "preview-grid-line", {
+              x1: Number(previewScroll.value),
+              y1: gridY,
+              x2: Number(previewScroll.value) + previewViewport.width,
+              y2: gridY,
+            });
           }
+
+          const levelYValues = [
+            65,
+            540,
+            ...level.platforms.flatMap((platform) => [platform.y, platform.y + platform.height]),
+            ...(level.doors || []).flatMap((door) => [door.top, door.bottom]),
+            ...(level.hazards || []).flatMap((hazard) => [hazard.y, hazard.y + (hazard.height || 8)]),
+            ...(level.gravityPlates || []).map((plate) => plate.y),
+          ];
+          const minY = Math.min(...levelYValues);
+          const maxY = Math.max(...levelYValues);
+          const geometry = document.createElementNS(svgNamespace, "g");
+          clipped.append(geometry);
+
+          for (const section of level.sections || []) {
+            if (section.left > 0) {
+              appendShape(geometry, "line", "preview-grid-line", {
+                x1: section.left,
+                y1: minY,
+                x2: section.left,
+                y2: maxY,
+              });
+            }
+          }
+
           for (const platform of level.platforms) {
-            appendShape("rect", "preview-platform", {
-              x: mapX(platform.x),
-              y: mapY(platform.y),
-              width: Math.max(3, platform.width / level.worldWidth * 580),
-              height: Math.max(4, platform.height / 475 * 270),
+            if (platform.movement) {
+              appendShape(geometry, "line", "preview-track", {
+                x1: platform.movement.minX,
+                y1: platform.y + platform.height + 8,
+                x2: platform.movement.maxX + platform.width,
+                y2: platform.y + platform.height + 8,
+              });
+            }
+            appendShape(geometry, "rect", "preview-platform", {
+              x: platform.x,
+              y: platform.y,
+              width: platform.width,
+              height: platform.height,
               rx: 2,
+            });
+            appendShape(geometry, "line", "preview-platform-top", {
+              x1: platform.x + 1,
+              y1: platform.y + 1,
+              x2: platform.x + platform.width - 1,
+              y2: platform.y + 1,
             });
           }
           for (const pressurePlate of level.switches || []) {
-            appendShape("rect", "preview-switch", {
-              x: mapX(pressurePlate.x),
-              y: mapY(pressurePlate.y) - 8,
-              width: Math.max(9, SWITCH_WIDTH / level.worldWidth * 580),
+            appendShape(geometry, "rect", "preview-switch", {
+              x: pressurePlate.x,
+              y: pressurePlate.y - 7,
+              width: SWITCH_WIDTH,
+              height: 7,
+              rx: 1,
+            });
+          }
+          for (const plate of level.launchPlates || []) {
+            appendShape(geometry, "rect", "preview-switch", {
+              x: plate.x,
+              y: plate.y - 6,
+              width: plate.width || SWITCH_WIDTH,
               height: 6,
               rx: 1,
             });
           }
-          for (const plate of [...(level.launchPlates || []), ...(level.gravityPlates || [])]) {
-            appendShape("rect", "preview-switch", {
-              x: mapX(plate.x),
-              y: mapY(plate.y) - 8,
-              width: Math.max(9, (plate.width || SWITCH_WIDTH) / level.worldWidth * 580),
-              height: 6,
+          for (const plate of level.gravityPlates || []) {
+            appendShape(geometry, "rect", "preview-gravity-switch", {
+              x: plate.x,
+              y: plate.action === "invert" ? plate.y - 8 : plate.y,
+              width: plate.width || SWITCH_WIDTH,
+              height: 8,
               rx: 1,
             });
           }
           for (const door of level.doors || []) {
-            appendShape("rect", "preview-door", {
-              x: mapX(door.x) - 4,
-              y: mapY(door.top),
-              width: Math.max(8, door.width / level.worldWidth * 580),
-              height: Math.max(10, (door.bottom - door.top) / 475 * 270),
+            appendShape(geometry, "rect", "preview-door", {
+              x: door.x - door.width / 2,
+              y: door.top,
+              width: door.width,
+              height: door.bottom - door.top,
               rx: 1,
             });
           }
           for (const hazard of level.hazards || []) {
-            appendShape("line", "preview-hazard", {
-              x1: mapX(hazard.x),
-              y1: mapY(hazard.y),
-              x2: mapX(hazard.x + (hazard.width || 0)),
-              y2: mapY(hazard.y + (hazard.height || 0)),
+            let hazardWidth = hazard.width || 8;
+            let hazardHeight = hazard.height || 8;
+            if (hazard.motion?.axis === "x") hazardWidth += hazard.motion.distance;
+            if (hazard.motion?.axis === "y") hazardHeight += hazard.motion.distance;
+            appendShape(geometry, "rect", `preview-hazard${hazard.type === "laser" ? " preview-hazard--laser" : ""}`, {
+              x: hazard.x,
+              y: hazard.y,
+              width: hazardWidth,
+              height: hazardHeight,
+              rx: 1,
             });
           }
-          appendShape("rect", "preview-player", {
-            x: mapX(90),
-            y: mapY(500) - 18,
-            width: 10,
-            height: 16,
+
+          for (const checkpoint of level.checkpoints || []) {
+            appendShape(geometry, "rect", "preview-checkpoint", {
+              x: checkpoint.x - 2,
+              y: checkpoint.surfaceY - 42,
+              width: 3,
+              height: 42,
+            });
+            appendShape(geometry, "path", "preview-checkpoint", {
+              d: `M ${checkpoint.x + 1} ${checkpoint.surfaceY - 42} h 25 v 14 h -25 Z`,
+            });
+          }
+          const start = level.checkpoints?.[0] || { x: 90, surfaceY: 500 };
+          const startGravity = start.gravityDirection || 1;
+          appendShape(geometry, "rect", "preview-player", {
+            x: start.x - 10,
+            y: start.surfaceY - startGravity * 16.5 - 16.5,
+            width: 20,
+            height: 30,
             rx: 2,
           });
-          appendShape("rect", "preview-exit", {
-            x: mapX(level.exitX) - 9,
-            y: mapY(level.exit?.minY ?? 406),
-            width: 18,
-            height: Math.max(18, ((level.exit?.maxY ?? 500) - (level.exit?.minY ?? 406)) / 475 * 270),
-            rx: 2,
+          const exitSurface = level.exitSurface || 500;
+          appendShape(geometry, "rect", "preview-exit", {
+            x: level.exitX - 33,
+            y: exitSurface - 102,
+            width: 66,
+            height: 96,
           });
 
-          const plateCount = (level.switches || []).length + (level.launchPlates || []).length;
+          const plateCount = (level.switches || []).length
+            + (level.launchPlates || []).length
+            + (level.gravityPlates || []).length;
           const gateCount = (level.doors || []).length;
           const hazardCount = (level.hazards || []).length;
           previewIndexLabel.textContent = `FIG. ${String(level.number).padStart(2, "0")} / CHAMBER PREVIEW`;
@@ -2285,14 +2440,15 @@
           previewMetaLabel.textContent = `${level.difficulty.toUpperCase()} / ${plateCount} PLATE${plateCount === 1 ? "" : "S"} / ${gateCount} GATE${gateCount === 1 ? "" : "S"}${hazardCount ? ` / ${hazardCount} HAZARDS` : ""}`;
           previewObjectiveLabel.textContent = level.description;
           levelPreview.setAttribute("aria-label", `${level.title}: schematic of its actual platforms, pressure plates, gates, hazards, start, and exit.`);
+          previewScrollValue.value = `${previewScroll.value} / ${previewScroll.max}`;
         }
 
         function renderLevelCards() {
           levelGrid.replaceChildren();
-          const unlockedCount = levels.filter((_, index) => isLevelUnlocked(index)).length;
-          const completedCount = completedLevels.length;
-          levelProgressLabel.textContent = `${completedCount} / ${levels.length} COMPLETED · ${unlockedCount} AVAILABLE${progressPersistenceAvailable ? "" : " · NOT SAVED"}`;
-          levels.forEach((level, index) => {
+          const unlockedCount = primaryLevels.filter((_, index) => isLevelUnlocked(index)).length;
+          const completedCount = primaryLevels.filter((level) => completedLevels.includes(level.id)).length;
+          levelProgressLabel.textContent = `${completedCount} / ${primaryLevels.length} COMPLETED · ${unlockedCount} AVAILABLE${progressPersistenceAvailable ? "" : " · NOT SAVED"}`;
+          primaryLevels.forEach((level, index) => {
             const unlocked = isLevelUnlocked(index);
             const completed = completedLevels.includes(level.id);
             const card = document.createElement("article");
@@ -2389,7 +2545,9 @@
         }
 
         function capturePose(time) {
-          const state = !player.grounded ? "air" : Math.abs(player.vx) > 18 ? "run" : "idle";
+          const state = !player.grounded
+            ? player.vy * player.gravityDirection < -35 ? "jump" : "fall"
+            : landingAnimationTime > 0 ? "land" : Math.abs(player.vx) > 18 ? "run" : "idle";
           return {
             time,
             x: player.x,
@@ -2498,7 +2656,10 @@
           launchPlateStates = launchPlates.map(() => false);
           gravityPlateStates = gravityPlates.map(() => false);
           nextDoorCheckpoint = doors.findIndex((door) => door.checkpointX > checkpoints[currentCheckpoint].x);
-          cameraX = Math.max(0, Math.min(WORLD_WIDTH - WIDTH, checkpoints[currentCheckpoint].x - WIDTH * 0.45));
+          cameraX = Math.max(
+            0,
+            Math.min(WORLD_WIDTH - CAMERA_VIEW_WIDTH, checkpoints[currentCheckpoint].x - CAMERA_VIEW_WIDTH * 0.45),
+          );
           jumpBuffer = 0;
           coyoteTime = 0;
           keys.clear();
@@ -2563,6 +2724,7 @@
           jumpBuffer = 0;
           coyoteTime = 0;
           runAnimationTime = 0;
+          landingAnimationTime = 0;
           hazardClock = 0;
           redEchoElapsed = 0;
           redEchoHistory = activeLevel.redEcho ? [capturePose(0)] : [];
@@ -2669,6 +2831,7 @@
 
         function update(delta) {
           hazardClock += delta;
+          landingAnimationTime = Math.max(0, landingAnimationTime - delta);
           const wasGrounded = player.grounded;
           if (activeLevel.redEcho) redEchoElapsed += delta;
           const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
@@ -2712,80 +2875,76 @@
 
           const oldX = player.x;
           const oldY = player.y;
-          player.vy = Math.max(-1050, Math.min(player.vy + 1450 * gravityDirection * delta, 1050));
-          const nextY = player.y + player.vy * delta;
-          const nextX = Math.max(player.width / 2, Math.min(WORLD_WIDTH - player.width / 2, player.x + player.vx * delta));
-          const sweptTop = Math.min(oldY, nextY) - player.height / 2;
-          const sweptBottom = Math.max(oldY, nextY) + player.height / 2;
-          player.x = nextX;
+          const solids = platforms.map((platform) => ({
+            left: platform.x,
+            right: platform.x + platform.width,
+            top: platform.y,
+            bottom: platform.y + platform.height,
+          }));
           for (let index = 0; index < doors.length; index += 1) {
             const panel = getDoorPanel(doors[index], index);
-            const overlapsSweptY = sweptBottom > panel.top && sweptTop < panel.bottom;
-            if (!overlapsSweptY) continue;
+            solids.push({ left: panel.left, right: panel.right, top: panel.top, bottom: panel.bottom });
+          }
+
+          let nextX = Math.max(
+            player.width / 2,
+            Math.min(WORLD_WIDTH - player.width / 2, player.x + player.vx * delta),
+          );
+          const movingRight = nextX > oldX;
+          const movingLeft = nextX < oldX;
+          for (const solid of solids) {
+            const verticalOverlap = player.y + player.height / 2 > solid.top
+              && player.y - player.height / 2 < solid.bottom;
+            if (!verticalOverlap) continue;
             const oldLeft = oldX - player.width / 2;
             const oldRight = oldX + player.width / 2;
-            const newLeft = player.x - player.width / 2;
-            const newRight = player.x + player.width / 2;
-            if (player.vx > 0 && oldRight <= panel.left && newRight > panel.left) {
-              player.x = panel.left - player.width / 2;
-              player.vx = 0;
-            } else if (player.vx < 0 && oldLeft >= panel.right && newLeft < panel.right) {
-              player.x = panel.right + player.width / 2;
-              player.vx = 0;
+            if (movingRight && oldRight <= solid.left && nextX + player.width / 2 > solid.left) {
+              nextX = Math.min(nextX, solid.left - player.width / 2);
+            } else if (movingLeft && oldLeft >= solid.right && nextX - player.width / 2 < solid.right) {
+              nextX = Math.max(nextX, solid.right + player.width / 2);
             }
           }
-          player.y = nextY;
+          if (nextX === player.width / 2 || nextX === WORLD_WIDTH - player.width / 2) player.vx = 0;
+          if ((movingRight && nextX < oldX + player.vx * delta)
+            || (movingLeft && nextX > oldX + player.vx * delta)) player.vx = 0;
+          player.x = nextX;
+
+          player.vy = Math.max(-1050, Math.min(player.vy + 1450 * gravityDirection * delta, 1050));
+          const nextY = player.y + player.vy * delta;
+          const movingDown = nextY > oldY;
+          const movingUp = nextY < oldY;
           player.grounded = false;
-
-          for (let index = 0; index < doors.length; index += 1) {
-            const panel = getDoorPanel(doors[index], index);
-            const overlapsX = player.x + player.width / 2 > panel.left
-              && player.x - player.width / 2 < panel.right;
-            if (!overlapsX) continue;
-            const oldTop = oldY - player.height / 2;
-            const oldBottom = oldY + player.height / 2;
-            const newTop = player.y - player.height / 2;
-            const newBottom = player.y + player.height / 2;
-            if (gravityDirection > 0 && player.vy >= 0
-              && oldBottom <= panel.top + LANDING_TOLERANCE && newBottom >= panel.top) {
-              player.y = panel.top - player.height / 2;
-              player.vy = 0;
-              player.grounded = true;
-            } else if ((gravityDirection > 0 && player.vy < 0
-              && oldTop >= panel.bottom && newTop < panel.bottom)
-              || (gravityDirection < 0 && player.vy <= 0
-                && oldTop >= panel.bottom - LANDING_TOLERANCE && newTop <= panel.bottom)) {
-              player.y = panel.bottom + player.height / 2;
-              player.vy = 0;
-              player.grounded = true;
+          let verticalContact = null;
+          for (const solid of solids) {
+            const horizontalOverlap = player.x + player.width / 2 > solid.left
+              && player.x - player.width / 2 < solid.right;
+            if (!horizontalOverlap) continue;
+            if (movingDown
+              && oldY + player.height / 2 <= solid.top + 1
+              && nextY + player.height / 2 >= solid.top
+              && (!verticalContact || solid.top < verticalContact.surface)) {
+              verticalContact = {
+                surface: solid.top,
+                position: solid.top - player.height / 2,
+                grounded: gravityDirection > 0,
+              };
+            } else if (movingUp
+              && oldY - player.height / 2 >= solid.bottom - 1
+              && nextY - player.height / 2 <= solid.bottom
+              && (!verticalContact || solid.bottom > verticalContact.surface)) {
+              verticalContact = {
+                surface: solid.bottom,
+                position: solid.bottom + player.height / 2,
+                grounded: gravityDirection < 0,
+              };
             }
           }
-
-          if (gravityDirection > 0 && player.vy >= 0) {
-            for (const platform of platforms) {
-              const crossesTop = oldY + player.height / 2 <= platform.y + LANDING_TOLERANCE && player.y + player.height / 2 >= platform.y;
-              const overlapsX = player.x + player.width / 2 > platform.x && player.x - player.width / 2 < platform.x + platform.width;
-              if (crossesTop && overlapsX) {
-                player.y = platform.y - player.height / 2;
-                player.vy = 0;
-                player.grounded = true;
-                break;
-              }
-            }
-          } else if (gravityDirection < 0 && player.vy <= 0) {
-            for (const platform of platforms) {
-              const underside = platform.y + platform.height;
-              const crossesUnderside = oldY - player.height / 2 >= underside - LANDING_TOLERANCE
-                && player.y - player.height / 2 <= underside;
-              const overlapsX = player.x + player.width / 2 > platform.x
-                && player.x - player.width / 2 < platform.x + platform.width;
-              if (crossesUnderside && overlapsX) {
-                player.y = underside + player.height / 2;
-                player.vy = 0;
-                player.grounded = true;
-                break;
-              }
-            }
+          if (verticalContact) {
+            player.y = verticalContact.position;
+            player.vy = 0;
+            player.grounded = verticalContact.grounded;
+          } else {
+            player.y = nextY;
           }
 
           let hazardHit = false;
@@ -2863,7 +3022,10 @@
             );
           }
 
-          if (player.grounded && !wasGrounded) playEffect("land");
+          if (player.grounded && !wasGrounded) {
+            landingAnimationTime = 0.14;
+            playEffect("land");
+          }
           if (gravityDirection > 0) {
             launchPlates.forEach((plate, index) => {
               const touching = isOnSurface(player, plate, gravityDirection);
@@ -2981,7 +3143,7 @@
             }
           }
 
-          const targetCamera = Math.max(0, Math.min(WORLD_WIDTH - WIDTH, player.x - WIDTH * 0.61));
+          const targetCamera = Math.max(0, Math.min(WORLD_WIDTH - CAMERA_VIEW_WIDTH, player.x - CAMERA_VIEW_WIDTH * 0.61));
           cameraX += (targetCamera - cameraX) * Math.min(1, delta * 5.4);
           if (player.x + player.width / 2 >= EXIT_X - 25
             && player.x - player.width / 2 <= EXIT_X + 25
@@ -3080,78 +3242,192 @@
           const nextLevelIndex = currentLevelIndex + 1;
           victoryEyebrow.textContent = `Trial ${activeLevel.number} complete`;
           victoryTitle.textContent = activeLevel.title;
-          victoryCopy.textContent = nextLevelIndex < levels.length
+          victoryCopy.textContent = nextLevelIndex < primaryLevels.length
             ? `${levels[nextLevelIndex].title} is now available. Your progress is saved on this device.`
-            : "All fourteen trials are complete. Your progress is saved on this device.";
-          continueButton.querySelector("span").textContent = nextLevelIndex < levels.length
+            : "All ten primary trials are complete. Your progress is saved on this device.";
+          continueButton.querySelector("span").textContent = nextLevelIndex < primaryLevels.length
             ? `Continue to ${levels[nextLevelIndex].title}`
             : "Return to level selection";
-          continueButton.querySelector(".button-arrow").textContent = nextLevelIndex < levels.length ? "↗" : "←";
+          continueButton.querySelector(".button-arrow").textContent = nextLevelIndex < primaryLevels.length ? "↗" : "←";
           victoryOverlay.hidden = false;
           continueButton.focus();
         }
 
         function drawBackground() {
-          const redEchoLevel = activeLevel.redEcho;
-          ctx.fillStyle = redEchoLevel ? "#1b1114" : "#171915";
-          ctx.fillRect(0, 0, WORLD_WIDTH, HEIGHT);
-          ctx.fillStyle = redEchoLevel ? "#281519" : "#20231e";
-          ctx.fillRect(0, 78, WORLD_WIDTH, 312);
-          ctx.fillStyle = redEchoLevel ? "#51232a" : "#343a32";
-          ctx.fillRect(0, 78, WORLD_WIDTH, 7);
-          ctx.fillStyle = redEchoLevel ? "#120d0f" : "#11130f";
-          ctx.fillRect(0, 390, WORLD_WIDTH, 150);
-          ctx.fillStyle = redEchoLevel ? "#5a2830" : "#393e36";
-          ctx.fillRect(0, 390, WORLD_WIDTH, 3);
+          const roomStyle = ((activeLevel.number - 1) % 4) + 1;
+          const parallaxX = cameraX * 0.16;
+          const firstPanel = Math.floor(parallaxX / 420) * 420 - 420;
+          const wallGradient = ctx.createLinearGradient(0, 0, 0, HEIGHT);
+          wallGradient.addColorStop(0, "#242a29");
+          wallGradient.addColorStop(0.45, "#1a201f");
+          wallGradient.addColorStop(1, "#111515");
+          ctx.fillStyle = wallGradient;
+          ctx.fillRect(0, 0, WIDTH, HEIGHT);
+          ctx.fillStyle = "rgb(120 153 128 / 4%)";
+          ctx.fillRect(0, 78, WIDTH, 312);
 
-          for (const x of [84, 450, 905, 1405, 1885, 2340, 2710]) {
-            ctx.fillStyle = "rgb(52 55 49 / 72%)";
-            ctx.fillRect(x, 88, 2, 298);
-            ctx.fillStyle = "rgb(17 19 15 / 90%)";
-            ctx.fillRect(x + 4, 88, 1, 298);
+          ctx.save();
+          ctx.translate(-Math.round(parallaxX), 0);
+          for (let panelX = firstPanel; panelX < parallaxX + WIDTH + 420; panelX += 420) {
+            ctx.fillStyle = "rgb(82 94 91 / 13%)";
+            ctx.fillRect(panelX + 18, 82, 382, 298);
+            ctx.fillStyle = "rgb(4 7 7 / 30%)";
+            ctx.fillRect(panelX + 24, 91, 370, 278);
+            ctx.fillStyle = "rgb(81 91 88 / 29%)";
+            ctx.fillRect(panelX + 18, 82, 382, 3);
+            ctx.fillStyle = "rgb(6 9 9 / 62%)";
+            ctx.fillRect(panelX + 18, 377, 382, 4);
+
+            for (const ribX of [panelX + 18, panelX + 206, panelX + 400]) {
+              ctx.fillStyle = "rgb(104 112 107 / 27%)";
+              ctx.fillRect(ribX, 82, 5, 298);
+              ctx.fillStyle = "rgb(6 9 9 / 50%)";
+              ctx.fillRect(ribX + 5, 82, 3, 298);
+            }
+
+            ctx.fillStyle = "rgb(129 139 128 / 23%)";
+            ctx.fillRect(panelX + 34, 108, 115, 2);
+            ctx.fillRect(panelX + 34, 108, 2, 45);
+            ctx.fillStyle = "rgb(16 21 19 / 48%)";
+            ctx.fillRect(panelX + 42, 117, 98, 28);
+
+            if (roomStyle === 1) {
+              ctx.fillStyle = "rgb(116 145 119 / 25%)";
+              ctx.fillRect(panelX + 260, 211, 92, 76);
+              ctx.strokeStyle = "rgb(139 166 137 / 25%)";
+              ctx.strokeRect(panelX + 260, 211, 92, 76);
+              ctx.fillStyle = "rgb(139 183 139 / 29%)";
+              ctx.fillRect(panelX + 276, 228, 60, 2);
+            } else if (roomStyle === 2) {
+              ctx.fillStyle = "rgb(16 20 19 / 73%)";
+              ctx.fillRect(panelX + 247, 173, 112, 138);
+              ctx.strokeStyle = "rgb(126 139 129 / 30%)";
+              ctx.strokeRect(panelX + 247, 173, 112, 138);
+              for (let ventY = 187; ventY < 299; ventY += 12) {
+                ctx.fillStyle = "rgb(126 147 129 / 25%)";
+                ctx.fillRect(panelX + 260, ventY, 85, 2);
+              }
+              ctx.fillStyle = "rgb(132 169 131 / 30%)";
+              ctx.fillRect(panelX + 330, 327, 5, 5);
+            } else if (roomStyle === 3) {
+              ctx.fillStyle = "rgb(8 12 12 / 76%)";
+              ctx.fillRect(panelX + 244, 152, 118, 204);
+              ctx.fillStyle = "rgb(109 120 113 / 31%)";
+              ctx.fillRect(panelX + 242, 149, 5, 210);
+              ctx.fillRect(panelX + 359, 149, 5, 210);
+              for (let machineY = 170; machineY < 343; machineY += 43) {
+                ctx.fillStyle = "rgb(108 124 113 / 29%)";
+                ctx.fillRect(panelX + 258, machineY, 88, 3);
+                ctx.fillStyle = "rgb(118 157 124 / 28%)";
+                ctx.fillRect(panelX + 269, machineY + 10, 9, 9);
+              }
+            } else {
+              const coreX = panelX + 302;
+              ctx.fillStyle = "rgb(8 12 12 / 83%)";
+              ctx.fillRect(panelX + 232, 119, 142, 241);
+              ctx.strokeStyle = "rgb(122 143 126 / 31%)";
+              ctx.lineWidth = 3;
+              ctx.strokeRect(panelX + 232, 119, 142, 241);
+              ctx.strokeStyle = "rgb(135 167 132 / 25%)";
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.arc(coreX, 239, 39, 0, Math.PI * 2);
+              ctx.arc(coreX, 239, 28, 0, Math.PI * 2);
+              ctx.stroke();
+              ctx.fillStyle = "rgb(140 184 140 / 25%)";
+              ctx.fillRect(coreX - 2, 207, 4, 64);
+              ctx.fillRect(coreX - 32, 237, 64, 4);
+            }
+
+            for (const screwY of [95, 364]) {
+              ctx.beginPath();
+              ctx.fillStyle = "rgb(138 144 136 / 41%)";
+              ctx.arc(panelX + 32, screwY, 3, 0, Math.PI * 2);
+              ctx.arc(panelX + 385, screwY, 3, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.fillStyle = "rgb(14 17 16 / 72%)";
+              ctx.fillRect(panelX + 30, screwY, 4, 1);
+              ctx.fillRect(panelX + 383, screwY, 4, 1);
+            }
+
+            ctx.fillStyle = "rgb(116 126 118 / 25%)";
+            ctx.fillRect(panelX + 34, 397, 350, 3);
+            ctx.fillStyle = "rgb(8 12 11 / 62%)";
+            ctx.fillRect(panelX + 34, 401, 350, 5);
+            ctx.fillStyle = "rgb(81 92 83 / 28%)";
+            ctx.fillRect(panelX + 48, 425, 132, 45);
+            ctx.fillStyle = "rgb(6 9 8 / 60%)";
+            ctx.fillRect(panelX + 53, 430, 122, 34);
+            for (let grateX = panelX + 58; grateX < panelX + 170; grateX += 8) {
+              ctx.fillStyle = "rgb(130 143 128 / 18%)";
+              ctx.fillRect(grateX, 433, 2, 28);
+            }
+            ctx.fillStyle = "rgb(129 145 126 / 25%)";
+            ctx.fillRect(panelX + 225, 421, 139, 2);
+            ctx.fillRect(panelX + 225, 421, 2, 42);
+            ctx.fillRect(panelX + 362, 421, 2, 42);
+            ctx.fillStyle = "rgb(12 17 15 / 65%)";
+            ctx.fillRect(panelX + 232, 429, 122, 26);
+            ctx.fillStyle = "rgb(182 130 77 / 46%)";
+            ctx.fillRect(panelX + 239, 435, 4, 4);
+            ctx.fillStyle = "rgb(139 177 133 / 36%)";
+            ctx.fillRect(panelX + 249, 435, 4, 4);
           }
 
+          ctx.fillStyle = "rgb(124 134 125 / 35%)";
+          ctx.fillRect(firstPanel, 50, WIDTH + 840, 5);
+          ctx.fillStyle = "rgb(4 7 7 / 66%)";
+          ctx.fillRect(firstPanel, 55, WIDTH + 840, 4);
+          ctx.fillStyle = "rgb(82 93 86 / 31%)";
+          ctx.fillRect(firstPanel, 407, WIDTH + 840, 3);
+          ctx.fillStyle = "rgb(7 10 9 / 72%)";
+          ctx.fillRect(firstPanel, 411, WIDTH + 840, 5);
+          for (let lightX = firstPanel + 74; lightX < parallaxX + WIDTH + 420; lightX += 210) {
+            ctx.fillStyle = "rgb(133 153 126 / 18%)";
+            ctx.fillRect(lightX, 61, 36, 2);
+            ctx.fillStyle = "rgb(176 128 75 / 45%)";
+            ctx.fillRect(lightX + 5, 68, 4, 2);
+            ctx.fillStyle = "rgb(130 174 132 / 37%)";
+            ctx.fillRect(lightX + 25, 68, 4, 2);
+          }
+
+          ctx.strokeStyle = "rgb(103 118 108 / 56%)";
+          ctx.lineWidth = 7;
+          ctx.beginPath();
+          ctx.moveTo(firstPanel, 94);
+          ctx.bezierCurveTo(firstPanel + 70, 112, firstPanel + 110, 58, firstPanel + 198, 83);
+          ctx.bezierCurveTo(firstPanel + 264, 105, firstPanel + 310, 67, firstPanel + 420, 91);
+          ctx.stroke();
+          ctx.strokeStyle = "rgb(4 7 7 / 75%)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(firstPanel, 102);
+          ctx.bezierCurveTo(firstPanel + 70, 120, firstPanel + 110, 66, firstPanel + 198, 91);
+          ctx.bezierCurveTo(firstPanel + 264, 113, firstPanel + 310, 75, firstPanel + 420, 99);
+          ctx.stroke();
+
+          ctx.fillStyle = "rgb(123 140 125 / 25%)";
+          ctx.fillRect(firstPanel, 386, WIDTH + 840, 4);
+          ctx.fillStyle = "rgb(5 8 8 / 48%)";
+          ctx.fillRect(firstPanel, 392, WIDTH + 840, 10);
+          ctx.restore();
+
+          const vignette = ctx.createRadialGradient(WIDTH / 2, HEIGHT / 2, 110, WIDTH / 2, HEIGHT / 2, 610);
+          vignette.addColorStop(0, "rgb(0 0 0 / 0%)");
+          vignette.addColorStop(1, "rgb(0 0 0 / 31%)");
+          ctx.fillStyle = vignette;
+          ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        }
+
+        function drawSectionLabels() {
+          ctx.save();
+          ctx.fillStyle = "rgb(191 197 184 / 66%)";
+          ctx.font = "10px ui-monospace, monospace";
+          ctx.textAlign = "left";
           for (const section of sections) {
-            ctx.fillStyle = redEchoLevel ? "#bc8187" : "#9ba194";
-            ctx.font = "10px ui-monospace, monospace";
-            ctx.textAlign = "left";
             ctx.fillText(section.title, section.left + 36, 150);
           }
-
-          for (const cabinet of [
-            { x: 285, y: 236, width: 58, height: 136 },
-            { x: 1090, y: 280, width: 74, height: 92 },
-            { x: 1925, y: 218, width: 68, height: 154 },
-          ]) {
-            ctx.fillStyle = "#1b1e19";
-            ctx.fillRect(cabinet.x, cabinet.y, cabinet.width, cabinet.height);
-            ctx.strokeStyle = "#3c433a";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(cabinet.x, cabinet.y, cabinet.width, cabinet.height);
-            ctx.fillStyle = "#272c25";
-            ctx.fillRect(cabinet.x + 7, cabinet.y + 12, cabinet.width - 14, 34);
-            ctx.strokeStyle = "#454c42";
-            ctx.lineWidth = 1;
-            ctx.strokeRect(cabinet.x + 7, cabinet.y + 12, cabinet.width - 14, 34);
-            ctx.fillStyle = "#9e784d";
-            ctx.fillRect(cabinet.x + 10, cabinet.y + 12, 4, 4);
-            ctx.strokeStyle = "#454c42";
-            ctx.beginPath();
-            ctx.moveTo(cabinet.x + 11, cabinet.y + 76);
-            ctx.lineTo(cabinet.x + cabinet.width - 8, cabinet.y + 91);
-            ctx.stroke();
-          }
-
-          ctx.strokeStyle = "#353b32";
-          ctx.lineWidth = 4;
-          ctx.beginPath();
-          ctx.moveTo(660, 86); ctx.lineTo(660, 124); ctx.lineTo(792, 124); ctx.lineTo(792, 188);
-          ctx.stroke();
-          ctx.strokeStyle = "#555c50";
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(660, 84); ctx.lineTo(660, 120); ctx.lineTo(792, 120); ctx.lineTo(792, 184);
-          ctx.stroke();
+          ctx.restore();
         }
 
         function drawPlatforms() {
@@ -3165,19 +3441,28 @@
               ctx.fillRect(platform.movement.minX, platform.y + platform.height + 1, 3, 6);
               ctx.fillRect(platform.movement.maxX + platform.width - 3, platform.y + platform.height + 1, 3, 6);
             }
-            ctx.fillStyle = "rgb(0 0 0 / 16%)";
-            ctx.fillRect(platform.x + 2, platform.y + 8, platform.width - 4, 8);
-            ctx.fillStyle = moving ? "#294239" : "#292d27";
+            ctx.fillStyle = "rgb(0 0 0 / 35%)";
+            ctx.fillRect(platform.x + 3, platform.y + platform.height - 1, platform.width - 6, 6);
+            ctx.fillStyle = moving ? "#344a3f" : "#353a36";
             ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-            ctx.fillStyle = moving ? "#a4d5bd" : "#797f74";
-            ctx.fillRect(platform.x, platform.y, platform.width, 3);
-            ctx.fillStyle = moving ? "#8ce0c0" : "#6aaea8";
-            ctx.fillRect(platform.x + 5, platform.y + 3, platform.width - 10, 1);
-            ctx.fillStyle = "#9b9f96";
-            ctx.fillRect(platform.x + 10, platform.y + 12, 2, 4);
-            ctx.fillRect(platform.x + platform.width - 12, platform.y + 12, 2, 4);
-            ctx.fillStyle = "#474d44";
-            ctx.fillRect(platform.x + 16, platform.y + platform.height - 7, platform.width - 32, 2);
+            ctx.fillStyle = moving ? "#637a68" : "#555c55";
+            ctx.fillRect(platform.x, platform.y, platform.width, Math.min(4, platform.height));
+            ctx.fillStyle = moving ? "#9bb79b" : "#a2a79b";
+            ctx.fillRect(platform.x, platform.y, platform.width, 2);
+            ctx.fillStyle = "rgb(12 16 15 / 42%)";
+            ctx.fillRect(platform.x + 4, platform.y + 7, platform.width - 8, 1);
+            ctx.fillStyle = moving ? "#435b49" : "#444a44";
+            ctx.fillRect(platform.x + 1, platform.y + 5, platform.width - 2, Math.max(1, platform.height - 8));
+            ctx.fillStyle = "rgb(144 153 142 / 44%)";
+            ctx.fillRect(platform.x + 8, platform.y + 10, 3, 3);
+            ctx.fillRect(platform.x + platform.width - 11, platform.y + 10, 3, 3);
+            ctx.fillStyle = "rgb(8 11 10 / 46%)";
+            ctx.fillRect(platform.x + 10, platform.y + 11, 3, 1);
+            ctx.fillRect(platform.x + platform.width - 9, platform.y + 11, 3, 1);
+            if (platform.height > 18 && platform.width > 80) {
+              ctx.fillStyle = "rgb(113 123 114 / 29%)";
+              ctx.fillRect(platform.x + 16, platform.y + platform.height - 5, platform.width - 32, 2);
+            }
           }
         }
 
@@ -3192,7 +3477,7 @@
           const brightness = 0.94
             + 0.03 * Math.sin(phase * 10.8 + seed)
             + 0.02 * Math.sin(phase * 15.4 + seed * 1.3);
-          const glow = 10 + 1.5 * Math.sin(phase * 9.2 + seed * 0.8);
+          const glow = 5 + 0.8 * Math.sin(phase * 9.2 + seed * 0.8);
           const startX = vertical ? bounds.x + bounds.width / 2 : bounds.x;
           const startY = vertical ? bounds.y : bounds.y + bounds.height / 2;
           const endX = vertical ? startX : bounds.x + bounds.width;
@@ -3204,19 +3489,19 @@
           ctx.moveTo(startX, startY);
           ctx.quadraticCurveTo(controlX, controlY, endX, endY);
           ctx.globalAlpha = active ? brightness : 1;
-          ctx.shadowColor = active ? "#ff244f" : "transparent";
+          ctx.shadowColor = active ? "#b7483f" : "transparent";
           ctx.shadowBlur = active ? glow : 0;
-          ctx.strokeStyle = active ? "rgb(145 17 42 / 38%)" : "rgb(104 34 48 / 30%)";
+          ctx.strokeStyle = active ? "rgb(147 41 37 / 45%)" : "rgb(104 48 43 / 28%)";
           ctx.lineWidth = active ? 8 : 1.5;
           ctx.stroke();
 
           if (active) {
             ctx.shadowBlur = 5;
-            ctx.strokeStyle = "rgb(255 47 79 / 84%)";
+            ctx.strokeStyle = "rgb(211 91 76 / 82%)";
             ctx.lineWidth = 3;
             ctx.stroke();
             ctx.shadowBlur = 2;
-            ctx.strokeStyle = "#ff3657";
+            ctx.strokeStyle = "#d66a57";
             ctx.lineWidth = 1.4;
             ctx.stroke();
           }
@@ -3233,14 +3518,14 @@
               drawLaserBeam(hazard, bounds, vertical, active);
               if (vertical) {
                 ctx.shadowBlur = active ? 7 : 0;
-                ctx.shadowColor = "#ff244f";
-                ctx.fillStyle = active ? "#ff244f" : "#713744";
+                ctx.shadowColor = "#b7483f";
+                ctx.fillStyle = active ? "#b7483f" : "#713c39";
                 ctx.fillRect(bounds.x - 5, bounds.y - 7, bounds.width + 10, 7);
                 ctx.fillRect(bounds.x - 5, bounds.y + bounds.height, bounds.width + 10, 7);
               } else {
                 ctx.shadowBlur = active ? 7 : 0;
-                ctx.shadowColor = "#ff244f";
-                ctx.fillStyle = active ? "#ff244f" : "#713744";
+                ctx.shadowColor = "#b7483f";
+                ctx.fillStyle = active ? "#b7483f" : "#713c39";
                 ctx.fillRect(bounds.x - 7, bounds.y - 5, 7, bounds.height + 10);
                 ctx.fillRect(bounds.x + bounds.width, bounds.y - 5, 7, bounds.height + 10);
               }
@@ -3350,14 +3635,14 @@
             const inverted = plate.action === "invert";
             const plateTop = inverted ? plate.y - 8 : plate.y;
             ctx.save();
-            ctx.shadowColor = inverted ? "#e8a85d" : "#62d5e8";
+            ctx.shadowColor = inverted ? "#d59e5e" : "#83aa82";
             ctx.shadowBlur = 11;
-            ctx.fillStyle = inverted ? "rgb(232 168 93 / 32%)" : "rgb(98 213 232 / 30%)";
+            ctx.fillStyle = inverted ? "rgb(213 158 94 / 30%)" : "rgb(131 170 130 / 28%)";
             ctx.fillRect(plate.x - 3, plateTop, plate.width + 6, 9);
-            ctx.fillStyle = inverted ? "#e8a85d" : "#62d5e8";
+            ctx.fillStyle = inverted ? "#d59e5e" : "#83aa82";
             ctx.fillRect(plate.x, plateTop + 3, plate.width, 5);
             ctx.restore();
-            ctx.fillStyle = inverted ? "#ffe0b1" : "#c5f7ff";
+            ctx.fillStyle = inverted ? "#efcea0" : "#c0d7b4";
             ctx.font = "7px ui-monospace, monospace";
             ctx.textAlign = "center";
             ctx.fillText(plate.label, plate.x + plate.width / 2, plate.y - 14);
@@ -3401,48 +3686,159 @@
         }
 
         function drawActor(actor, echo = false, redEcho = false) {
-          const x = Math.round(actor.x);
-          const y = Math.round(actor.y);
-          const step = actor.state === "run" ? Math.sin(actor.animationPhase) * 2 : 0;
+          const state = actor.state || "idle";
+          const phase = actor.animationPhase || 0;
+          const run = state === "run";
+          const jump = state === "jump";
+          const fall = state === "fall" || state === "air";
+          const landing = state === "land";
+          const idleBob = state === "idle" ? Math.sin(performance.now() * 0.0022 + actor.x) * 0.45 : 0;
+          const stride = run ? Math.sin(phase) * 3 : 0;
+          const bodyTilt = run
+            ? (actor.facing || 1) * 0.055
+            : jump ? (actor.facing || 1) * -0.045 : fall ? (actor.facing || 1) * 0.035 : 0;
+          const bodyY = idleBob + (landing ? 2 : jump ? -1 : 0);
+          const palette = echo
+            ? {
+                armor: "#91b590",
+                armorLight: "#c1d5b2",
+                armorDark: "#496c51",
+                outline: "#314d3a",
+                joint: "#789b79",
+                face: "#263d32",
+                light: "#d5e7b8",
+                reflection: "rgba(174, 209, 161, 0.54)",
+              }
+            : redEcho
+            ? {
+                armor: "#98554a",
+                armorLight: "#c58671",
+                armorDark: "#57342f",
+                outline: "#3f2927",
+                joint: "#865348",
+                face: "#302321",
+                light: "#e9bc83",
+                reflection: "rgba(196, 117, 91, 0.48)",
+              }
+            : {
+                armor: "#aab7a2",
+                armorLight: "#d0d2bd",
+                armorDark: "#697a6c",
+                outline: "#303a35",
+                joint: "#64746a",
+                face: "#202824",
+                light: "#e8b66e",
+                reflection: "rgba(192, 119, 76, 0.42)",
+              };
           ctx.save();
-          ctx.translate(x, y);
+          ctx.translate(Math.round(actor.x), Math.round(actor.y));
           if (actor.gravityDirection < 0) ctx.scale(1, -1);
-          if (redEcho) {
-            ctx.globalAlpha = 0.82;
-            ctx.shadowColor = "#ff334d";
-            ctx.shadowBlur = 17;
-            ctx.fillStyle = "#f5364e";
-            ctx.fillRect(-12, -15, 24, 28);
-            ctx.shadowBlur = 0;
-            ctx.strokeStyle = "rgb(255 93 104 / 78%)";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(-14, -17, 28, 34);
+          ctx.scale(0.67, 0.82);
+          ctx.globalAlpha = echo ? 0.7 : redEcho ? 0.88 : 1;
+          if (echo || redEcho) {
+            ctx.shadowColor = echo ? "#88ae83" : "#9e5548";
+            ctx.shadowBlur = echo ? 6 : 3;
           }
+
+          ctx.fillStyle = echo ? "rgba(111, 161, 112, 0.24)" : "rgba(7, 10, 8, 0.38)";
+          ctx.fillRect(-12, 18, 24, 2);
+
+          const leftLeg = jump ? 1 : fall ? -1 : landing ? 2 : run ? stride : 0;
+          const rightLeg = jump ? -1 : fall ? 1 : landing ? 2 : run ? -stride : 0;
+          for (const leg of [
+            { x: -8, offset: leftLeg },
+            { x: 3, offset: rightLeg },
+          ]) {
+            const legTop = 9 + (landing ? 1 : 0);
+            ctx.fillStyle = palette.outline;
+            ctx.fillRect(leg.x, legTop, 6, 8 + Math.max(0, leg.offset));
+            ctx.fillStyle = palette.joint;
+            ctx.fillRect(leg.x + 1, legTop + 2, 4, 5 + Math.max(0, leg.offset));
+            ctx.fillStyle = palette.armorDark;
+            ctx.fillRect(leg.x - 1 + leg.offset * 0.35, 15 + Math.max(0, leg.offset), 9, 5);
+            ctx.fillStyle = palette.armorLight;
+            ctx.fillRect(leg.x + 1 + leg.offset * 0.35, 15 + Math.max(0, leg.offset), 5, 1);
+          }
+
+          ctx.save();
+          ctx.translate(0, bodyY);
+          ctx.rotate(bodyTilt);
+          ctx.fillStyle = palette.outline;
+          ctx.fillRect(-15, -16, 30, 27);
+          ctx.fillStyle = palette.armorDark;
+          ctx.fillRect(-13, -14, 26, 23);
+          ctx.fillStyle = palette.armor;
+          ctx.fillRect(-12, -15, 24, 22);
+          ctx.fillStyle = palette.armorLight;
+          ctx.fillRect(-10, -14, 18, 2);
+          ctx.fillRect(-13, -11, 2, 13);
+
+          ctx.fillStyle = palette.joint;
+          ctx.fillRect(-18, -9, 4, 11);
+          ctx.fillRect(14, -9, 4, 11);
+          ctx.fillStyle = palette.outline;
+          ctx.fillRect(-18, -7, 4, 5);
+          ctx.fillRect(14, -7, 4, 5);
+
+          ctx.fillStyle = palette.armorDark;
+          ctx.fillRect(-10, 1, 20, 7);
+          ctx.fillStyle = palette.armor;
+          ctx.fillRect(-8, 2, 16, 4);
+          ctx.fillStyle = palette.armorLight;
+          ctx.fillRect(-6, 2, 5, 1);
+          ctx.fillStyle = palette.outline;
+          ctx.fillRect(-1, -14, 1, 8);
+          ctx.fillRect(-8, 7, 16, 1);
+
+          ctx.fillStyle = palette.outline;
+          ctx.fillRect(-9, -12, 18, 9);
+          ctx.fillStyle = palette.face;
+          ctx.fillRect(-7, -10, 14, 5);
+          ctx.shadowColor = palette.light;
+          ctx.shadowBlur = echo ? 3 : redEcho ? 1 : 1 + (Math.sin(performance.now() * 0.004) + 1) * 0.55;
+          ctx.fillStyle = palette.light;
+          ctx.fillRect(-5, -9, 3, 2);
+          ctx.fillRect(2, -9, 3, 2);
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = echo ? "rgba(222, 237, 190, 0.42)" : palette.armorLight;
+          ctx.fillRect(-2, -8, 4, 1);
+
+          ctx.fillStyle = palette.outline;
+          ctx.fillRect(-13, -13, 2, 2);
+          ctx.fillRect(11, -13, 2, 2);
+          ctx.fillRect(-11, 4, 2, 2);
+          ctx.fillRect(9, 4, 2, 2);
+          ctx.fillStyle = palette.armorLight;
+          ctx.fillRect(-12, -13, 1, 1);
+          ctx.fillRect(12, -13, 1, 1);
+
+          ctx.fillStyle = palette.reflection;
+          ctx.fillRect(-13, -5, 2, 5);
+          ctx.fillRect(11, -3, 2, 4);
+          ctx.restore();
+
           if (echo) {
-            ctx.globalAlpha = 0.55;
-            ctx.setLineDash([3, 2]);
-            ctx.strokeStyle = "#c6c1d4";
-            ctx.strokeRect(-14, -17, 28, 34);
+            ctx.shadowBlur = 0;
+            ctx.globalAlpha = 0.28;
+            ctx.fillStyle = "#d1e2bc";
+            for (let scanY = -15; scanY <= 8; scanY += 4) {
+              ctx.fillRect(-12, scanY, 24, 1);
+            }
+            ctx.fillRect(-8, 11, 16, 1);
+          } else if (!redEcho) {
+            ctx.fillStyle = "rgba(191, 112, 67, 0.58)";
+            ctx.fillRect(actor.facing < 0 ? -15 : 13, -12, 2, 3);
           }
-          ctx.fillStyle = redEcho ? "rgb(255 52 73 / 20%)" : echo ? "#a9aec0" : "rgb(85 217 209 / 15%)";
-          ctx.fillRect(-17, -19, 34, 38);
-          ctx.fillStyle = redEcho ? "#f5364e" : echo ? "#aaaec1" : "#70d9d2";
-          ctx.fillRect(-12, -15, 24, 28);
-          ctx.fillStyle = redEcho ? "#541822" : echo ? "#343744" : "#25373a";
-          ctx.fillRect(-9, -11, 18, 7);
-          ctx.fillStyle = redEcho ? "#ffe2e4" : echo ? "#e2dfec" : "#b8f4ed";
-          ctx.fillRect(-7 + actor.facing, -8, 14, 2);
-          ctx.fillStyle = redEcho ? "#a52739" : echo ? "#858ba2" : "#4b8e8a";
-          ctx.fillRect(-10, 10 + step, 8, 7);
-          ctx.fillRect(2, 10 - step, 8, 7);
           ctx.restore();
         }
 
         function render() {
           ctx.clearRect(0, 0, WIDTH, HEIGHT);
-          ctx.save();
-          ctx.translate(-Math.round(cameraX), 0);
           drawBackground();
+          ctx.save();
+          ctx.translate(-Math.round(cameraX * CAMERA_ZOOM), HEIGHT * (1 - CAMERA_ZOOM) / 2);
+          ctx.scale(CAMERA_ZOOM, CAMERA_ZOOM);
+          drawSectionLabels();
           drawPlatforms();
           drawPuzzle();
           drawHazards();
@@ -3451,9 +3847,15 @@
           const redEchoPose = activeLevel.redEcho
             ? getRedEchoPose(redEchoElapsed - RED_ECHO_DELAY)
             : null;
+          drawActor({
+            ...player,
+            state: player.grounded
+              ? landingAnimationTime > 0 ? "land" : Math.abs(player.vx) > 18 ? "run" : "idle"
+              : player.vy * gravityDirection < -35 ? "jump" : "fall",
+            animationPhase: runAnimationTime,
+          });
           if (echoPose) drawActor(echoPose, true);
           if (redEchoPose) drawActor(redEchoPose, false, true);
-          drawActor({ ...player, state: player.grounded ? (Math.abs(player.vx) > 18 ? "run" : "idle") : "air", animationPhase: runAnimationTime });
           ctx.restore();
         }
 
@@ -3473,15 +3875,27 @@
         document.querySelector("#restart-button").addEventListener("click", () => startRun(currentLevelIndex));
         document.querySelector("#play-again-button").addEventListener("click", () => startRun(currentLevelIndex));
         document.querySelector("#continue-button").addEventListener("click", () => {
-          if (currentLevelIndex + 1 < levels.length) startRun(currentLevelIndex + 1);
+          if (currentLevelIndex + 1 < primaryLevels.length) startRun(currentLevelIndex + 1);
           else showLevelSelect();
         });
         document.querySelector("#back-button").addEventListener("click", showLevelSelect);
+        previewScroll.addEventListener("input", () => {
+          const scrollX = Math.min(Number(previewScroll.value), previewViewport.maxScroll);
+          levelPreview.setAttribute(
+            "viewBox",
+            `${scrollX} 0 ${previewViewport.width} ${previewViewport.height}`,
+          );
+          levelPreview.querySelector("#preview-viewport rect").setAttribute("x", String(scrollX));
+          previewScrollValue.value = `${scrollX} / ${previewViewport.maxScroll}`;
+        });
+        window.addEventListener("resize", () => {
+          if (screen === "select") renderLevelPreview(selectedLevelIndex, true);
+        });
         levelGrid.addEventListener("click", (event) => {
           const previewButton = event.target.closest("button[data-preview-index]");
           if (previewButton) {
             const previewIndex = Number(previewButton.dataset.previewIndex);
-            if (Number.isInteger(previewIndex) && levels[previewIndex]) {
+            if (Number.isInteger(previewIndex) && primaryLevels[previewIndex]) {
               selectedLevelIndex = previewIndex;
               renderLevelCards();
               levelGrid.querySelector(`button[data-preview-index="${previewIndex}"]`)?.focus();
