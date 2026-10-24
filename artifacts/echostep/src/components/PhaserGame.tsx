@@ -6,9 +6,10 @@ import type { LevelCompletion } from "@/game/levelTimes";
 
 type PhaserGameProps = {
   onVictory: (completion: LevelCompletion) => void;
+  levelId?: string;
 };
 
-export default function PhaserGame({ onVictory }: PhaserGameProps) {
+export default function PhaserGame({ onVictory, levelId = 'trial-01' }: PhaserGameProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const onVictoryRef = useRef(onVictory);
 
@@ -19,6 +20,7 @@ export default function PhaserGame({ onVictory }: PhaserGameProps) {
   useEffect(() => {
     if (!mountRef.current) return;
 
+    const scene = new EchoStepScene(levelId);
     const game = new Phaser.Game({
       type: Phaser.AUTO,
       parent: mountRef.current,
@@ -41,7 +43,7 @@ export default function PhaserGame({ onVictory }: PhaserGameProps) {
           debug: false,
         },
       },
-      scene: [EchoStepScene],
+      scene: [scene],
     });
 
     const debugWindow = window as typeof window & { __ECHOSTEP_GAME__?: Phaser.Game };

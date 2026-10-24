@@ -16,8 +16,53 @@ import {
 
 const queryClient = new QueryClient();
 
+export type LevelOption = {
+  id: string;
+  number: number;
+  title: string;
+  difficulty: string;
+  objective: string;
+  status: 'available' | 'locked';
+};
+
+const LEVEL_OPTIONS: LevelOption[] = [
+  {
+    id: 'trial-01',
+    number: 1,
+    title: 'Quiet Drift',
+    difficulty: 'ENTRY',
+    objective: 'Find the exit and avoid the chamber glare.',
+    status: 'available',
+  },
+  {
+    id: 'trial-02',
+    number: 2,
+    title: 'Relay Gap',
+    difficulty: 'MID',
+    objective: 'Cross the suspended crawlways and hold your momentum.',
+    status: 'available',
+  },
+  {
+    id: 'trial-03',
+    number: 3,
+    title: 'Heavy Echo',
+    difficulty: 'ADV',
+    objective: 'Use precise timing to leap between hazard lanes.',
+    status: 'available',
+  },
+  {
+    id: 'trial-04',
+    number: 4,
+    title: 'Exit Protocol',
+    difficulty: 'FINAL',
+    objective: 'Reach the final breach and complete the route.',
+    status: 'locked',
+  },
+];
+
 function Home() {
-  const [screen, setScreen] = useState<'title' | 'playing' | 'victory'>('title');
+  const [screen, setScreen] = useState<'title' | 'level-select' | 'playing' | 'victory'>('title');
+  const [selectedLevelId, setSelectedLevelId] = useState<string>(LEVEL_OPTIONS[0].id);
   const [runId, setRunId] = useState(1);
   const [completion, setCompletion] = useState<LevelCompletion | null>(null);
   const handleVictory = useCallback((result: LevelCompletion) => {
@@ -25,6 +70,11 @@ function Home() {
     setScreen('victory');
   }, []);
   const handleStart = useCallback(() => {
+    setCompletion(null);
+    setScreen('level-select');
+  }, []);
+  const handleSelectLevel = useCallback((levelId: string) => {
+    setSelectedLevelId(levelId);
     setCompletion(null);
     setScreen('playing');
   }, []);
@@ -43,12 +93,15 @@ function Home() {
       screen={screen}
       runId={runId}
       completion={completion}
+      levels={LEVEL_OPTIONS}
+      selectedLevelId={selectedLevelId}
       onStart={handleStart}
+      onSelectLevel={handleSelectLevel}
       onRestart={handleRestart}
       onTitle={handleTitle}
     >
-      {screen !== 'title' && (
-        <PhaserGame key={runId} onVictory={handleVictory} />
+      {screen === 'playing' && (
+        <PhaserGame key={`${runId}-${selectedLevelId}`} onVictory={handleVictory} levelId={selectedLevelId} />
       )}
     </EchoStepShell>
   );

@@ -3,7 +3,7 @@ import { recordLevelCompletion } from "@/game/levelTimes";
 
 const VIEW_WIDTH = 960;
 const VIEW_HEIGHT = 540;
-const LEVEL_ID = "echostep-main";
+const DEFAULT_LEVEL_ID = "trial-01";
 const WORLD_WIDTH = 2_780;
 const WORLD_HEIGHT = 760;
 const RUN_SPEED = 310;
@@ -21,19 +21,92 @@ type PlatformData = {
   height: number;
 };
 
-const PLATFORMS: PlatformData[] = [
-  { x: 0, y: 500, width: 405, height: 28 },
-  { x: 485, y: 425, width: 150, height: 22 },
-  { x: 700, y: 500, width: 220, height: 28 },
-  { x: 975, y: 425, width: 175, height: 22 },
-  { x: 1_205, y: 500, width: 245, height: 28 },
-  { x: 1_525, y: 420, width: 155, height: 22 },
-  { x: 1_730, y: 500, width: 230, height: 28 },
-  { x: 2_035, y: 415, width: 160, height: 22 },
-  { x: 2_245, y: 500, width: 535, height: 28 },
-];
+type LevelLayout = {
+  id: string;
+  playfieldWidth: number;
+  platforms: PlatformData[];
+  playerStartX: number;
+  playerStartY: number;
+  exitX: number;
+};
+
+const LEVEL_LAYOUTS: Record<string, LevelLayout> = {
+  'trial-01': {
+    id: 'trial-01',
+    playfieldWidth: 2_780,
+    playerStartX: 120,
+    playerStartY: 450,
+    exitX: 2_625,
+    platforms: [
+      { x: 0, y: 500, width: 405, height: 28 },
+      { x: 485, y: 425, width: 150, height: 22 },
+      { x: 700, y: 500, width: 220, height: 28 },
+      { x: 975, y: 425, width: 175, height: 22 },
+      { x: 1_205, y: 500, width: 245, height: 28 },
+      { x: 1_525, y: 420, width: 155, height: 22 },
+      { x: 1_730, y: 500, width: 230, height: 28 },
+      { x: 2_035, y: 415, width: 160, height: 22 },
+      { x: 2_245, y: 500, width: 535, height: 28 },
+    ],
+  },
+  'trial-02': {
+    id: 'trial-02',
+    playfieldWidth: 2_840,
+    playerStartX: 120,
+    playerStartY: 450,
+    exitX: 2_660,
+    platforms: [
+      { x: 0, y: 500, width: 280, height: 28 },
+      { x: 360, y: 455, width: 140, height: 22 },
+      { x: 610, y: 510, width: 230, height: 28 },
+      { x: 915, y: 430, width: 150, height: 22 },
+      { x: 1_175, y: 500, width: 220, height: 28 },
+      { x: 1_480, y: 400, width: 180, height: 22 },
+      { x: 1_760, y: 500, width: 190, height: 28 },
+      { x: 2_050, y: 425, width: 195, height: 22 },
+      { x: 2_400, y: 500, width: 440, height: 28 },
+    ],
+  },
+  'trial-03': {
+    id: 'trial-03',
+    playfieldWidth: 2_980,
+    playerStartX: 120,
+    playerStartY: 450,
+    exitX: 2_760,
+    platforms: [
+      { x: 0, y: 500, width: 240, height: 28 },
+      { x: 430, y: 440, width: 140, height: 22 },
+      { x: 670, y: 500, width: 200, height: 28 },
+      { x: 930, y: 370, width: 150, height: 22 },
+      { x: 1_180, y: 500, width: 220, height: 28 },
+      { x: 1_500, y: 410, width: 140, height: 22 },
+      { x: 1_770, y: 500, width: 200, height: 28 },
+      { x: 2_080, y: 355, width: 155, height: 22 },
+      { x: 2_360, y: 500, width: 620, height: 28 },
+    ],
+  },
+  'trial-04': {
+    id: 'trial-04',
+    playfieldWidth: 3_130,
+    playerStartX: 120,
+    playerStartY: 450,
+    exitX: 2_940,
+    platforms: [
+      { x: 0, y: 500, width: 220, height: 28 },
+      { x: 300, y: 470, width: 120, height: 22 },
+      { x: 520, y: 510, width: 210, height: 28 },
+      { x: 820, y: 390, width: 150, height: 22 },
+      { x: 1_070, y: 500, width: 220, height: 28 },
+      { x: 1_400, y: 430, width: 180, height: 22 },
+      { x: 1_720, y: 500, width: 230, height: 28 },
+      { x: 2_050, y: 360, width: 170, height: 22 },
+      { x: 2_380, y: 500, width: 750, height: 28 },
+    ],
+  },
+};
 
 export default class EchoStepScene extends Phaser.Scene {
+  private readonly levelId: string;
   private player!: Phaser.Physics.Arcade.Sprite;
   private platforms!: Phaser.Physics.Arcade.StaticGroup;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -47,27 +120,30 @@ export default class EchoStepScene extends Phaser.Scene {
   private pausedAt: number | null = null;
   private pausedDuration = 0;
 
-  constructor() {
+  constructor(levelId = DEFAULT_LEVEL_ID) {
     super("EchoStepScene");
+    this.levelId = levelId;
   }
 
   create() {
+    const level = LEVEL_LAYOUTS[this.levelId] ?? LEVEL_LAYOUTS[DEFAULT_LEVEL_ID];
+
     this.hasWon = false;
     this.lastGroundedAt = Number.NEGATIVE_INFINITY;
     this.jumpBufferedUntil = Number.NEGATIVE_INFINITY;
     this.levelStartedAt = null;
     this.pausedAt = null;
     this.pausedDuration = 0;
-    this.physics.world.setBounds(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+    this.physics.world.setBounds(0, 0, level.playfieldWidth, WORLD_HEIGHT);
     this.physics.world.gravity.y = 1_450;
-    this.cameras.main.setBounds(0, 0, WORLD_WIDTH, VIEW_HEIGHT);
+    this.cameras.main.setBounds(0, 0, level.playfieldWidth, VIEW_HEIGHT);
     this.cameras.main.setBackgroundColor("#17151a");
 
-    this.drawLaboratory();
+    this.drawLaboratory(level.playfieldWidth);
     this.createTextures();
-    this.createPlatforms();
-    this.createExit();
-    this.createPlayer();
+    this.createPlatforms(level.platforms);
+    this.createExit(level.exitX);
+    this.createPlayer(level.playerStartX, level.playerStartY);
     this.bindControls();
 
     this.physics.add.collider(this.player, this.platforms);
@@ -134,8 +210,8 @@ export default class EchoStepScene extends Phaser.Scene {
     this.jumpKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
   }
 
-  private createPlayer() {
-    this.player = this.physics.add.sprite(120, 450, "runner");
+  private createPlayer(playerStartX: number, playerStartY: number) {
+    this.player = this.physics.add.sprite(playerStartX, playerStartY, "runner");
     this.player.setDisplaySize(28, 38);
     this.player.setBodySize(21, 33);
     this.player.setCollideWorldBounds(true);
@@ -144,10 +220,10 @@ export default class EchoStepScene extends Phaser.Scene {
     this.player.setDragX(GROUND_DRAG);
   }
 
-  private createPlatforms() {
+  private createPlatforms(levelPlatforms: PlatformData[]) {
     this.platforms = this.physics.add.staticGroup();
 
-    for (const platform of PLATFORMS) {
+    for (const platform of levelPlatforms) {
       const centerX = platform.x + platform.width / 2;
       const centerY = platform.y + platform.height / 2;
       this.add
@@ -161,8 +237,8 @@ export default class EchoStepScene extends Phaser.Scene {
     }
   }
 
-  private createExit() {
-    const x = 2_625;
+  private createExit(exitX: number) {
+    const x = exitX;
     const baseY = 486;
     const y = baseY - 40;
     this.add
@@ -232,18 +308,18 @@ export default class EchoStepScene extends Phaser.Scene {
     exitGraphic.destroy();
   }
 
-  private drawLaboratory() {
+  private drawLaboratory(playfieldWidth: number) {
     const background = this.add.graphics().setDepth(-10);
     background.fillStyle(0x17151a, 1);
-    background.fillRect(0, 0, WORLD_WIDTH, VIEW_HEIGHT);
+    background.fillRect(0, 0, playfieldWidth, VIEW_HEIGHT);
     background.fillStyle(0x201e24, 1);
-    background.fillRect(0, 78, WORLD_WIDTH, 312);
+    background.fillRect(0, 78, playfieldWidth, 312);
     background.fillStyle(0x29272e, 1);
-    background.fillRect(0, 78, WORLD_WIDTH, 7);
+    background.fillRect(0, 78, playfieldWidth, 7);
     background.fillStyle(0x111014, 1);
-    background.fillRect(0, 390, WORLD_WIDTH, 150);
+    background.fillRect(0, 390, playfieldWidth, 150);
     background.fillStyle(0x302d35, 1);
-    background.fillRect(0, 390, WORLD_WIDTH, 3);
+    background.fillRect(0, 390, playfieldWidth, 3);
 
     const seams = [84, 450, 905, 1_405, 1_885, 2_340, 2_710];
     for (const x of seams) {
@@ -296,7 +372,7 @@ export default class EchoStepScene extends Phaser.Scene {
     );
     this.levelStartedAt = null;
     this.pausedAt = null;
-    this.game.events.emit("echostep-victory", recordLevelCompletion(LEVEL_ID, completionTimeMs));
+    this.game.events.emit("echostep-victory", recordLevelCompletion(this.levelId, completionTimeMs));
   }
 
   private pauseLevelTimer() {
