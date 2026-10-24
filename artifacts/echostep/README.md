@@ -4,16 +4,17 @@ EchoStep is a self-contained, single-player puzzle-platformer set in an abandone
 
 ## Run
 
-The game is self-contained in `index.html`. It uses only built-in browser features: HTML, CSS, JavaScript, and the Canvas 2D API. It does not load packages, fonts, images, scripts, or other files from the internet.
+The playable game is `index.html`. It uses built-in browser features: HTML, CSS, JavaScript, the Canvas 2D API, and Web Audio API. Locally synthesized ambient music and gameplay sound effects work without downloads. Optional locally stored audio files can replace the generated music, ghost replay, switch, hazard, and victory sounds; see [`public/assets/audio/README.md`](./public/assets/audio/README.md) for filenames, sources, and license checks. The game does not hotlink external audio.
 
-1. Open `index.html` in a modern web browser. Double-clicking the file is sufficient; no server, package manager, compiler, or installation is required.
-2. Select **Choose a trial** and pick an available level.
-3. Use **A / D** or the **left / right arrow keys** to move, and **Space** to jump.
-4. Follow the plate and gate labels. Press **R** to start a recording and **R** again to stop; press **E** to replay it.
-5. While the echo repeats its recorded path, move to the exit. The gate stays solid until its linked plate is held.
-6. Complete a level to unlock the next trial. The **Levels** button returns to selection without clearing unlocked progress.
-7. **Backspace** returns to the latest checkpoint and keeps a completed recording. Falling also returns you to that checkpoint. **Restart** begins the current level again.
-8. The completion screen's **Continue** button loads the next unlocked trial. Completed levels can be replayed from selection.
+1. Open `index.html` in a modern web browser. Double-clicking the file is sufficient for the self-contained synthesized soundtrack; no server, package manager, compiler, or installation is required. Music begins when you start a trial.
+2. To use optional downloaded audio files, serve the workspace with `pnpm --filter @workspace/echostep dev` from the repository root and open the local Vite URL it prints. Downloaded files in `public/assets/audio/` are served at `/assets/audio/`.
+3. Select **Choose a trial** and pick an available level.
+4. Use **A / D** or the **left / right arrow keys** to move, and **Space** to jump.
+5. Follow the plate and gate labels. Press **R** to start a recording and **R** again to stop; press **E** to replay it.
+6. While the echo repeats its recorded path, move to the exit. The gate stays solid until its linked plate is held.
+7. Complete a level to unlock the next trial. The **Levels** button returns to selection without clearing unlocked progress.
+8. **Backspace** returns to the latest checkpoint and keeps a completed recording. Falling also returns you to that checkpoint. **Restart** begins the current level again.
+9. The completion screen's **Continue** button loads the next unlocked trial. Completed levels can be replayed from selection.
 
 The game can also be served as a static file using any existing local web server, but this is optional.
 
@@ -28,7 +29,7 @@ The game can also be served as a static file using any existing local web server
 | Play recorded echo | E |
 | Reset puzzle to checkpoint | Backspace |
 
-The recording indicator shows whether the game is recording, ready to play, or replaying. Playback follows recorded positions and timing; the echo does not run a second physics simulation or act as a solid platform. Only marked pressure plates respond to the player or echo, and each gate is linked to its own plate. A closed gate blocks movement from the sides and above. Its visible panel and collision bounds move together. Checkpoints clear the previous sequence where a new gate begins. Moving patrols are hazards: touching one returns you to the last checkpoint while preserving a completed recording.
+Use the **Sound** control in the top bar to enable or disable Music and Sound Effects independently, adjust their separate volume sliders, or mute/unmute all audio. Sound preferences are stored locally in the browser. Music pauses while the level archive is open or the page is hidden, and resumes between trials without restarting. The recording indicator shows whether the game is recording, ready to play, or replaying. Playback follows recorded positions and timing; the echo does not run a second physics simulation or act as a solid platform. Only marked pressure plates respond to the player or echo, and each gate is linked to its own plate. A closed gate blocks movement from the sides and above. Its visible panel and collision bounds move together. Checkpoints clear the previous sequence where a new gate begins. Moving patrols are hazards: touching one returns you to the last checkpoint while preserving a completed recording.
 
 ## Levels
 

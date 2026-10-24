@@ -44,6 +44,7 @@
         min-height: 76px;
         align-items: center;
         justify-content: space-between;
+        position: relative;
         border-bottom: 1px solid var(--line);
       }
       .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; letter-spacing: .16em; }
@@ -54,6 +55,70 @@
       .mark i:nth-child(2) { height: 15px; }
       .mark i:nth-child(3) { height: 11px; }
       .run-id { color: var(--muted); font: 10px ui-monospace, monospace; letter-spacing: .12em; }
+      .topbar-right { display: flex; align-items: center; gap: 18px; }
+      .audio-settings { position: relative; }
+      .audio-settings-toggle {
+        min-height: 34px;
+        padding: 0 11px;
+        border: 1px solid #42483f;
+        border-radius: 3px;
+        color: var(--muted);
+        background: #1b1e19;
+        cursor: pointer;
+        font: 9px ui-monospace, monospace;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      .audio-settings-toggle:hover, .audio-settings-toggle[aria-expanded="true"] { border-color: var(--mint); color: var(--ink); }
+      .audio-settings-toggle:focus-visible, .audio-settings-panel button:focus-visible, .audio-settings-panel input:focus-visible {
+        outline: 2px solid var(--mint);
+        outline-offset: 3px;
+      }
+      .audio-settings-panel {
+        position: absolute;
+        z-index: 5;
+        top: calc(100% + 10px);
+        right: 0;
+        width: min(280px, calc(100vw - 36px));
+        padding: 18px;
+        border: 1px solid #42483f;
+        border-radius: 3px;
+        background: #1b1e19;
+        box-shadow: 0 18px 42px rgb(0 0 0 / 35%);
+      }
+      .audio-settings-panel[hidden] { display: none; }
+      .audio-settings-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+      .audio-settings-heading strong { color: var(--ink); font: 600 10px ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; }
+      .audio-mute {
+        min-height: 30px;
+        padding: 0 9px;
+        border: 1px solid #42483f;
+        border-radius: 3px;
+        color: var(--mint);
+        background: transparent;
+        cursor: pointer;
+        font: 9px ui-monospace, monospace;
+        text-transform: uppercase;
+      }
+      .audio-channel-toggles { display: flex; gap: 8px; }
+      .audio-channel-toggle {
+        flex: 1;
+        min-height: 32px;
+        padding: 0 7px;
+        border: 1px solid #42483f;
+        border-radius: 3px;
+        color: var(--muted);
+        background: transparent;
+        cursor: pointer;
+        font: 9px ui-monospace, monospace;
+      }
+      .audio-channel-toggle[aria-pressed="true"] { border-color: #60786d; color: var(--mint); }
+      .audio-channel-toggle:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px; }
+      .audio-slider { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 12px; margin-top: 14px; }
+      .audio-slider label { color: var(--muted); font: 10px ui-monospace, monospace; }
+      .audio-slider output { color: var(--mint); font: 9px ui-monospace, monospace; }
+      .audio-slider input { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--mint); cursor: pointer; }
+      .audio-status { min-height: 12px; margin: 14px 0 0; color: var(--dim); font: 9px ui-monospace, monospace; line-height: 1.4; }
       .title-screen {
         display: grid;
         width: min(100%, 1280px);
@@ -300,7 +365,35 @@
           <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
           <span>ECHO<span class="brand-step">STEP</span></span>
         </div>
-        <span id="run-id" class="run-id" hidden></span>
+        <div class="topbar-right">
+          <div class="audio-settings">
+            <button id="audio-settings-toggle" class="audio-settings-toggle" type="button" aria-expanded="false" aria-controls="audio-settings-panel">
+              Sound
+            </button>
+            <section id="audio-settings-panel" class="audio-settings-panel" aria-label="Sound settings" hidden>
+              <div class="audio-settings-heading">
+                <strong>Sound settings</strong>
+                <button id="audio-mute" class="audio-mute" type="button" aria-pressed="false">Mute all</button>
+              </div>
+              <div class="audio-channel-toggles">
+                <button id="music-toggle" class="audio-channel-toggle" type="button" aria-pressed="true">Music: On</button>
+                <button id="sfx-toggle" class="audio-channel-toggle" type="button" aria-pressed="true">Effects: On</button>
+              </div>
+              <div class="audio-slider">
+                <label for="music-volume">Music</label>
+                <output id="music-volume-value" for="music-volume">25%</output>
+                <input id="music-volume" type="range" min="0" max="1" step="0.01" value="0.25">
+              </div>
+              <div class="audio-slider">
+                <label for="sfx-volume">Sound effects</label>
+                <output id="sfx-volume-value" for="sfx-volume">68%</output>
+                <input id="sfx-volume" type="range" min="0" max="1" step="0.01" value="0.68">
+              </div>
+              <p id="audio-status" class="audio-status" aria-live="polite">Music starts when you start a trial.</p>
+            </section>
+          </div>
+          <span id="run-id" class="run-id" hidden></span>
+        </div>
       </header>
 
       <section id="title-screen" class="title-screen" aria-labelledby="game-title">
@@ -808,10 +901,35 @@
         const recordingTimeLabel = document.querySelector("#record-time");
         const puzzleStatus = document.querySelector("#puzzle-status");
         const stageTitle = document.querySelector("#stage-title");
+        const topbar = document.querySelector(".topbar");
+        const audioSettingsToggle = document.querySelector("#audio-settings-toggle");
+        const audioSettingsPanel = document.querySelector("#audio-settings-panel");
+        const audioMuteButton = document.querySelector("#audio-mute");
+        const musicToggle = document.querySelector("#music-toggle");
+        const sfxToggle = document.querySelector("#sfx-toggle");
+        const musicVolumeInput = document.querySelector("#music-volume");
+        const musicVolumeValue = document.querySelector("#music-volume-value");
+        const sfxVolumeInput = document.querySelector("#sfx-volume");
+        const sfxVolumeValue = document.querySelector("#sfx-volume-value");
+        const audioStatus = document.querySelector("#audio-status");
         const canvas = document.querySelector("#game-canvas");
         const ctx = canvas.getContext("2d");
         if (!ctx) throw new Error("This browser could not create a 2D canvas context.");
         const SAVE_KEY = "echostep-progress-v1";
+        const AUDIO_SETTINGS_KEY = "echostep-audio-v1";
+        const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+        let audioSettings = loadAudioSettings();
+        let audioContext = null;
+        let masterGain = null;
+        let musicGain = null;
+        let sfxGain = null;
+        let musicSource = null;
+        let audioResumePending = false;
+        let audioSuspendPending = false;
+        let audioAssets = null;
+        let musicAssetPending = false;
+        const activeVoices = new Set();
+        const lastSoundTime = new Map();
         let progressPersistenceAvailable = true;
         const completedLevels = loadProgress();
         let selectedLevelIndex = 0;
@@ -839,6 +957,485 @@
         let runAnimationTime = 0;
         let hazardClock = 0;
         const keys = new Set();
+
+        function loadAudioSettings() {
+          let saved;
+          try {
+            saved = localStorage.getItem(AUDIO_SETTINGS_KEY);
+          } catch (error) {
+            if (!(error instanceof DOMException)) throw error;
+            console.error("EchoStep could not read saved sound settings in this browser.", error);
+            return { music: 0.25, sfx: 0.68, musicEnabled: true, sfxEnabled: true, muted: false };
+          }
+          if (saved === null) return { music: 0.25, sfx: 0.68, musicEnabled: true, sfxEnabled: true, muted: false };
+          let parsed;
+          try {
+            parsed = JSON.parse(saved);
+          } catch (error) {
+            if (!(error instanceof SyntaxError)) throw error;
+            console.error("EchoStep sound settings were invalid and have been reset.", error);
+            return { music: 0.25, sfx: 0.68, musicEnabled: true, sfxEnabled: true, muted: false };
+          }
+          if (!parsed || typeof parsed !== "object") {
+            console.error("EchoStep sound settings had an unexpected format and have been reset.");
+            return { music: 0.25, sfx: 0.68, musicEnabled: true, sfxEnabled: true, muted: false };
+          }
+          const volume = (value, fallback) => Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : fallback;
+          return {
+            music: volume(parsed.music, 0.25),
+            sfx: volume(parsed.sfx, 0.68),
+            musicEnabled: parsed.musicEnabled !== false,
+            sfxEnabled: parsed.sfxEnabled !== false,
+            muted: parsed.muted === true,
+          };
+        }
+
+        function saveAudioSettings() {
+          try {
+            localStorage.setItem(AUDIO_SETTINGS_KEY, JSON.stringify(audioSettings));
+          } catch (error) {
+            if (!(error instanceof DOMException)) throw error;
+            console.error("EchoStep could not save sound settings in this browser.", error);
+            audioStatus.textContent = "Settings could not be saved in this browser.";
+          }
+        }
+
+        function renderAudioSettings() {
+          musicVolumeInput.value = String(audioSettings.music);
+          musicVolumeValue.value = `${Math.round(audioSettings.music * 100)}%`;
+          musicVolumeValue.textContent = musicVolumeValue.value;
+          sfxVolumeInput.value = String(audioSettings.sfx);
+          sfxVolumeValue.value = `${Math.round(audioSettings.sfx * 100)}%`;
+          sfxVolumeValue.textContent = sfxVolumeValue.value;
+          audioMuteButton.textContent = audioSettings.muted ? "Unmute all" : "Mute all";
+          audioMuteButton.setAttribute("aria-pressed", String(audioSettings.muted));
+          musicToggle.textContent = `Music: ${audioSettings.musicEnabled ? "On" : "Off"}`;
+          musicToggle.setAttribute("aria-pressed", String(audioSettings.musicEnabled));
+          sfxToggle.textContent = `Effects: ${audioSettings.sfxEnabled ? "On" : "Off"}`;
+          sfxToggle.setAttribute("aria-pressed", String(audioSettings.sfxEnabled));
+          if (masterGain && audioContext) {
+            masterGain.gain.setTargetAtTime(audioSettings.muted ? 0 : 1, audioContext.currentTime, 0.025);
+          }
+          if (musicGain && audioContext) {
+            const musicActive = audioSettings.musicEnabled && screen === "playing" && !document.hidden;
+            musicGain.gain.setTargetAtTime(musicActive ? audioSettings.music * 0.75 : 0, audioContext.currentTime, 0.025);
+          }
+          if (sfxGain && audioContext) {
+            const effectsActive = audioSettings.sfxEnabled ? audioSettings.sfx * 0.72 : 0;
+            sfxGain.gain.setTargetAtTime(effectsActive, audioContext.currentTime, 0.025);
+          }
+        }
+
+        function audioAssetUrl(filename) {
+          const folder = location.protocol === "file:" ? "./public/assets/audio/" : "./assets/audio/";
+          return new URL(`${folder}${filename}`, location.href);
+        }
+
+        function createAudioAssets() {
+          if (audioAssets) return audioAssets;
+          const files = {
+            music: ["space-ambient-sci-fi-121842.mp3", true],
+            "ghost-appear": ["ghost-replay.mp3", false],
+            switch: ["switch-activation.mp3", false],
+            hazard: ["hazard-trigger.mp3", false],
+            complete: ["level-complete.mp3", false],
+          };
+          audioAssets = new Map();
+          for (const [name, [filename, loop]] of Object.entries(files)) {
+            const url = audioAssetUrl(filename);
+            const element = new Audio(url.href);
+            element.preload = "none";
+            element.loop = loop;
+            element.addEventListener("error", () => {
+              const asset = audioAssets.get(name);
+              if (asset) asset.failed = true;
+            });
+            const failed = location.protocol === "file:";
+            const available = failed
+              ? Promise.resolve(false)
+              : fetch(url.href, { method: "HEAD" })
+                .then((response) => response.ok)
+                .catch(() => false);
+            audioAssets.set(name, {
+              element,
+              filename,
+              loop,
+              failed,
+              pending: false,
+              source: null,
+              available,
+            });
+          }
+          return audioAssets;
+        }
+
+        function connectAudioAsset(asset, bus, name, echo = false) {
+          if (asset.source) return;
+          const source = audioContext.createMediaElementSource(asset.element);
+          source.connect(bus);
+          if (echo || name === "ghost-appear") {
+            const delay = audioContext.createDelay(0.35);
+            const echoGain = audioContext.createGain();
+            delay.delayTime.value = name === "switch" ? 0.1 : 0.13;
+            echoGain.gain.value = name === "switch" ? 0.1 : 0.18;
+            source.connect(delay);
+            delay.connect(echoGain);
+            echoGain.connect(bus);
+          }
+          asset.source = source;
+        }
+
+        function startSynthesizedMusic() {
+          if (!audioContext || musicSource) return false;
+          let source;
+          try {
+            source = audioContext.createBufferSource();
+            source.buffer = createMusicBuffer(audioContext);
+            source.loop = true;
+            source.connect(musicGain);
+            source.start();
+            musicSource = source;
+            audioStatus.textContent = "Built-in synthesized ambient music is playing.";
+            return true;
+          } catch (error) {
+            if (source) source.disconnect();
+            console.error("EchoStep could not start its background music.", error);
+            audioStatus.textContent = "Background music could not start; the game remains playable.";
+            return false;
+          }
+        }
+
+        function createMusicBuffer(context) {
+          const duration = 12;
+          const length = Math.floor(context.sampleRate * duration);
+          const buffer = context.createBuffer(2, length, context.sampleRate);
+          const left = buffer.getChannelData(0);
+          const right = buffer.getChannelData(1);
+          const tau = Math.PI * 2;
+          for (let index = 0; index < length; index += 1) {
+            const phase = index / length;
+            const breath = 0.72 + 0.28 * Math.sin(tau * phase * 2);
+            const fundamental = Math.sin(tau * phase * 660) * 0.34;
+            const fifth = Math.sin(tau * phase * 990) * 0.14;
+            const minorThird = Math.sin(tau * phase * 786) * 0.12;
+            const lowOctave = Math.sin(tau * phase * 330) * 0.16;
+            const upperHarmonic = Math.sin(tau * phase * 1320) * 0.045;
+            const sample = (fundamental + fifth + minorThird + lowOctave + upperHarmonic) * breath * 0.12;
+            left[index] = sample;
+            right[index] = sample * (0.94 + 0.06 * Math.sin(tau * phase * 3));
+          }
+          return buffer;
+        }
+
+        function startMusic() {
+          if (!audioContext || !audioSettings.musicEnabled || screen !== "playing") return false;
+          if (musicSource) return true;
+          const asset = createAudioAssets().get("music");
+          if (!asset.failed && !asset.pending && asset.element.paused === false) return true;
+          if (asset.pending) return true;
+          if (!asset.failed) {
+            asset.pending = true;
+            asset.available.then((available) => {
+              asset.pending = false;
+              if (available && audioContext?.state === "running" && audioSettings.musicEnabled && screen === "playing") {
+                startMusicAsset(asset);
+                return;
+              }
+              if (!available) {
+                asset.failed = true;
+                if (audioSettings.musicEnabled && screen === "playing" && !document.hidden) {
+                  audioStatus.textContent = `Optional ${asset.filename} is unavailable; using built-in ambient music.`;
+                  startSynthesizedMusic();
+                }
+              }
+            });
+            return true;
+          }
+          return startSynthesizedMusic();
+        }
+
+        function startMusicAsset(asset) {
+          if (!audioContext || !audioSettings.musicEnabled || screen !== "playing") return false;
+          if (!asset.failed) {
+            try {
+              connectAudioAsset(asset, musicGain, "music");
+              asset.pending = true;
+              asset.element.play().then(() => {
+                asset.pending = false;
+                if (!audioSettings.musicEnabled || screen !== "playing" || document.hidden) {
+                  asset.element.pause();
+                  return;
+                }
+                audioStatus.textContent = "Local ambient music is playing.";
+              }, () => {
+                asset.pending = false;
+                asset.failed = true;
+                if (audioSettings.musicEnabled && screen === "playing" && !document.hidden) {
+                  audioStatus.textContent = `Optional ${asset.filename} is unavailable; using built-in ambient music.`;
+                  startSynthesizedMusic();
+                }
+              });
+              return true;
+            } catch (error) {
+              asset.pending = false;
+              asset.failed = true;
+              console.warn(`EchoStep could not load optional ${asset.filename}; using built-in ambient music.`, error);
+            }
+          }
+          return startSynthesizedMusic();
+        }
+
+        function pauseMusic() {
+          if (!audioContext) return;
+          const asset = audioAssets && audioAssets.get("music");
+          if (asset) {
+            asset.pending = false;
+            asset.element.pause();
+          }
+          if (musicGain) musicGain.gain.setTargetAtTime(0, audioContext.currentTime, 0.025);
+        }
+
+        function suspendAudio() {
+          pauseMusic();
+          if (audioContext && audioContext.state === "running" && !audioSuspendPending) {
+            audioSuspendPending = true;
+            audioContext.suspend().then(() => {
+              audioSuspendPending = false;
+              if (screen === "playing" && !document.hidden && document.hasFocus() && audioContext.state !== "closed") startAudio();
+            }, (error) => {
+              audioSuspendPending = false;
+              console.error("EchoStep could not pause audio.", error);
+            });
+          }
+        }
+
+        function startAudio() {
+          if (!AudioContextConstructor) {
+            audioStatus.textContent = "Web Audio is unavailable; the game is still playable.";
+            return;
+          }
+          try {
+            if (!audioContext) {
+              audioContext = new AudioContextConstructor();
+              masterGain = audioContext.createGain();
+              musicGain = audioContext.createGain();
+              sfxGain = audioContext.createGain();
+              musicGain.connect(masterGain);
+              sfxGain.connect(masterGain);
+              masterGain.connect(audioContext.destination);
+              renderAudioSettings();
+            }
+          } catch (error) {
+            console.error("EchoStep could not initialize game audio.", error);
+            audioStatus.textContent = "Audio could not be initialized; the game is still playable.";
+            return;
+          }
+          if (audioContext.state === "running") {
+            startMusic();
+            return;
+          }
+          if (audioResumePending) return;
+          audioResumePending = true;
+          audioContext.resume().then(() => {
+            audioResumePending = false;
+            if (audioContext.state === "running") {
+              startMusic();
+              renderAudioSettings();
+            }
+          }, (error) => {
+            audioResumePending = false;
+            console.error("EchoStep could not resume game audio after interaction.", error);
+            audioStatus.textContent = "Audio could not start; interact again or check browser audio permissions.";
+          });
+        }
+
+        function playEffect(name, echo = false) {
+          if (!audioSettings.sfxEnabled || !audioContext || audioContext.state === "closed" || activeVoices.size >= 8) return;
+          const now = audioContext.currentTime;
+          const previousTime = lastSoundTime.get(name) || 0;
+          const cooldown = 0.25;
+          if (now - previousTime < cooldown) return;
+          lastSoundTime.set(name, now);
+          const asset = createAudioAssets().get(name);
+          if (asset && !asset.failed) {
+            if (asset.pending || !asset.element.paused) return;
+            if (asset.availableResult === undefined) {
+              asset.available.then((available) => {
+                asset.availableResult = available;
+                if (!audioSettings.sfxEnabled) return;
+                if (available && !asset.failed && audioContext?.state === "running" && audioSettings.sfxEnabled) {
+                  playAudioEffect(asset, name, echo);
+                } else {
+                  asset.failed = true;
+                  playSynthesizedEffect(name, echo);
+                }
+              });
+              return;
+            }
+            if (asset.availableResult) {
+              playAudioEffect(asset, name, echo);
+              return;
+            }
+          }
+          playSynthesizedEffect(name, echo);
+        }
+
+        function playAudioEffect(asset, name, echo) {
+          if (!audioContext || audioContext.state !== "running" || !audioSettings.sfxEnabled) return;
+          try {
+            connectAudioAsset(asset, sfxGain, name, echo);
+            asset.pending = true;
+            asset.element.currentTime = 0;
+            asset.element.play().then(() => {
+              asset.pending = false;
+            }, () => {
+              asset.pending = false;
+              asset.failed = true;
+              playSynthesizedEffect(name, echo);
+            });
+          } catch (error) {
+            asset.pending = false;
+            asset.failed = true;
+            console.warn(`EchoStep could not load optional ${asset.filename}; using a built-in sound.`, error);
+            playSynthesizedEffect(name, echo);
+          }
+        }
+
+        function playSynthesizedEffect(name, echo) {
+          if (!audioContext || audioContext.state === "closed" || activeVoices.size >= 8) return;
+          const now = audioContext.currentTime;
+          const sounds = {
+            jump: { start: 235, end: 390, duration: 0.15, level: 0.18, wave: "triangle" },
+            land: { start: 115, end: 72, duration: 0.12, level: 0.16, wave: "sine" },
+            "ghost-appear": { start: 610, end: 390, duration: 0.42, level: 0.13, wave: "sine" },
+            switch: { start: 365, end: 680, duration: 0.22, level: 0.17, wave: "sine" },
+            hazard: { start: 165, end: 78, duration: 0.2, level: 0.09, wave: "triangle" },
+            death: { start: 190, end: 52, duration: 0.48, level: 0.2, wave: "triangle" },
+            complete: { start: 440, end: 880, duration: 0.62, level: 0.19, wave: "sine" },
+          };
+          const sound = sounds[name];
+          if (!sound) return;
+          let oscillator;
+          let envelope;
+          let delay;
+          let echoGain;
+          try {
+            oscillator = audioContext.createOscillator();
+            envelope = audioContext.createGain();
+            oscillator.type = sound.wave;
+            oscillator.frequency.setValueAtTime(sound.start, now);
+            oscillator.frequency.exponentialRampToValueAtTime(sound.end, now + sound.duration);
+            envelope.gain.setValueAtTime(0.0001, now);
+            envelope.gain.linearRampToValueAtTime(sound.level, now + Math.min(0.025, sound.duration / 4));
+            envelope.gain.exponentialRampToValueAtTime(0.0001, now + sound.duration);
+            oscillator.connect(envelope);
+            envelope.connect(sfxGain);
+            if (echo) {
+              delay = audioContext.createDelay(0.35);
+              echoGain = audioContext.createGain();
+              delay.delayTime.value = 0.13;
+              echoGain.gain.value = 0.18;
+              envelope.connect(delay);
+              delay.connect(echoGain);
+              echoGain.connect(sfxGain);
+            }
+            activeVoices.add(oscillator);
+            oscillator.onended = () => {
+              activeVoices.delete(oscillator);
+              oscillator.disconnect();
+              envelope.disconnect();
+              if (delay) delay.disconnect();
+              if (echoGain) echoGain.disconnect();
+            };
+            oscillator.start(now);
+            oscillator.stop(now + sound.duration + (echo ? 0.14 : 0.015));
+          } catch (error) {
+            if (oscillator) {
+              activeVoices.delete(oscillator);
+              oscillator.disconnect();
+            }
+            if (envelope) envelope.disconnect();
+            if (delay) delay.disconnect();
+            if (echoGain) echoGain.disconnect();
+            console.error(`EchoStep could not play the ${name} sound effect.`, error);
+            audioStatus.textContent = "A sound effect could not be played; the game is still playable.";
+          }
+        }
+
+        function closeAudio() {
+          if (!audioContext || audioContext.state === "closed") return;
+          if (audioAssets) {
+            for (const asset of audioAssets.values()) {
+              asset.pending = false;
+              asset.element.pause();
+              if (asset.source) asset.source.disconnect();
+            }
+          }
+          if (musicSource) {
+            musicSource.stop();
+            musicSource.disconnect();
+            musicSource = null;
+          }
+          audioContext.close().catch((error) => {
+            console.error("EchoStep could not close game audio cleanly.", error);
+          });
+        }
+
+        audioSettingsToggle.addEventListener("click", () => {
+          const expanded = audioSettingsToggle.getAttribute("aria-expanded") === "true";
+          audioSettingsToggle.setAttribute("aria-expanded", String(!expanded));
+          audioSettingsPanel.hidden = expanded;
+          topbar.style.marginBottom = expanded ? "" : `${audioSettingsPanel.getBoundingClientRect().height + 12}px`;
+        });
+        audioMuteButton.addEventListener("click", () => {
+          audioSettings.muted = !audioSettings.muted;
+          renderAudioSettings();
+          saveAudioSettings();
+        });
+        musicToggle.addEventListener("click", () => {
+          audioSettings.musicEnabled = !audioSettings.musicEnabled;
+          renderAudioSettings();
+          if (audioSettings.musicEnabled && screen === "playing") startMusic();
+          else if (!audioSettings.musicEnabled) pauseMusic();
+          saveAudioSettings();
+        });
+        sfxToggle.addEventListener("click", () => {
+          audioSettings.sfxEnabled = !audioSettings.sfxEnabled;
+          renderAudioSettings();
+          saveAudioSettings();
+        });
+        musicVolumeInput.addEventListener("input", () => {
+          audioSettings.music = Number(musicVolumeInput.value);
+          renderAudioSettings();
+          saveAudioSettings();
+        });
+        sfxVolumeInput.addEventListener("input", () => {
+          audioSettings.sfx = Number(sfxVolumeInput.value);
+          renderAudioSettings();
+          saveAudioSettings();
+        });
+        const resumeAudioAfterInteraction = () => {
+          if (audioContext && audioContext.state === "suspended" && screen === "playing") startAudio();
+        };
+        document.addEventListener("pointerdown", resumeAudioAfterInteraction, { capture: true });
+        document.addEventListener("keydown", resumeAudioAfterInteraction, { capture: true });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && !audioSettingsPanel.hidden) {
+            audioSettingsPanel.hidden = true;
+            audioSettingsToggle.setAttribute("aria-expanded", "false");
+            topbar.style.marginBottom = "";
+          }
+        });
+        document.addEventListener("visibilitychange", () => {
+          if (document.hidden) suspendAudio();
+          else if (screen === "playing" && audioContext?.state === "suspended") startAudio();
+        });
+        window.addEventListener("blur", suspendAudio);
+        window.addEventListener("focus", () => {
+          if (screen === "playing" && audioContext?.state === "suspended") startAudio();
+        });
+        window.addEventListener("pagehide", closeAudio, { once: true });
+        renderAudioSettings();
 
         function loadProgress() {
           let saved;
@@ -1019,6 +1616,7 @@
             elapsed: 0,
             sampleIndex: 0,
           };
+          playEffect("ghost-appear", true);
           setRecordingUI("playing", "Echo playing", `${recordedDuration.toFixed(1)}s sequence`);
           setPuzzleMessage("Echo replay started from its recorded starting point.", switchPressed);
           render();
@@ -1098,6 +1696,8 @@
           runAnimationTime = 0;
           hazardClock = 0;
           won = false;
+          renderAudioSettings();
+          startAudio();
           keys.clear();
           lastFrame = 0;
           scheduleFrame();
@@ -1105,6 +1705,7 @@
 
         function showLevelSelect() {
           screen = "select";
+          suspendAudio();
           keys.clear();
           recording = null;
           echoPlayback = null;
@@ -1172,6 +1773,7 @@
 
         function update(delta) {
           hazardClock += delta;
+          const wasGrounded = player.grounded;
           const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
           const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
           if (keys.has("jump")) {
@@ -1195,6 +1797,7 @@
             player.grounded = false;
             coyoteTime = 0;
             jumpBuffer = 0;
+            playEffect("jump");
           }
 
           const oldX = player.x;
@@ -1279,6 +1882,7 @@
               echoPlayback = null;
               setRecordingUI("idle", "Recording canceled", "You fell · press R to try again");
             }
+            playEffect(hazardHit ? "hazard" : "death");
             const checkpoint = checkpoints[currentCheckpoint];
             player.x = checkpoint.x;
             player = spawnAt(checkpoint);
@@ -1307,6 +1911,7 @@
             );
           }
 
+          if (player.grounded && !wasGrounded) playEffect("land");
           if (Math.abs(player.vx) > 18 && player.grounded) runAnimationTime += delta * 12;
           if (recording) {
             recordingElapsed = Math.min(MAX_RECORDING_SECONDS, recordingElapsed + delta);
@@ -1331,6 +1936,8 @@
             if (held !== switchStates[pressurePlate.id]) {
               stateChanged = true;
               switchStates[pressurePlate.id] = held;
+              const ghostHeld = echoPose !== null && isOnSwitch(echoPose, pressurePlate);
+              if (held) playEffect("switch", ghostHeld);
               activeMessage = held
                 ? `Plate ${pressurePlate.id} held — its gate is opening.`
                 : `Plate ${pressurePlate.id} released — its gate is closing.`;
@@ -1418,7 +2025,9 @@
         function win() {
           if (won) return;
           won = true;
+          playEffect("complete");
           screen = "victory";
+          renderAudioSettings();
           player.vx = 0;
           player.vy = 0;
           statusLabel.textContent = "Exit reached";
@@ -1702,6 +2311,15 @@
         });
         window.addEventListener("keydown", (event) => {
           const key = event.key;
+          if (event.target instanceof Element) {
+            const audioControl = event.target.closest(".audio-settings");
+            const isRangeControl = event.target.closest(".audio-settings input[type='range']");
+            const isButtonActivation = audioControl && event.target.closest("button")
+              && [" ", "Spacebar", "Enter"].includes(key);
+            const isRangeAdjustment = isRangeControl
+              && ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(key);
+            if (isButtonActivation || isRangeAdjustment) return;
+          }
           if (screen === "title") return;
           if (screen !== "playing") return;
           if (["ArrowLeft", "ArrowRight", " ", "Spacebar", "Backspace"].includes(key)) event.preventDefault();
