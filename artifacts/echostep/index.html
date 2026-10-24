@@ -279,6 +279,7 @@
       .record-indicator { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #72776f; }
       .recording-state[data-mode="recording"] .record-indicator { background: #ca8075; box-shadow: 0 0 0 3px rgb(202 128 117 / 13%); }
       .recording-state[data-mode="playing"] .record-indicator { background: var(--mint); }
+      .recording-state[data-mode="consumed"] .record-indicator { background: #777a75; }
       .record-state-copy { display: grid; gap: 3px; }
       .record-state-copy strong { color: var(--ink); font-size: 11px; font-weight: 600; }
       .record-state-copy span { color: var(--muted); font: 10px ui-monospace, monospace; }
@@ -510,6 +511,7 @@
         const LANDING_TOLERANCE = 12;
         const RESPAWN_Y = 690;
         const MAX_RECORDING_SECONDS = 12;
+        const MIN_RECORDING_SECONDS = 0.1;
         const SWITCH_WIDTH = 58;
         const RED_ECHO_DELAY = 1.2;
         const archiveLevels = [
@@ -1056,6 +1058,7 @@
         let recordingElapsed = 0;
         let recordedEcho = [];
         let recordedDuration = 0;
+        let echoRecordingState = "empty";
         let echoPlayback = null;
         let switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
         let switchPressed = false;
@@ -1705,6 +1708,7 @@
           recordingElapsed = 0;
           recordedEcho = [];
           recordedDuration = 0;
+          echoRecordingState = "recording";
           runAnimationTime = 0;
           recording.push(capturePose(0));
           setRecordingUI("recording", "Recording movement", `0.0s / ${MAX_RECORDING_SECONDS}s · R to stop`);
@@ -1719,6 +1723,15 @@
           recordedEcho = recording;
           recordedDuration = recordingElapsed;
           recording = null;
+          if (recordedDuration < MIN_RECORDING_SECONDS || recordedEcho.length < 2) {
+            recordedEcho = [];
+            recordedDuration = 0;
+            echoRecordingState = "empty";
+            setRecordingUI("idle", "Recording too short", "Hold R longer to record an echo");
+            setPuzzleMessage("That recording was too short to play. Press R and record for a little longer.", switchPressed, true);
+            return;
+          }
+          echoRecordingState = "available";
           const duration = recordedDuration.toFixed(1);
           const reasonText = reason === "limit" ? " · limit reached" : "";
           setRecordingUI("ready", "Echo recorded", `${duration}s · E to play${reasonText}`);
@@ -1731,10 +1744,16 @@
             setPuzzleMessage("Stop the recording with R before replaying it.", switchPressed, true);
             return;
           }
-          if (recordedEcho.length === 0) {
+          if (echoRecordingState === "playing") return;
+          if (echoRecordingState === "consumed") {
+            setPuzzleMessage("This echo has already been used. Press R to create a new recording.", switchPressed);
+            return;
+          }
+          if (echoRecordingState !== "available" || recordedEcho.length === 0) {
             setPuzzleMessage("There is no recording yet. Press R to record a movement sequence.", switchPressed, true);
             return;
           }
+          echoRecordingState = "playing";
           echoPlayback = {
             samples: recordedEcho,
             duration: recordedDuration,
@@ -1750,6 +1769,15 @@
         function resetPuzzle() {
           if (screen === "title") return;
           const wasPlaying = screen === "playing";
+          const interruptedRecording = recording !== null;
+          const interruptedEcho = echoPlayback !== null;
+          if (interruptedRecording) {
+            recordedEcho = [];
+            recordedDuration = 0;
+            echoRecordingState = "empty";
+          } else if (interruptedEcho) {
+            echoRecordingState = "consumed";
+          }
           won = false;
           screen = "playing";
           victoryOverlay.hidden = true;
@@ -1773,9 +1801,15 @@
           keys.clear();
           lastFrame = 0;
           stageTitle.textContent = sections[checkpoints[currentCheckpoint].section].title;
-          if (recordedEcho.length > 0) {
+          if (echoRecordingState === "available") {
             setRecordingUI("ready", "Echo retained", `${recordedDuration.toFixed(1)}s · E to play`);
             setPuzzleMessage("Checkpoint restored. The recording is kept; use E to replay it.", false);
+          } else if (echoRecordingState === "consumed") {
+            setRecordingUI("consumed", "Echo already used", "R to create a new recording");
+            setPuzzleMessage("Checkpoint restored. This recording has already been used; press R to record again.", false);
+          } else if (interruptedRecording) {
+            setRecordingUI("idle", "Recording canceled", "Reset to checkpoint · press R to try again");
+            setPuzzleMessage("Recording canceled by the reset. Press R to create a new recording.", false);
           } else {
             setRecordingUI("idle", "No recording yet", `R to record · up to ${MAX_RECORDING_SECONDS} seconds`);
             setPuzzleMessage(sections[checkpoints[currentCheckpoint].section].hint, false);
@@ -1807,6 +1841,7 @@
           recordingElapsed = 0;
           recordedEcho = [];
           recordedDuration = 0;
+          echoRecordingState = "empty";
           echoPlayback = null;
           switchPressed = false;
           switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
@@ -1860,6 +1895,7 @@
           recording = null;
           recordedEcho = [];
           recordedDuration = 0;
+          echoRecordingState = "empty";
           echoPlayback = null;
           switchPressed = false;
           switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
@@ -2074,6 +2110,7 @@
               recording = null;
               recordedEcho = [];
               recordedDuration = 0;
+              echoRecordingState = "empty";
               echoPlayback = null;
               setRecordingUI("idle", "Recording canceled", "You fell · press R to try again");
             }
@@ -2088,6 +2125,7 @@
             player.grounded = false;
             coyoteTime = 0;
             jumpBuffer = 0;
+            if (interruptedEcho) echoRecordingState = "consumed";
             echoPlayback = null;
             switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
             switchPressed = false;
@@ -2095,9 +2133,7 @@
             launchPlateStates = launchPlates.map(() => false);
             gravityPlateStates = gravityPlates.map(() => false);
             if (interruptedEcho && !interruptedRecording) {
-              setRecordingUI(recordedEcho.length > 0 ? "ready" : "idle",
-                recordedEcho.length > 0 ? "Echo stopped at checkpoint" : "No recording yet",
-                recordedEcho.length > 0 ? `${recordedDuration.toFixed(1)}s · E to play` : "R to record · up to 12 seconds");
+              setRecordingUI("consumed", "Echo interrupted", "R to create a new recording");
             }
             setPuzzleMessage(
               ghostHit
@@ -2160,7 +2196,8 @@
             echoPlayback.elapsed += delta;
             if (echoPlayback.elapsed >= echoPlayback.duration) {
               echoPlayback = null;
-              setRecordingUI("ready", "Echo finished", `${recordedDuration.toFixed(1)}s · E to replay`);
+              echoRecordingState = "consumed";
+              setRecordingUI("consumed", "Echo used", "R to create a new recording");
             }
           }
 
@@ -2208,6 +2245,7 @@
               recordedEcho = [];
               recordedDuration = 0;
               recording = null;
+              echoRecordingState = "empty";
               echoPlayback = null;
               switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
               switchPressed = false;
@@ -2422,6 +2460,48 @@
           }
         }
 
+        function drawLaserBeam(hazard, bounds, vertical, active) {
+          const seed = hazard.x * 0.017 + hazard.y * 0.023;
+          const phase = hazardClock;
+          const wobble = (
+            Math.sin(phase * 18 + seed)
+            + 0.38 * Math.sin(phase * 29.7 + seed * 1.7)
+            + 0.2 * Math.sin(phase * 8.3 + seed * 0.7)
+          ) * 2.1;
+          const brightness = 0.94
+            + 0.03 * Math.sin(phase * 10.8 + seed)
+            + 0.02 * Math.sin(phase * 15.4 + seed * 1.3);
+          const glow = 10 + 1.5 * Math.sin(phase * 9.2 + seed * 0.8);
+          const startX = vertical ? bounds.x + bounds.width / 2 : bounds.x;
+          const startY = vertical ? bounds.y : bounds.y + bounds.height / 2;
+          const endX = vertical ? startX : bounds.x + bounds.width;
+          const endY = vertical ? bounds.y + bounds.height : startY;
+          const controlX = (startX + endX) / 2 + (vertical ? wobble * 2 : 0);
+          const controlY = (startY + endY) / 2 + (vertical ? 0 : wobble * 2);
+
+          ctx.beginPath();
+          ctx.moveTo(startX, startY);
+          ctx.quadraticCurveTo(controlX, controlY, endX, endY);
+          ctx.globalAlpha = active ? brightness : 1;
+          ctx.shadowColor = active ? "#ff244f" : "transparent";
+          ctx.shadowBlur = active ? glow : 0;
+          ctx.strokeStyle = active ? "rgb(145 17 42 / 38%)" : "rgb(104 34 48 / 30%)";
+          ctx.lineWidth = active ? 8 : 1.5;
+          ctx.stroke();
+
+          if (active) {
+            ctx.shadowBlur = 5;
+            ctx.strokeStyle = "rgb(255 47 79 / 84%)";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            ctx.shadowBlur = 2;
+            ctx.strokeStyle = "#ff3657";
+            ctx.lineWidth = 1.4;
+            ctx.stroke();
+          }
+          ctx.globalAlpha = 1;
+        }
+
         function drawHazards() {
           for (const hazard of hazards) {
             const bounds = getHazardBounds(hazard);
@@ -2429,33 +2509,15 @@
               const active = isHazardActive(hazard);
               const vertical = bounds.height > bounds.width;
               ctx.save();
-              if (active) {
-                ctx.shadowColor = "#ff244f";
-                ctx.shadowBlur = 18;
-                ctx.fillStyle = "rgb(255 36 79 / 34%)";
-                ctx.fillRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
-                ctx.shadowBlur = 7;
-                ctx.fillStyle = "#ff244f";
-                ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-                ctx.shadowBlur = 0;
-                ctx.fillStyle = "#fff1f4";
-                if (vertical) {
-                  ctx.fillRect(bounds.x + bounds.width * 0.35, bounds.y, Math.max(2, bounds.width * 0.3), bounds.height);
-                } else {
-                  ctx.fillRect(bounds.x, bounds.y + bounds.height * 0.35, bounds.width, Math.max(2, bounds.height * 0.3));
-                }
-              } else {
-                ctx.fillStyle = "rgb(255 36 79 / 9%)";
-                ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-              }
+              drawLaserBeam(hazard, bounds, vertical, active);
               if (vertical) {
-                ctx.shadowBlur = active ? 9 : 0;
+                ctx.shadowBlur = active ? 7 : 0;
                 ctx.shadowColor = "#ff244f";
                 ctx.fillStyle = active ? "#ff244f" : "#713744";
                 ctx.fillRect(bounds.x - 5, bounds.y - 7, bounds.width + 10, 7);
                 ctx.fillRect(bounds.x - 5, bounds.y + bounds.height, bounds.width + 10, 7);
               } else {
-                ctx.shadowBlur = active ? 9 : 0;
+                ctx.shadowBlur = active ? 7 : 0;
                 ctx.shadowColor = "#ff244f";
                 ctx.fillStyle = active ? "#ff244f" : "#713744";
                 ctx.fillRect(bounds.x - 7, bounds.y - 5, 7, bounds.height + 10);
