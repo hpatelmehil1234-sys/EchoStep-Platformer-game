@@ -1,0 +1,1665 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#151714">
+    <meta name="description" content="A quiet lab. A long way out. Find the exit in EchoStep, a compact platforming experiment.">
+    <title>EchoStep — A Platforming Experiment</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", Arial, sans-serif;
+        color: #eeeae2;
+        background: #151714;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        --ink: #eeeae2;
+        --muted: #aaa9a2;
+        --dim: #777a75;
+        --mint: #9ac8bd;
+        --sand: #c4b3a0;
+        --line: #343832;
+      }
+
+      * { box-sizing: border-box; }
+      body { min-width: 0; min-height: 100vh; margin: 0; }
+      button { font: inherit; }
+      .shell {
+        display: flex;
+        min-height: 100vh;
+        min-height: 100dvh;
+        flex-direction: column;
+        overflow-x: hidden;
+        padding: 0 clamp(18px, 5.4vw, 88px);
+        background: radial-gradient(ellipse at 76% 48%, rgb(65 82 69 / 12%), transparent 34rem), #151714;
+      }
+      .topbar, .footer {
+        width: min(100%, 1440px);
+        align-self: center;
+      }
+      .topbar {
+        display: flex;
+        min-height: 76px;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+      }
+      .brand { display: inline-flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; letter-spacing: .16em; }
+      .brand-step { color: var(--mint); }
+      .mark { display: inline-flex; width: 20px; height: 20px; align-items: center; gap: 3px; }
+      .mark i { display: block; width: 3px; background: var(--mint); }
+      .mark i:nth-child(1) { height: 8px; }
+      .mark i:nth-child(2) { height: 15px; }
+      .mark i:nth-child(3) { height: 11px; }
+      .run-id { color: var(--muted); font: 10px ui-monospace, monospace; letter-spacing: .12em; }
+      .title-screen {
+        display: grid;
+        width: min(100%, 1280px);
+        min-height: min(760px, calc(100dvh - 132px));
+        flex: 1;
+        grid-template-columns: minmax(0, .88fr) minmax(0, 1.12fr);
+        align-items: center;
+        gap: clamp(36px, 7vw, 104px);
+        align-self: center;
+        padding: clamp(36px, 5vh, 64px) 0;
+      }
+      .title-copy { padding-left: clamp(0px, 2vw, 28px); animation: appear .45s ease-out both; }
+      .eyebrow {
+        margin: 0;
+        color: var(--muted);
+        font: 600 10px ui-monospace, monospace;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+      }
+      .title-copy > .eyebrow::before {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin: 0 10px 1px 0;
+        background: var(--mint);
+        content: "";
+      }
+      h1 {
+        margin: 27px 0 19px -6px;
+        font-size: clamp(68px, 8.4vw, 122px);
+        font-weight: 650;
+        letter-spacing: -.095em;
+        line-height: .86;
+      }
+      h1 span, .victory-title span { color: var(--sand); }
+      .lede { margin: 0 0 31px; color: var(--muted); font-size: clamp(15px, 1.4vw, 17px); line-height: 1.75; }
+      .button {
+        display: inline-flex;
+        min-height: 52px;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+        border: 1px solid transparent;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 650;
+        transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+      }
+      .button:focus-visible, .text-button:focus-visible { outline: 2px solid var(--mint); outline-offset: 4px; }
+      .button:disabled { cursor: not-allowed; opacity: .42; }
+      .button-primary { min-width: 196px; padding: 0 18px; color: #17201c; background: var(--mint); }
+      .button-primary:hover { transform: translateY(-2px); background: #b0d9ce; }
+      .button-arrow { font-size: 16px; font-weight: 400; }
+      .title-controls {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px 26px;
+        margin-top: 36px;
+        padding-top: 19px;
+        border-top: 1px solid var(--line);
+      }
+      .control-group { display: flex; align-items: center; gap: 11px; }
+      .control-label { color: var(--dim); font: 600 9px ui-monospace, monospace; letter-spacing: .1em; }
+      .key-row { display: inline-flex; align-items: center; gap: 4px; }
+      kbd {
+        display: inline-grid;
+        min-width: 22px;
+        height: 22px;
+        place-items: center;
+        padding: 0 4px;
+        border: 1px solid #4a5048;
+        color: #d0d3ca;
+        background: #20231e;
+        font: 9px ui-monospace, monospace;
+      }
+      .key-row > span { padding: 0 3px; color: var(--dim); font: 8px ui-monospace, monospace; }
+      .key-space { min-width: 54px; }
+      .lab-art {
+        position: relative;
+        width: min(100%, 690px);
+        aspect-ratio: 1.2;
+        justify-self: end;
+        overflow: hidden;
+        border: 1px solid #3a4039;
+        background: #191c18;
+        box-shadow: 0 24px 70px rgb(0 0 0 / 18%);
+        animation: appear .55s .04s ease-out both;
+      }
+      .lab-art::before, .lab-art::after {
+        position: absolute;
+        z-index: 2;
+        color: #858b80;
+        font: 9px ui-monospace, monospace;
+        letter-spacing: .12em;
+      }
+      .lab-art::before { top: 18px; left: 20px; content: "FIG. 01 / TEST CHAMBER"; }
+      .lab-art::after { right: 20px; bottom: 18px; content: "EXIT  →"; }
+      .art-wall { position: absolute; inset: 14% 7% 16%; border: 1px solid #3a4039; background: #1d211c; }
+      .art-wall::before, .art-wall::after { position: absolute; background: #343a32; content: ""; }
+      .art-wall::before { top: 0; bottom: 0; left: 34%; width: 2px; }
+      .art-wall::after { top: 0; right: 29%; bottom: 0; width: 1px; }
+      .cabinet { position: absolute; border: 1px solid #4a5048; background: #242821; }
+      .cabinet::before { position: absolute; top: 17%; right: 12%; left: 12%; height: 27%; border: 1px solid #3b4139; content: ""; }
+      .cabinet::after { position: absolute; right: 12%; bottom: 14%; left: 12%; height: 1px; background: #51584d; content: ""; }
+      .cabinet-one { top: 26%; left: 17%; width: 9%; height: 40%; }
+      .cabinet-two { top: 34%; right: 20%; width: 12%; height: 32%; }
+      .art-platform { position: absolute; height: 13px; border-top: 2px solid #879084; background: #3a4038; }
+      .platform-a { top: 72%; left: 9%; width: 27%; }
+      .platform-b { top: 60%; left: 37%; width: 23%; }
+      .platform-c { top: 48%; left: 64%; width: 20%; }
+      .art-runner { position: absolute; top: 50%; left: 30%; width: 16px; height: 28px; border: 1px solid #c2e4d8; background: #85b8a8; box-shadow: 0 0 24px rgb(154 200 189 / 18%); }
+      .art-runner::after { position: absolute; top: 7px; left: 4px; width: 6px; height: 3px; background: #283a34; content: ""; }
+      .art-exit { position: absolute; top: 30%; right: 8%; display: grid; width: 42px; height: 64px; place-items: center; border: 1px solid #82897e; background: #292d27; }
+      .art-exit::before { position: absolute; inset: 6px; border: 1px solid #4b5248; content: ""; }
+      .art-exit span { z-index: 1; color: var(--mint); font: 7px ui-monospace, monospace; letter-spacing: .08em; }
+      .level-select {
+        width: min(100%, 1100px);
+        flex: 1;
+        align-self: center;
+        padding: clamp(32px, 7vh, 76px) 0;
+      }
+      .selection-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 30px; }
+      .selection-title { margin: 12px 0 8px; font-size: clamp(34px, 5vw, 56px); font-weight: 500; letter-spacing: -.065em; }
+      .selection-copy { max-width: 470px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+      .level-progress { flex: 0 0 auto; color: var(--muted); font: 10px ui-monospace, monospace; letter-spacing: .08em; }
+      .level-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
+      .level-card { display: flex; min-height: 184px; flex-direction: column; align-items: flex-start; padding: 20px 22px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgb(28 31 26 / 62%); }
+      .level-card[data-selected="true"] { box-shadow: inset 3px 0 var(--mint); background: #20241f; }
+      .level-card[data-completed="true"] { background: linear-gradient(110deg, rgb(154 200 189 / 8%), transparent 65%), #1c211c; }
+      .level-card[data-locked="true"] { color: var(--dim); background: rgb(22 24 21 / 55%); }
+      .level-card-top { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 14px; }
+      .level-number, .level-difficulty { color: var(--muted); font: 9px ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; }
+      .level-status { display: block; margin-bottom: 8px; color: var(--mint); font: 9px ui-monospace, monospace; letter-spacing: .08em; text-transform: uppercase; }
+      .level-card[data-completed="true"] .level-status { color: var(--mint); }
+      .level-card[data-locked="true"] .level-status { color: var(--dim); }
+      .level-card h3 { margin: 14px 0 7px; font-size: 22px; font-weight: 500; letter-spacing: -.04em; }
+      .level-card p { max-width: 390px; margin: 0 0 17px; color: var(--muted); font-size: 11px; line-height: 1.6; }
+      .level-card[data-locked="true"] p { color: var(--dim); }
+      .level-card .button { min-height: 34px; padding: 0 12px; }
+      .selection-footer { display: flex; justify-content: flex-start; margin-top: 18px; }
+      .game-layout { display: flex; width: min(100%, 1180px); flex: 1; flex-direction: column; align-self: center; padding: 30px 0 14px; animation: appear .3s ease-out both; }
+      .game-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; padding: 0 2px 14px; }
+      .game-actions { display: flex; gap: 8px; }
+      .game-title { margin: 7px 0 0; font-size: clamp(22px, 2.7vw, 30px); font-weight: 500; letter-spacing: -.045em; }
+      .button-quiet { min-height: 38px; gap: 8px; padding: 0 12px; border-color: #4a5048; color: var(--muted); background: #20231e; font-size: 11px; }
+      .button-quiet:hover { border-color: var(--mint); color: var(--ink); background: #292d27; }
+      .restart-icon { font-size: 17px; line-height: 1; }
+      .stage-frame { position: relative; width: min(100%, calc(min(62vh, 650px) * 1.7778)); aspect-ratio: 16 / 9; align-self: center; overflow: hidden; border: 1px solid #403c45; background: #171915; }
+      .game-canvas { display: block; width: 100%; height: 100%; }
+      .controls { display: flex; min-height: 58px; align-items: center; gap: 18px; }
+      .controls .control-group { gap: 9px; }
+      .controls-label { color: var(--muted); font-size: 10px; }
+      .controls-divider { width: 1px; height: 20px; background: var(--line); }
+      .mechanic-panel { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 12px 14px; border: 1px solid var(--line); background: rgb(28 31 26 / 78%); }
+      .recording-state { display: flex; min-width: 220px; align-items: center; gap: 11px; }
+      .record-indicator { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #72776f; }
+      .recording-state[data-mode="recording"] .record-indicator { background: #ca8075; box-shadow: 0 0 0 3px rgb(202 128 117 / 13%); }
+      .recording-state[data-mode="playing"] .record-indicator { background: var(--mint); }
+      .record-state-copy { display: grid; gap: 3px; }
+      .record-state-copy strong { color: var(--ink); font-size: 11px; font-weight: 600; }
+      .record-state-copy span { color: var(--muted); font: 10px ui-monospace, monospace; }
+      .mechanic-help { display: flex; flex-wrap: wrap; gap: 7px 14px; color: var(--muted); font-size: 10px; }
+      .mechanic-help span { display: inline-flex; align-items: center; gap: 6px; }
+      .mechanic-help kbd { min-width: 21px; height: 20px; }
+      .puzzle-status { margin: 9px 2px 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+      .puzzle-status[data-active="true"] { color: var(--mint); }
+      .puzzle-status[data-alert="true"] { color: #d5aa8e; }
+      .recording-state[data-mode="recording"] .record-state-copy strong { color: #e2a59a; }
+      .victory-overlay { position: absolute; z-index: 2; inset: 0; display: grid; place-items: center; padding: 18px; background: rgb(14 15 13 / 82%); }
+      .victory-card { position: relative; display: flex; width: min(100%, 360px); flex-direction: column; align-items: flex-start; padding: 30px clamp(22px, 4vw, 36px) 25px; border: 1px solid #51574e; background: #1b1e19; }
+      .victory-overlay:not([hidden]) .victory-card { animation: victory-arrive .42s cubic-bezier(.2, .75, .25, 1) both; }
+      .victory-stamp { position: absolute; top: 23px; right: 23px; display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid #4e5554; }
+      .victory-stamp .mark { transform: scale(.65); }
+      .victory-title { margin: 14px 0 9px; font-size: clamp(34px, 5vw, 44px); font-weight: 500; letter-spacing: -.06em; line-height: .98; }
+      .victory-copy { margin: 5px 0 20px; color: var(--muted); font-size: 12px; line-height: 1.55; }
+      .victory-card .button { width: 100%; justify-content: space-between; }
+      .text-button { align-self: center; margin-top: 12px; padding: 8px 12px; border: 0; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; }
+      .text-button:hover { color: var(--mint); }
+      .footer { padding: 13px 0 16px; border-top: 1px solid var(--line); color: var(--dim); font: 9px ui-monospace, monospace; letter-spacing: .1em; }
+      [hidden] { display: none !important; }
+      @keyframes appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+      @keyframes victory-arrive { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+      @media (min-width: 761px) and (max-height: 760px) {
+        .title-screen { min-height: 0; padding: 30px 0; }
+        .lab-art { width: min(100%, 570px); }
+        .title-controls { margin-top: 24px; }
+      }
+      @media (min-width: 1200px) and (min-height: 800px) {
+        .title-screen { min-height: min(820px, calc(100dvh - 140px)); }
+        .game-layout { padding-top: 32px; }
+      }
+      @media (max-width: 760px) {
+        .shell { padding: 0 24px; }
+        .topbar { min-height: 66px; }
+        .title-screen { min-height: 0; grid-template-columns: minmax(0, 1fr); gap: 36px; padding: 52px 0 42px; }
+        .title-copy { padding-left: 0; }
+        h1 { margin-top: 22px; font-size: clamp(66px, 14vw, 100px); }
+        .lede { margin-bottom: 26px; }
+        .title-controls { margin-top: 28px; }
+        .lab-art { width: 100%; max-width: none; justify-self: stretch; }
+        .game-layout { padding-top: 22px; }
+        .stage-frame { width: 100%; }
+        .controls { flex-wrap: wrap; min-height: 52px; gap: 10px; }
+        .selection-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
+        .level-select { padding: 42px 0; }
+      }
+      @media (max-width: 460px) {
+        .shell { padding: 0 18px; }
+        .title-screen { gap: 29px; padding-top: 42px; }
+        h1 { margin-left: -4px; font-size: clamp(60px, 17vw, 78px); }
+        .title-controls { gap: 14px 20px; }
+        .control-group { gap: 8px; }
+        .lab-art { aspect-ratio: 1.1; }
+        .lab-art::before { top: 12px; left: 12px; font-size: 8px; }
+        .lab-art::after { right: 12px; bottom: 12px; font-size: 8px; }
+        .game-heading { align-items: center; }
+        .game-title { font-size: 23px; }
+        .button-quiet { padding: 0 9px; }
+        .controls { gap: 8px 12px; }
+        .mechanic-panel { align-items: flex-start; flex-direction: column; }
+        .controls-divider { display: none; }
+        .level-grid { grid-template-columns: minmax(0, 1fr); }
+        .level-card { min-height: 170px; padding: 18px; }
+      }
+      @media (max-width: 360px) {
+        .shell { padding: 0 14px; }
+        .title-controls { align-items: flex-start; flex-direction: column; }
+        .game-heading { gap: 8px; }
+        .game-title { font-size: 20px; }
+        .button-quiet { min-height: 36px; gap: 5px; font-size: 10px; }
+        .controls .control-group { flex-wrap: wrap; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand" aria-label="EchoStep">
+          <span class="mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>ECHO<span class="brand-step">STEP</span></span>
+        </div>
+        <span id="run-id" class="run-id" hidden></span>
+      </header>
+
+      <section id="title-screen" class="title-screen" aria-labelledby="game-title">
+        <div class="title-copy">
+          <p class="eyebrow">The abandoned lab <span aria-hidden="true">—</span> movement study</p>
+          <h1 id="game-title">Echo<span>Step</span></h1>
+          <p class="lede">A quiet lab. A long way out.<br>Find the exit.</p>
+          <button id="start-button" class="button button-primary" type="button">
+            <span>Choose a trial</span><span class="button-arrow" aria-hidden="true">↗</span>
+          </button>
+          <div class="title-controls" aria-label="A and D or arrow keys to move; Space to jump">
+            <div class="control-group">
+              <span class="control-label">MOVE</span>
+              <span class="key-row"><kbd>A</kbd><kbd>D</kbd><span>OR</span><kbd>←</kbd><kbd>→</kbd></span>
+            </div>
+            <div class="control-group">
+              <span class="control-label">JUMP</span>
+              <span class="key-row"><kbd class="key-space">SPACE</kbd></span>
+            </div>
+          </div>
+        </div>
+        <div class="lab-art" aria-hidden="true">
+          <div class="art-wall"></div>
+          <div class="cabinet cabinet-one"></div>
+          <div class="cabinet cabinet-two"></div>
+          <div class="art-platform platform-a"></div>
+          <div class="art-platform platform-b"></div>
+          <div class="art-platform platform-c"></div>
+          <div class="art-runner"></div>
+          <div class="art-exit"><span>EXIT</span></div>
+        </div>
+      </section>
+
+      <section id="level-select" class="level-select" aria-labelledby="selection-title" hidden>
+        <div class="selection-heading">
+          <div>
+            <p class="eyebrow">Research archive / fourteen trials</p>
+            <h2 id="selection-title" class="selection-title">Choose a level</h2>
+            <p class="selection-copy">Each chamber adds a new demand on your recorded movement. Finish a trial to open the next.</p>
+          </div>
+          <p id="level-progress" class="level-progress" aria-live="polite"></p>
+        </div>
+        <div id="level-grid" class="level-grid" aria-label="Available levels"></div>
+        <div class="selection-footer">
+          <button id="selection-back-button" class="text-button" type="button">← Back to main menu</button>
+        </div>
+      </section>
+
+      <section id="game-screen" class="game-layout" aria-label="EchoStep game" hidden>
+        <div class="game-heading">
+          <div>
+            <p id="stage-title" class="eyebrow">01 / FIRST STEPS</p>
+            <h2 id="game-status" class="game-title">Find the exit</h2>
+          </div>
+          <div class="game-actions">
+            <button id="levels-button" class="button button-quiet" type="button">Levels</button>
+            <button id="restart-button" class="button button-quiet" type="button">
+              <span class="restart-icon" aria-hidden="true">↻</span>Restart
+            </button>
+          </div>
+        </div>
+        <div class="stage-frame">
+          <canvas id="game-canvas" class="game-canvas" width="960" height="540" role="img" aria-label="EchoStep platform game. Use A and D or the arrow keys to move, Space to jump, R to record, E to replay an echo, and Backspace to reset the puzzle."></canvas>
+          <div id="victory-overlay" class="victory-overlay" hidden>
+            <div class="victory-card" role="dialog" aria-modal="true" aria-labelledby="victory-title">
+              <div class="victory-stamp" aria-hidden="true"><span class="mark"><i></i><i></i><i></i></span></div>
+              <p id="victory-eyebrow" class="eyebrow">Trial complete</p>
+              <h2 id="victory-title" class="victory-title">You made<br><span>it out.</span></h2>
+              <p id="victory-copy" class="victory-copy">The chamber is behind you.</p>
+              <button id="continue-button" class="button button-primary" type="button">
+                <span>Continue</span><span class="button-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button id="play-again-button" class="text-button" type="button">Replay this level</button>
+              <button id="back-button" class="text-button" type="button">Level selection</button>
+            </div>
+          </div>
+        </div>
+        <footer class="controls" aria-label="Game controls">
+          <div class="control-group"><span class="key-row"><kbd>A</kbd><kbd>D</kbd><span>OR</span><kbd>←</kbd><kbd>→</kbd></span><span class="controls-label">to move</span></div>
+          <span class="controls-divider" aria-hidden="true"></span>
+          <div class="control-group"><span class="key-row"><kbd class="key-space">SPACE</kbd></span><span class="controls-label">to jump</span></div>
+        </footer>
+        <div class="mechanic-panel" aria-label="Echo controls and recording status">
+          <div id="recording-state" class="recording-state" data-mode="idle">
+            <span class="record-indicator" aria-hidden="true"></span>
+            <span class="record-state-copy">
+              <strong id="record-status" aria-live="polite">No recording yet</strong>
+              <span id="record-time">R to record · up to 12 seconds</span>
+            </span>
+          </div>
+          <div class="mechanic-help" aria-label="Echo mechanic controls">
+            <span><kbd>R</kbd> record / stop</span>
+            <span><kbd>E</kbd> play echo</span>
+            <span><kbd>⌫</kbd> reset puzzle</span>
+          </div>
+        </div>
+        <p id="puzzle-status" class="puzzle-status" aria-live="polite">Jump the service gap, then stand on plate A. R records the hold; E replays it.</p>
+      </section>
+
+      <footer class="footer">ECHO STEP — A PLATFORMING EXPERIMENT</footer>
+    </main>
+    <script>
+      (() => {
+        "use strict";
+
+        const WIDTH = 960;
+        const HEIGHT = 540;
+        const RUN_SPEED = 310;
+        const RUN_ACCELERATION = 2100;
+        const GROUND_DRAG = 2200;
+        const JUMP_SPEED = 600;
+        const COYOTE_TIME = 0.12;
+        const JUMP_BUFFER = 0.14;
+        const LANDING_TOLERANCE = 12;
+        const RESPAWN_Y = 690;
+        const MAX_RECORDING_SECONDS = 12;
+        const SWITCH_WIDTH = 58;
+        const archiveLevels = [
+          {
+            id: "first-echo", number: 1, title: "First Echo", difficulty: "Easy",
+            description: "Learn the rhythm: record a pressure-plate hold, then cross the gate it opens.",
+            hint: "Stand on the marked plate. Press R to record a hold, R to stop, then E to replay while you cross the gate.",
+            worldWidth: 1580, exitX: 1490, exitSurface: 500,
+            platforms: [
+              { x: 0, y: 500, width: 1580, height: 28 },
+              { x: 300, y: 440, width: 120, height: 22 },
+            ],
+            switches: [{ id: "A", x: 520, y: 500, label: "PLATE A / RECORD" }],
+            doors: [{ id: "A", x: 850, top: 260, bottom: 500, width: 28, switchId: "A", checkpointX: 1040 }],
+            sections: [{ id: "A", left: 0, right: 1580, title: "01 / FIRST ECHO — TEST CHAMBER", hint: "Record a hold on the plate, then replay it to cross the sealed gate." }],
+            checkpoints: [{ x: 90, surfaceY: 500, section: 0 }, { x: 1060, surfaceY: 500, section: 0 }],
+            exit: { minY: 406, maxY: 500 },
+          },
+          {
+            id: "split-timing", number: 2, title: "Split Timing", difficulty: "Easy–Medium",
+            description: "Leave your echo on a raised plate while you descend, cross a gap and reach the exit.",
+            hint: "The raised plate holds the gate open. Record a still pose there, then use the steps and floor gap while the echo keeps pressure.",
+            worldWidth: 1940, exitX: 1840, exitSurface: 500,
+            platforms: [
+              { x: 0, y: 500, width: 280, height: 28 },
+              { x: 320, y: 450, width: 140, height: 22 },
+              { x: 500, y: 420, width: 200, height: 22 },
+              { x: 735, y: 440, width: 120, height: 22 },
+              { x: 900, y: 500, width: 1040, height: 28 },
+            ],
+            switches: [{ id: "A", x: 565, y: 420, label: "PLATE A / ELEVATED" }],
+            doors: [{ id: "A", x: 1110, top: 235, bottom: 500, width: 28, switchId: "A", checkpointX: 1220 }],
+            sections: [{ id: "A", left: 0, right: 1940, title: "02 / SPLIT TIMING — DESCENT BAY", hint: "Record the raised plate, then descend and cross the gap before the echo ends." }],
+            checkpoints: [{ x: 90, surfaceY: 500, section: 0 }, { x: 1240, surfaceY: 500, section: 0 }],
+            exit: { minY: 406, maxY: 500 },
+          },
+          {
+            id: "dual-sequence", number: 3, title: "Dual Sequence", difficulty: "Medium–Hard",
+            description: "Solve two linked gates in order; each checkpoint clears the previous recording.",
+            hint: "The first plate is on the entry floor. A checkpoint beyond Gate A starts the second sequence at the raised plate.",
+            worldWidth: 2260, exitX: 2160, exitSurface: 500,
+            platforms: [
+              { x: 0, y: 500, width: 650, height: 28 },
+              { x: 690, y: 500, width: 220, height: 28 },
+              { x: 930, y: 440, width: 160, height: 22 },
+              { x: 1110, y: 410, width: 210, height: 22 },
+              { x: 1340, y: 500, width: 920, height: 28 },
+            ],
+            switches: [
+              { id: "A", x: 245, y: 500, label: "PLATE A / ENTRY" },
+              { id: "B", x: 1180, y: 410, label: "PLATE B / UPPER" },
+            ],
+            doors: [
+              { id: "A", x: 580, top: 245, bottom: 500, width: 28, switchId: "A", checkpointX: 790 },
+              { id: "B", x: 1520, top: 225, bottom: 500, width: 28, switchId: "B", checkpointX: 1630 },
+            ],
+            sections: [
+              { id: "A", left: 0, right: 900, title: "03 / DUAL SEQUENCE — ENTRY", hint: "Record Plate A, pass Gate A, and reach the checkpoint to begin the second sequence." },
+              { id: "B", left: 900, right: 2260, title: "03 / DUAL SEQUENCE — UPPER BAY", hint: "Record the elevated Plate B, then descend through Gate B before the echo releases it." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 820, surfaceY: 500, section: 1 },
+              { x: 1650, surfaceY: 500, section: 1 },
+            ],
+            exit: { minY: 406, maxY: 500 },
+          },
+          {
+            id: "final-experiment", number: 4, title: "The Final Experiment", difficulty: "Hard",
+            description: "Coordinate three recordings across stepped ground and keep moving through the final gate.",
+            hint: "Three gates, three checkpoints. Save each plate as a separate recording and respect the different floor heights.",
+            worldWidth: 2710, exitX: 2600, exitSurface: 500,
+            platforms: [
+              { x: 0, y: 500, width: 340, height: 28 },
+              { x: 385, y: 435, width: 185, height: 22 },
+              { x: 620, y: 500, width: 370, height: 28 },
+              { x: 1020, y: 420, width: 205, height: 22 },
+              { x: 1255, y: 500, width: 435, height: 28 },
+              { x: 1720, y: 400, width: 195, height: 22 },
+              { x: 1950, y: 500, width: 760, height: 28 },
+            ],
+            switches: [
+              { id: "A", x: 440, y: 435, label: "PLATE A / STEP" },
+              { id: "B", x: 1090, y: 420, label: "PLATE B / DESCENT" },
+              { id: "C", x: 1780, y: 400, label: "PLATE C / FINAL" },
+            ],
+            doors: [
+              { id: "A", x: 835, top: 235, bottom: 500, width: 28, switchId: "A", checkpointX: 930 },
+              { id: "B", x: 1480, top: 220, bottom: 500, width: 28, switchId: "B", checkpointX: 1590 },
+              { id: "C", x: 2130, top: 205, bottom: 500, width: 28, switchId: "C", checkpointX: 2240 },
+            ],
+            sections: [
+              { id: "A", left: 0, right: 990, title: "04 / FINAL EXPERIMENT — FIRST STEP", hint: "Record the elevated Plate A, cross the first gate, and reach the checkpoint." },
+              { id: "B", left: 990, right: 1690, title: "04 / FINAL EXPERIMENT — DESCENT", hint: "The second plate is raised. Leave its echo behind, then cross the floor gate." },
+              { id: "C", left: 1690, right: 2710, title: "04 / FINAL EXPERIMENT — LAST PASS", hint: "Record the final elevated plate and cross the last gate to reach the exit." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 950, surfaceY: 500, section: 1 },
+              { x: 1610, surfaceY: 500, section: 2 },
+              { x: 2260, surfaceY: 500, section: 2 },
+            ],
+            exit: { minY: 406, maxY: 500 },
+          },
+        ];
+        function createTrial({
+          id, number, title, difficulty, description, hint, worldWidth, exitX,
+          platforms, switches = [], doors = [], checkpoints = [], hazards = [],
+        }) {
+          return {
+            id, number, title, difficulty, description, hint, worldWidth, exitX, exitSurface: 500,
+            platforms,
+            switches,
+            doors,
+            hazards,
+            sections: [{
+              id: "A",
+              left: 0,
+              right: worldWidth,
+              title: `${String(number).padStart(2, "0")} / ${title.toUpperCase()}`,
+              hint,
+            }],
+            checkpoints: [90, ...checkpoints].map((x) => ({ x, surfaceY: 500, section: 0 })),
+            exit: { minY: 406, maxY: 500 },
+          };
+        }
+
+        const levels = [
+          createTrial({
+            id: "first-steps", number: 1, title: "First Steps", difficulty: "Easy",
+            description: "A gentle introduction to jumping, recording a plate, and crossing an echo gate.",
+            hint: "Stand on Plate A and press R to record a still pose. Stop with R, press E, then cross the gate.",
+            worldWidth: 1080, exitX: 1000,
+            platforms: [
+              { x: 0, y: 500, width: 1080, height: 28 },
+              { x: 330, y: 440, width: 130, height: 22 },
+            ],
+            switches: [{ id: "A", x: 235, y: 500, label: "PLATE A / RECORD" }],
+            doors: [{ id: "A", x: 560, top: 260, bottom: 500, width: 28, switchId: "A", checkpointX: 660 }],
+            checkpoints: [690],
+          }),
+          createTrial({
+            id: "timing-basics", number: 2, title: "Timing Basics", difficulty: "Easy",
+            description: "Hold an elevated plate with your echo while you descend across a broken walkway.",
+            hint: "Record a short hold on the raised plate. Replay it, then take the stepping platforms to the gate.",
+            worldWidth: 1450, exitX: 1360,
+            platforms: [
+              { x: 0, y: 500, width: 360, height: 28 },
+              { x: 385, y: 455, width: 125, height: 22 },
+              { x: 535, y: 415, width: 170, height: 22 },
+              { x: 730, y: 455, width: 125, height: 22 },
+              { x: 875, y: 500, width: 575, height: 28 },
+            ],
+            switches: [{ id: "A", x: 585, y: 415, label: "PLATE A / TIMING" }],
+            doors: [{ id: "A", x: 1080, top: 250, bottom: 500, width: 28, switchId: "A", checkpointX: 1180 }],
+            checkpoints: [1210],
+          }),
+          createTrial({
+            id: "moving-hazards", number: 3, title: "Moving Hazards", difficulty: "Easy–Medium",
+            description: "Read a slow patrol, jump cleanly, and use your echo to keep the route open.",
+            hint: "The amber patrol moves back and forth. Record Plate A, then time one clear jump over the patrol.",
+            worldWidth: 1320, exitX: 1230,
+            platforms: [{ x: 0, y: 500, width: 1320, height: 28 }],
+            switches: [{ id: "A", x: 190, y: 500, label: "PLATE A / PATROL" }],
+            doors: [{ id: "A", x: 790, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 900 }],
+            checkpoints: [930],
+            hazards: [{ x: 425, y: 465, width: 46, height: 23, motion: { axis: "x", distance: 90, period: 4.2 } }],
+          }),
+          createTrial({
+            id: "echo-platforms", number: 4, title: "Echo Platforms", difficulty: "Medium",
+            description: "Use a recorded plate hold as a timer while you leave the upper route and cross below.",
+            hint: "The echo presses switches but is not solid. Record the upper plate, then drop to the lower route and pass the gate.",
+            worldWidth: 1420, exitX: 1330,
+            platforms: [
+              { x: 0, y: 500, width: 300, height: 28 },
+              { x: 315, y: 450, width: 130, height: 22 },
+              { x: 465, y: 410, width: 190, height: 22 },
+              { x: 675, y: 450, width: 140, height: 22 },
+              { x: 830, y: 500, width: 590, height: 28 },
+            ],
+            switches: [{ id: "A", x: 520, y: 410, label: "PLATE A / UPPER" }],
+            doors: [{ id: "A", x: 1020, top: 250, bottom: 500, width: 28, switchId: "A", checkpointX: 1130 }],
+            checkpoints: [1160],
+          }),
+          createTrial({
+            id: "switch-sequence", number: 5, title: "Switch Sequence", difficulty: "Medium",
+            description: "Open two gates in order, with a fresh recording after the midway checkpoint.",
+            hint: "Plate A opens the first gate. The checkpoint clears that echo; record Plate B for the second gate.",
+            worldWidth: 1710, exitX: 1615,
+            platforms: [{ x: 0, y: 500, width: 1710, height: 28 }],
+            switches: [
+              { id: "A", x: 230, y: 500, label: "PLATE A / FIRST" },
+              { id: "B", x: 960, y: 500, label: "PLATE B / SECOND" },
+            ],
+            doors: [
+              { id: "A", x: 570, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 680 },
+              { id: "B", x: 1310, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1420 },
+            ],
+            checkpoints: [710, 1450],
+          }),
+          createTrial({
+            id: "precision-route", number: 6, title: "Precision Route", difficulty: "Medium",
+            description: "Cross a stepped series of generous but deliberate jumps before the echo gate.",
+            hint: "The platforms are spaced for a full jump. Record Plate A on the middle step, then follow the route right.",
+            worldWidth: 1520, exitX: 1425,
+            platforms: [
+              { x: 0, y: 500, width: 300, height: 28 },
+              { x: 325, y: 455, width: 115, height: 22 },
+              { x: 465, y: 415, width: 145, height: 22 },
+              { x: 635, y: 455, width: 115, height: 22 },
+              { x: 775, y: 500, width: 745, height: 28 },
+            ],
+            switches: [{ id: "A", x: 505, y: 415, label: "PLATE A / STEP" }],
+            doors: [{ id: "A", x: 1100, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 1210 }],
+            checkpoints: [1240],
+          }),
+          createTrial({
+            id: "split-paths", number: 7, title: "Split Paths", difficulty: "Medium–Hard",
+            description: "Choose a stepped upper route or a lower bridge, then echo the switch on the high path.",
+            hint: "Both routes meet again. The upper branch contains Plate A; record it before descending to the gate.",
+            worldWidth: 1710, exitX: 1610,
+            platforms: [
+              { x: 0, y: 500, width: 350, height: 28 },
+              { x: 340, y: 430, width: 185, height: 22 },
+              { x: 545, y: 390, width: 205, height: 22 },
+              { x: 365, y: 480, width: 150, height: 18 },
+              { x: 535, y: 470, width: 190, height: 18 },
+              { x: 760, y: 500, width: 950, height: 28 },
+            ],
+            switches: [{ id: "A", x: 615, y: 390, label: "PLATE A / FORK" }],
+            doors: [{ id: "A", x: 1270, top: 250, bottom: 500, width: 28, switchId: "A", checkpointX: 1380 }],
+            checkpoints: [1410],
+          }),
+          createTrial({
+            id: "multi-step-puzzle", number: 8, title: "Multi-Step Puzzle", difficulty: "Hard",
+            description: "Combine a gap, a moving patrol, a checkpoint, and two separate echo recordings.",
+            hint: "Clear Plate A and the patrol first. At the checkpoint, record Plate B and cross the final gate.",
+            worldWidth: 2090, exitX: 1995,
+            platforms: [
+              { x: 0, y: 500, width: 700, height: 28 },
+              { x: 735, y: 455, width: 140, height: 22 },
+              { x: 900, y: 500, width: 1190, height: 28 },
+            ],
+            switches: [
+              { id: "A", x: 220, y: 500, label: "PLATE A / ENTRY" },
+              { id: "B", x: 1230, y: 500, label: "PLATE B / EXIT BAY" },
+            ],
+            doors: [
+              { id: "A", x: 570, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 680 },
+              { id: "B", x: 1640, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1750 },
+            ],
+            checkpoints: [710, 1780],
+            hazards: [{ x: 1030, y: 465, width: 48, height: 23, motion: { axis: "x", distance: 100, period: 4.8 } }],
+          }),
+          createTrial({
+            id: "advanced-echo", number: 9, title: "Advanced Echo", difficulty: "Hard",
+            description: "Plan three short echo holds, with calm checkpoints separating each timing challenge.",
+            hint: "Each checkpoint starts a new bay and clears the previous echo. Use one recording per plate.",
+            worldWidth: 2380, exitX: 2280,
+            platforms: [
+              { x: 0, y: 500, width: 630, height: 28 },
+              { x: 670, y: 455, width: 140, height: 22 },
+              { x: 840, y: 415, width: 155, height: 22 },
+              { x: 1025, y: 500, width: 1355, height: 28 },
+            ],
+            switches: [
+              { id: "A", x: 220, y: 500, label: "PLATE A / FIRST" },
+              { id: "B", x: 875, y: 415, label: "PLATE B / HIGH" },
+              { id: "C", x: 1690, y: 500, label: "PLATE C / LAST" },
+            ],
+            doors: [
+              { id: "A", x: 500, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 610 },
+              { id: "B", x: 1370, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1480 },
+              { id: "C", x: 2020, top: 255, bottom: 500, width: 28, switchId: "C", checkpointX: 2130 },
+            ],
+            checkpoints: [640, 1510, 2160],
+            hazards: [{ x: 1870, y: 465, width: 46, height: 23, motion: { axis: "x", distance: 75, period: 3.8 } }],
+          }),
+          createTrial({
+            id: "final-trial", number: 10, title: "The Final Trial", difficulty: "Expert",
+            description: "The complete EchoStep exam: three gates, careful jumps, patrols, and checkpoint planning.",
+            hint: "Work bay by bay. Each checkpoint resets the echo; read the patrols, record each plate, and keep moving.",
+            worldWidth: 3010, exitX: 2910,
+            platforms: [
+              { x: 0, y: 500, width: 650, height: 28 },
+              { x: 680, y: 455, width: 125, height: 22 },
+              { x: 835, y: 415, width: 155, height: 22 },
+              { x: 1020, y: 500, width: 650, height: 28 },
+              { x: 1700, y: 455, width: 135, height: 22 },
+              { x: 1865, y: 415, width: 160, height: 22 },
+              { x: 2055, y: 500, width: 955, height: 28 },
+            ],
+            switches: [
+              { id: "A", x: 220, y: 500, label: "PLATE A / ENTRY" },
+              { id: "B", x: 875, y: 415, label: "PLATE B / HIGH BAY" },
+              { id: "C", x: 1915, y: 415, label: "PLATE C / FINAL BAY" },
+            ],
+            doors: [
+              { id: "A", x: 500, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 610 },
+              { id: "B", x: 1420, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1530 },
+              { id: "C", x: 2510, top: 255, bottom: 500, width: 28, switchId: "C", checkpointX: 2620 },
+            ],
+            checkpoints: [640, 1560, 2650],
+            hazards: [
+              { x: 1090, y: 465, width: 48, height: 23, motion: { axis: "x", distance: 82, period: 4.5 } },
+              { x: 2180, y: 465, width: 48, height: 23, motion: { axis: "x", distance: 92, period: 4.1 } },
+            ],
+          }),
+          ...archiveLevels.map((level, index) => ({
+            ...level,
+            number: index + 11,
+            title: `Archive ${index + 1}: ${level.title}`,
+            difficulty: `Bonus · ${level.difficulty}`,
+            description: `Bonus archive trial. ${level.description}`,
+          })),
+        ];
+        let activeLevel = levels[0];
+        let WORLD_WIDTH = activeLevel.worldWidth;
+        let EXIT_X = activeLevel.exitX;
+        let platforms = activeLevel.platforms;
+        let switches = activeLevel.switches;
+        let doors = activeLevel.doors;
+        let hazards = activeLevel.hazards || [];
+        let sections = activeLevel.sections;
+        let checkpoints = activeLevel.checkpoints;
+
+        const titleScreen = document.querySelector("#title-screen");
+        const levelSelectScreen = document.querySelector("#level-select");
+        const gameScreen = document.querySelector("#game-screen");
+        const levelGrid = document.querySelector("#level-grid");
+        const levelProgressLabel = document.querySelector("#level-progress");
+        const runLabel = document.querySelector("#run-id");
+        const statusLabel = document.querySelector("#game-status");
+        const victoryOverlay = document.querySelector("#victory-overlay");
+        const victoryTitle = document.querySelector("#victory-title");
+        const victoryCopy = document.querySelector("#victory-copy");
+        const victoryEyebrow = document.querySelector("#victory-eyebrow");
+        const continueButton = document.querySelector("#continue-button");
+        const recordingState = document.querySelector("#recording-state");
+        const recordingStatus = document.querySelector("#record-status");
+        const recordingTimeLabel = document.querySelector("#record-time");
+        const puzzleStatus = document.querySelector("#puzzle-status");
+        const stageTitle = document.querySelector("#stage-title");
+        const canvas = document.querySelector("#game-canvas");
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("This browser could not create a 2D canvas context.");
+        const SAVE_KEY = "echostep-progress-v1";
+        let progressPersistenceAvailable = true;
+        const completedLevels = loadProgress();
+        let selectedLevelIndex = 0;
+        let currentLevelIndex = 0;
+
+        let screen = "title";
+        let runId = 0;
+        let lastFrame = 0;
+        let animationFrameId = 0;
+        let cameraX = 0;
+        let jumpBuffer = 0;
+        let coyoteTime = 0;
+        let won = false;
+        let player = null;
+        let recording = null;
+        let recordingElapsed = 0;
+        let recordedEcho = [];
+        let recordedDuration = 0;
+        let echoPlayback = null;
+        let switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
+        let switchPressed = false;
+        let doorProgress = doors.map(() => 0);
+        let currentCheckpoint = 0;
+        let nextDoorCheckpoint = 0;
+        let runAnimationTime = 0;
+        let hazardClock = 0;
+        const keys = new Set();
+
+        function loadProgress() {
+          let saved;
+          try {
+            saved = localStorage.getItem(SAVE_KEY);
+          } catch (error) {
+            if (!(error instanceof DOMException)) throw error;
+            progressPersistenceAvailable = false;
+            console.error("EchoStep could not read saved progress in this browser.", error);
+            return [];
+          }
+          if (saved === null) return [];
+          let parsed;
+          try {
+            parsed = JSON.parse(saved);
+          } catch (error) {
+            if (!(error instanceof SyntaxError)) throw error;
+            console.error("EchoStep progress data was invalid and has been ignored.", error);
+            return [];
+          }
+          if (!parsed || !Array.isArray(parsed.completed)) {
+            console.error("EchoStep progress data has an unexpected format and has been ignored.");
+            return [];
+          }
+          return [...new Set(parsed.completed.filter((id) => levels.some((level) => level.id === id)))];
+        }
+
+        function saveProgress() {
+          try {
+            localStorage.setItem(SAVE_KEY, JSON.stringify({ completed: completedLevels }));
+          } catch (error) {
+            if (!(error instanceof DOMException)) throw error;
+            progressPersistenceAvailable = false;
+            console.error("EchoStep could not save progress in this browser.", error);
+            levelProgressLabel.textContent = `${completedLevels.length} / ${levels.length} COMPLETED · PROGRESS NOT SAVED`;
+          }
+        }
+
+        function isLevelUnlocked(index) {
+          return index === 0
+            || completedLevels.includes(levels[index].id)
+            || completedLevels.includes(levels[index - 1].id);
+        }
+
+        function renderLevelCards() {
+          levelGrid.replaceChildren();
+          const unlockedCount = levels.filter((_, index) => isLevelUnlocked(index)).length;
+          const completedCount = completedLevels.length;
+          levelProgressLabel.textContent = `${completedCount} / ${levels.length} COMPLETED · ${unlockedCount} AVAILABLE${progressPersistenceAvailable ? "" : " · NOT SAVED"}`;
+          levels.forEach((level, index) => {
+            const unlocked = isLevelUnlocked(index);
+            const completed = completedLevels.includes(level.id);
+            const card = document.createElement("article");
+            card.className = "level-card";
+            card.dataset.locked = String(!unlocked);
+            card.dataset.selected = String(index === selectedLevelIndex);
+            card.dataset.completed = String(completed);
+            card.innerHTML = `
+              <div class="level-card-top">
+                <span class="level-number">TRIAL ${String(level.number).padStart(2, "0")}</span>
+                <span class="level-difficulty">${level.difficulty}</span>
+              </div>
+              <h3>${level.title}</h3>
+              <p>${level.description}</p>
+              <span class="level-status">${completed ? "Completed" : unlocked ? "Available" : "Locked"}</span>
+            `;
+            const playButton = document.createElement("button");
+            playButton.className = "button button-quiet";
+            playButton.type = "button";
+            playButton.disabled = !unlocked;
+            playButton.dataset.levelIndex = String(index);
+            playButton.textContent = unlocked ? (completed ? "Replay" : "Play") : "Locked";
+            card.append(playButton);
+            levelGrid.append(card);
+          });
+        }
+
+        function configureLevel(levelIndex) {
+          currentLevelIndex = levelIndex;
+          selectedLevelIndex = levelIndex;
+          activeLevel = levels[levelIndex];
+          WORLD_WIDTH = activeLevel.worldWidth;
+          EXIT_X = activeLevel.exitX;
+          platforms = activeLevel.platforms;
+          switches = activeLevel.switches;
+          doors = activeLevel.doors;
+          hazards = activeLevel.hazards || [];
+          sections = activeLevel.sections;
+          checkpoints = activeLevel.checkpoints;
+        }
+
+        function spawnAt(checkpoint) {
+          return {
+            x: checkpoint.x,
+            y: checkpoint.surfaceY - 33 / 2,
+            width: 21,
+            height: 33,
+            vx: 0,
+            vy: 0,
+            facing: 1,
+            grounded: true,
+          };
+        }
+
+        function scheduleFrame() {
+          if (screen === "playing" && animationFrameId === 0) {
+            animationFrameId = requestAnimationFrame(frame);
+          }
+        }
+
+        function setRecordingUI(mode, title, detail) {
+          recordingState.dataset.mode = mode;
+          recordingStatus.textContent = title;
+          recordingTimeLabel.textContent = detail;
+        }
+
+        function setPuzzleMessage(message, active = switchPressed, alert = false) {
+          puzzleStatus.textContent = message;
+          puzzleStatus.dataset.active = String(active);
+          puzzleStatus.dataset.alert = String(alert);
+        }
+
+        function capturePose(time) {
+          const state = !player.grounded ? "air" : Math.abs(player.vx) > 18 ? "run" : "idle";
+          return {
+            time,
+            x: player.x,
+            y: player.y,
+            vx: player.vx,
+            vy: player.vy,
+            facing: player.facing,
+            grounded: player.grounded,
+            state,
+            animationPhase: state === "run" ? runAnimationTime : 0,
+          };
+        }
+
+        function beginRecording() {
+          if (screen !== "playing" || won) return;
+          echoPlayback = null;
+          recording = [];
+          recordingElapsed = 0;
+          recordedEcho = [];
+          recordedDuration = 0;
+          runAnimationTime = 0;
+          recording.push(capturePose(0));
+          setRecordingUI("recording", "Recording movement", `0.0s / ${MAX_RECORDING_SECONDS}s · R to stop`);
+          setPuzzleMessage("Recording started. Move onto the pressure plate or stay on it to record a hold.", switchPressed);
+          render();
+        }
+
+        function stopRecording(reason = "stopped") {
+          if (!recording) return;
+          const lastPose = recording[recording.length - 1];
+          if (recordingElapsed > lastPose.time) recording.push(capturePose(recordingElapsed));
+          recordedEcho = recording;
+          recordedDuration = recordingElapsed;
+          recording = null;
+          const duration = recordedDuration.toFixed(1);
+          const reasonText = reason === "limit" ? " · limit reached" : "";
+          setRecordingUI("ready", "Echo recorded", `${duration}s · E to play${reasonText}`);
+          setPuzzleMessage("Echo ready. Press E to replay the recorded path; the player can move during playback.", switchPressed);
+        }
+
+        function playRecording() {
+          if (screen !== "playing" || won) return;
+          if (recording) {
+            setPuzzleMessage("Stop the recording with R before replaying it.", switchPressed, true);
+            return;
+          }
+          if (recordedEcho.length === 0) {
+            setPuzzleMessage("There is no recording yet. Press R to record a movement sequence.", switchPressed, true);
+            return;
+          }
+          echoPlayback = {
+            samples: recordedEcho,
+            duration: recordedDuration,
+            elapsed: 0,
+            sampleIndex: 0,
+          };
+          setRecordingUI("playing", "Echo playing", `${recordedDuration.toFixed(1)}s sequence`);
+          setPuzzleMessage("Echo replay started from its recorded starting point.", switchPressed);
+          render();
+        }
+
+        function resetPuzzle() {
+          if (screen === "title") return;
+          const wasPlaying = screen === "playing";
+          won = false;
+          screen = "playing";
+          victoryOverlay.hidden = true;
+          statusLabel.textContent = `${String(activeLevel.number).padStart(2, "0")} / ${activeLevel.title}`;
+          const checkpoint = checkpoints[currentCheckpoint];
+          player = spawnAt(checkpoint);
+          recording = null;
+          recordingElapsed = 0;
+          echoPlayback = null;
+          switchPressed = false;
+          switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
+          doorProgress = doors.map(() => 0);
+          nextDoorCheckpoint = doors.findIndex((door) => door.checkpointX > checkpoints[currentCheckpoint].x);
+          cameraX = Math.max(0, Math.min(WORLD_WIDTH - WIDTH, checkpoints[currentCheckpoint].x - WIDTH * 0.45));
+          jumpBuffer = 0;
+          coyoteTime = 0;
+          keys.clear();
+          lastFrame = 0;
+          stageTitle.textContent = sections[checkpoints[currentCheckpoint].section].title;
+          if (recordedEcho.length > 0) {
+            setRecordingUI("ready", "Echo retained", `${recordedDuration.toFixed(1)}s · E to play`);
+            setPuzzleMessage("Checkpoint restored. The recording is kept; use E to replay it.", false);
+          } else {
+            setRecordingUI("idle", "No recording yet", `R to record · up to ${MAX_RECORDING_SECONDS} seconds`);
+            setPuzzleMessage(sections[checkpoints[currentCheckpoint].section].hint, false);
+          }
+          render();
+          if (!wasPlaying) scheduleFrame();
+        }
+
+        function startRun(levelIndex = currentLevelIndex) {
+          if (!isLevelUnlocked(levelIndex)) {
+            setPuzzleMessage("Complete the previous trial to unlock this level.", false, true);
+            return;
+          }
+          if (animationFrameId !== 0) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = 0;
+          }
+          configureLevel(levelIndex);
+          runId += 1;
+          runLabel.textContent = `RUN ${String(runId).padStart(2, "0")}`;
+          runLabel.hidden = false;
+          titleScreen.hidden = true;
+          levelSelectScreen.hidden = true;
+          gameScreen.hidden = false;
+          victoryOverlay.hidden = true;
+          statusLabel.textContent = `${String(activeLevel.number).padStart(2, "0")} / ${activeLevel.title}`;
+          stageTitle.textContent = sections[0].title;
+          recording = null;
+          recordingElapsed = 0;
+          recordedEcho = [];
+          recordedDuration = 0;
+          echoPlayback = null;
+          switchPressed = false;
+          switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
+          doorProgress = doors.map(() => 0);
+          currentCheckpoint = 0;
+          nextDoorCheckpoint = 0;
+          setRecordingUI("idle", "No recording yet", `R to record · up to ${MAX_RECORDING_SECONDS} seconds`);
+          setPuzzleMessage(sections[0].hint, false);
+          screen = "playing";
+          const start = checkpoints[0];
+          player = spawnAt(start);
+          player.grounded = false;
+          cameraX = 0;
+          jumpBuffer = 0;
+          coyoteTime = 0;
+          runAnimationTime = 0;
+          hazardClock = 0;
+          won = false;
+          keys.clear();
+          lastFrame = 0;
+          scheduleFrame();
+        }
+
+        function showLevelSelect() {
+          screen = "select";
+          keys.clear();
+          recording = null;
+          echoPlayback = null;
+          if (animationFrameId !== 0) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = 0;
+          }
+          gameScreen.hidden = true;
+          titleScreen.hidden = true;
+          levelSelectScreen.hidden = false;
+          runLabel.hidden = true;
+          renderLevelCards();
+          document.querySelector("#selection-back-button").focus();
+        }
+
+        function showTitle() {
+          screen = "title";
+          keys.clear();
+          recording = null;
+          recordedEcho = [];
+          recordedDuration = 0;
+          echoPlayback = null;
+          switchPressed = false;
+          switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
+          doorProgress = doors.map(() => 0);
+          if (animationFrameId !== 0) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = 0;
+          }
+          gameScreen.hidden = true;
+          levelSelectScreen.hidden = true;
+          runLabel.hidden = true;
+          titleScreen.hidden = false;
+          document.querySelector("#start-button").focus();
+        }
+
+        function approach(value, target, amount) {
+          if (value < target) return Math.min(value + amount, target);
+          if (value > target) return Math.max(value - amount, target);
+          return target;
+        }
+
+        function getDoorPanel(door, index) {
+          const height = door.bottom - door.top;
+          return {
+            left: door.x - door.width / 2,
+            right: door.x + door.width / 2,
+            top: door.top - doorProgress[index] * height,
+            bottom: door.bottom - doorProgress[index] * height,
+          };
+        }
+
+        function getHazardBounds(hazard) {
+          const motion = hazard.motion;
+          const offset = motion
+            ? Math.sin((hazardClock / motion.period) * Math.PI * 2) * motion.distance
+            : 0;
+          return {
+            x: hazard.x + (motion?.axis === "x" ? offset : 0),
+            y: hazard.y + (motion?.axis === "y" ? offset : 0),
+            width: hazard.width,
+            height: hazard.height,
+          };
+        }
+
+        function update(delta) {
+          hazardClock += delta;
+          const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
+          const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
+          if (keys.has("jump")) {
+            jumpBuffer = JUMP_BUFFER;
+            keys.delete("jump");
+          } else {
+            jumpBuffer = Math.max(0, jumpBuffer - delta);
+          }
+          if (player.grounded) coyoteTime = COYOTE_TIME;
+          else coyoteTime = Math.max(0, coyoteTime - delta);
+
+          if (left !== right) {
+            player.vx = approach(player.vx, left ? -RUN_SPEED : RUN_SPEED, RUN_ACCELERATION * delta);
+            player.facing = left ? -1 : 1;
+          } else {
+            player.vx = approach(player.vx, 0, GROUND_DRAG * delta);
+          }
+
+          if (jumpBuffer > 0 && coyoteTime > 0) {
+            player.vy = -JUMP_SPEED;
+            player.grounded = false;
+            coyoteTime = 0;
+            jumpBuffer = 0;
+          }
+
+          const oldX = player.x;
+          const oldY = player.y;
+          player.vy = Math.min(player.vy + 1450 * delta, 1050);
+          const nextY = player.y + player.vy * delta;
+          const nextX = Math.max(player.width / 2, Math.min(WORLD_WIDTH - player.width / 2, player.x + player.vx * delta));
+          const sweptTop = Math.min(oldY, nextY) - player.height / 2;
+          const sweptBottom = Math.max(oldY, nextY) + player.height / 2;
+          player.x = nextX;
+          for (let index = 0; index < doors.length; index += 1) {
+            const panel = getDoorPanel(doors[index], index);
+            const overlapsSweptY = sweptBottom > panel.top && sweptTop < panel.bottom;
+            if (!overlapsSweptY) continue;
+            const oldLeft = oldX - player.width / 2;
+            const oldRight = oldX + player.width / 2;
+            const newLeft = player.x - player.width / 2;
+            const newRight = player.x + player.width / 2;
+            if (player.vx > 0 && oldRight <= panel.left && newRight > panel.left) {
+              player.x = panel.left - player.width / 2;
+              player.vx = 0;
+            } else if (player.vx < 0 && oldLeft >= panel.right && newLeft < panel.right) {
+              player.x = panel.right + player.width / 2;
+              player.vx = 0;
+            }
+          }
+          player.y = nextY;
+          player.grounded = false;
+
+          for (let index = 0; index < doors.length; index += 1) {
+            const panel = getDoorPanel(doors[index], index);
+            const overlapsX = player.x + player.width / 2 > panel.left
+              && player.x - player.width / 2 < panel.right;
+            if (!overlapsX) continue;
+            const oldTop = oldY - player.height / 2;
+            const oldBottom = oldY + player.height / 2;
+            const newTop = player.y - player.height / 2;
+            const newBottom = player.y + player.height / 2;
+            if (player.vy >= 0 && oldBottom <= panel.top + LANDING_TOLERANCE && newBottom >= panel.top) {
+              player.y = panel.top - player.height / 2;
+              player.vy = 0;
+              player.grounded = true;
+            } else if (player.vy < 0 && oldTop >= panel.bottom && newTop < panel.bottom) {
+              player.y = panel.bottom + player.height / 2;
+              player.vy = 0;
+            }
+          }
+
+          if (player.vy >= 0) {
+            for (const platform of platforms) {
+              const crossesTop = oldY + player.height / 2 <= platform.y + LANDING_TOLERANCE && player.y + player.height / 2 >= platform.y;
+              const overlapsX = player.x + player.width / 2 > platform.x && player.x - player.width / 2 < platform.x + platform.width;
+              if (crossesTop && overlapsX) {
+                player.y = platform.y - player.height / 2;
+                player.vy = 0;
+                player.grounded = true;
+                break;
+              }
+            }
+          }
+
+          let hazardHit = false;
+          for (const hazard of hazards) {
+            const bounds = getHazardBounds(hazard);
+            if (player.x + player.width / 2 > bounds.x
+              && player.x - player.width / 2 < bounds.x + bounds.width
+              && player.y + player.height / 2 > bounds.y
+              && player.y - player.height / 2 < bounds.y + bounds.height) {
+              player.y = RESPAWN_Y + 1;
+              hazardHit = true;
+              break;
+            }
+          }
+
+          if (player.y > RESPAWN_Y) {
+            const interruptedRecording = recording !== null;
+            const interruptedEcho = echoPlayback !== null;
+            if (interruptedRecording) {
+              recording = null;
+              recordedEcho = [];
+              recordedDuration = 0;
+              echoPlayback = null;
+              setRecordingUI("idle", "Recording canceled", "You fell · press R to try again");
+            }
+            const checkpoint = checkpoints[currentCheckpoint];
+            player.x = checkpoint.x;
+            player = spawnAt(checkpoint);
+            player.vx = 0;
+            player.vy = 0;
+            player.grounded = false;
+            coyoteTime = 0;
+            jumpBuffer = 0;
+            echoPlayback = null;
+            switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
+            switchPressed = false;
+            doorProgress = doors.map(() => 0);
+            if (interruptedEcho && !interruptedRecording) {
+              setRecordingUI(recordedEcho.length > 0 ? "ready" : "idle",
+                recordedEcho.length > 0 ? "Echo stopped at checkpoint" : "No recording yet",
+                recordedEcho.length > 0 ? `${recordedDuration.toFixed(1)}s · E to play` : "R to record · up to 12 seconds");
+            }
+            setPuzzleMessage(
+              hazardHit
+                ? "The patrol caught you. Restored at the last checkpoint; your completed recording is safe."
+                : interruptedRecording
+                ? "Recording canceled after a fall. Restored at the last checkpoint."
+                : "You fell. Restored at the last checkpoint; your completed recording is safe.",
+              false,
+              true,
+            );
+          }
+
+          if (Math.abs(player.vx) > 18 && player.grounded) runAnimationTime += delta * 12;
+          if (recording) {
+            recordingElapsed = Math.min(MAX_RECORDING_SECONDS, recordingElapsed + delta);
+            recording.push(capturePose(recordingElapsed));
+            recordingTimeLabel.textContent = `${recordingElapsed.toFixed(1)}s / ${MAX_RECORDING_SECONDS}s · R to stop`;
+            if (recordingElapsed >= MAX_RECORDING_SECONDS) stopRecording("limit");
+          }
+
+          if (echoPlayback) {
+            echoPlayback.elapsed += delta;
+            if (echoPlayback.elapsed >= echoPlayback.duration) {
+              echoPlayback = null;
+              setRecordingUI("ready", "Echo finished", `${recordedDuration.toFixed(1)}s · E to replay`);
+            }
+          }
+
+          const echoPose = getEchoPose();
+          let stateChanged = false;
+          let activeMessage = "";
+          for (const pressurePlate of switches) {
+            const held = isOnSwitch(player, pressurePlate) || (echoPose !== null && isOnSwitch(echoPose, pressurePlate));
+            if (held !== switchStates[pressurePlate.id]) {
+              stateChanged = true;
+              switchStates[pressurePlate.id] = held;
+              activeMessage = held
+                ? `Plate ${pressurePlate.id} held — its gate is opening.`
+                : `Plate ${pressurePlate.id} released — its gate is closing.`;
+            }
+          }
+          switchPressed = Object.values(switchStates).some(Boolean);
+          if (stateChanged) setPuzzleMessage(activeMessage, switchPressed);
+
+          for (let index = 0; index < doors.length; index += 1) {
+            const door = doors[index];
+            const realPlayerInDoorway = player.x + player.width / 2 > door.x - door.width / 2
+              && player.x - player.width / 2 < door.x + door.width / 2
+              && player.y + player.height / 2 > door.top
+              && player.y - player.height / 2 < door.bottom;
+            const doorTarget = switchStates[door.switchId] || (realPlayerInDoorway && doorProgress[index] > 0) ? 1 : 0;
+            doorProgress[index] = approach(doorProgress[index], doorTarget, delta * 5);
+          }
+
+          while (currentCheckpoint < checkpoints.length - 1
+            && player.grounded
+            && player.x >= checkpoints[currentCheckpoint + 1].x
+            && Math.abs(player.y + player.height / 2 - checkpoints[currentCheckpoint + 1].surfaceY) <= 1) {
+            currentCheckpoint += 1;
+            const checkpoint = checkpoints[currentCheckpoint];
+            stageTitle.textContent = sections[checkpoint.section].title;
+            if (nextDoorCheckpoint < doors.length && checkpoint.x >= doors[nextDoorCheckpoint].checkpointX) {
+              const hasNextDoor = nextDoorCheckpoint + 1 < doors.length;
+              recordedEcho = [];
+              recordedDuration = 0;
+              recording = null;
+              echoPlayback = null;
+              switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
+              switchPressed = false;
+              setRecordingUI("idle", "Checkpoint reached", hasNextDoor ? "Recording cleared · next plate ahead" : "Recording cleared · exit ahead");
+              setPuzzleMessage(
+                hasNextDoor ? `${sections[checkpoint.section].hint} Record a fresh echo for this bay.` : "Checkpoint reached. The exit is ahead.",
+                false,
+              );
+              nextDoorCheckpoint += 1;
+            }
+          }
+
+          const targetCamera = Math.max(0, Math.min(WORLD_WIDTH - WIDTH, player.x - WIDTH * 0.61));
+          cameraX += (targetCamera - cameraX) * Math.min(1, delta * 5.4);
+          if (player.x + player.width / 2 >= EXIT_X - 25
+            && player.x - player.width / 2 <= EXIT_X + 25
+            && player.y + player.height / 2 >= activeLevel.exit.minY
+            && player.y - player.height / 2 <= activeLevel.exit.maxY) {
+            win();
+          }
+        }
+
+        function isOnSwitch(actor, pressurePlate) {
+          return actor.grounded
+            && actor.x + actor.width / 2 > pressurePlate.x
+            && actor.x - actor.width / 2 < pressurePlate.x + SWITCH_WIDTH
+            && actor.y + actor.height / 2 >= pressurePlate.y - 6
+            && actor.y + actor.height / 2 <= pressurePlate.y + 8;
+        }
+
+        function getEchoPose() {
+          if (!echoPlayback) return null;
+          const { samples, elapsed } = echoPlayback;
+          let index = echoPlayback.sampleIndex;
+          while (index < samples.length - 2 && samples[index + 1].time < elapsed) index += 1;
+          echoPlayback.sampleIndex = index;
+          const before = samples[index];
+          const after = samples[Math.min(index + 1, samples.length - 1)];
+          const span = after.time - before.time;
+          const amount = span > 0 ? Math.max(0, Math.min(1, (elapsed - before.time) / span)) : 0;
+          return {
+            x: before.x + (after.x - before.x) * amount,
+            y: before.y + (after.y - before.y) * amount,
+            vx: before.vx + (after.vx - before.vx) * amount,
+            vy: before.vy + (after.vy - before.vy) * amount,
+            width: player.width,
+            height: player.height,
+            facing: amount < 0.5 ? before.facing : after.facing,
+            grounded: amount < 0.5 ? before.grounded : after.grounded,
+            state: amount < 0.5 ? before.state : after.state,
+            animationPhase: before.animationPhase + (after.animationPhase - before.animationPhase) * amount,
+          };
+        }
+
+        function win() {
+          if (won) return;
+          won = true;
+          screen = "victory";
+          player.vx = 0;
+          player.vy = 0;
+          statusLabel.textContent = "Exit reached";
+          if (!completedLevels.includes(activeLevel.id)) {
+            completedLevels.push(activeLevel.id);
+            saveProgress();
+          }
+          const nextLevelIndex = currentLevelIndex + 1;
+          victoryEyebrow.textContent = `Trial ${activeLevel.number} complete`;
+          victoryTitle.textContent = activeLevel.title;
+          victoryCopy.textContent = nextLevelIndex < levels.length
+            ? `${levels[nextLevelIndex].title} is now available. Your progress is saved on this device.`
+            : "All fourteen trials are complete. Your progress is saved on this device.";
+          continueButton.querySelector("span").textContent = nextLevelIndex < levels.length
+            ? `Continue to ${levels[nextLevelIndex].title}`
+            : "Return to level selection";
+          continueButton.querySelector(".button-arrow").textContent = nextLevelIndex < levels.length ? "↗" : "←";
+          victoryOverlay.hidden = false;
+          continueButton.focus();
+        }
+
+        function drawBackground() {
+          ctx.fillStyle = "#171915";
+          ctx.fillRect(0, 0, WORLD_WIDTH, HEIGHT);
+          ctx.fillStyle = "#20231e";
+          ctx.fillRect(0, 78, WORLD_WIDTH, 312);
+          ctx.fillStyle = "#343a32";
+          ctx.fillRect(0, 78, WORLD_WIDTH, 7);
+          ctx.fillStyle = "#11130f";
+          ctx.fillRect(0, 390, WORLD_WIDTH, 150);
+          ctx.fillStyle = "#393e36";
+          ctx.fillRect(0, 390, WORLD_WIDTH, 3);
+
+          for (const x of [84, 450, 905, 1405, 1885, 2340, 2710]) {
+            ctx.fillStyle = "rgb(52 55 49 / 72%)";
+            ctx.fillRect(x, 88, 2, 298);
+            ctx.fillStyle = "rgb(17 19 15 / 90%)";
+            ctx.fillRect(x + 4, 88, 1, 298);
+          }
+
+          for (const section of sections) {
+            ctx.fillStyle = "#9ba194";
+            ctx.font = "10px ui-monospace, monospace";
+            ctx.textAlign = "left";
+            ctx.fillText(section.title, section.left + 36, 150);
+          }
+
+          for (const cabinet of [
+            { x: 285, y: 236, width: 58, height: 136 },
+            { x: 1090, y: 280, width: 74, height: 92 },
+            { x: 1925, y: 218, width: 68, height: 154 },
+          ]) {
+            ctx.fillStyle = "#1b1e19";
+            ctx.fillRect(cabinet.x, cabinet.y, cabinet.width, cabinet.height);
+            ctx.strokeStyle = "#3c433a";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(cabinet.x, cabinet.y, cabinet.width, cabinet.height);
+            ctx.fillStyle = "#272c25";
+            ctx.fillRect(cabinet.x + 7, cabinet.y + 12, cabinet.width - 14, 34);
+            ctx.strokeStyle = "#454c42";
+            ctx.lineWidth = 1;
+            ctx.strokeRect(cabinet.x + 7, cabinet.y + 12, cabinet.width - 14, 34);
+            ctx.fillStyle = "#9e784d";
+            ctx.fillRect(cabinet.x + 10, cabinet.y + 12, 4, 4);
+            ctx.strokeStyle = "#454c42";
+            ctx.beginPath();
+            ctx.moveTo(cabinet.x + 11, cabinet.y + 76);
+            ctx.lineTo(cabinet.x + cabinet.width - 8, cabinet.y + 91);
+            ctx.stroke();
+          }
+
+          ctx.strokeStyle = "#353b32";
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(660, 86); ctx.lineTo(660, 124); ctx.lineTo(792, 124); ctx.lineTo(792, 188);
+          ctx.stroke();
+          ctx.strokeStyle = "#555c50";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(660, 84); ctx.lineTo(660, 120); ctx.lineTo(792, 120); ctx.lineTo(792, 184);
+          ctx.stroke();
+        }
+
+        function drawPlatforms() {
+          for (const platform of platforms) {
+            ctx.fillStyle = "rgb(0 0 0 / 16%)";
+            ctx.fillRect(platform.x + 2, platform.y + 8, platform.width - 4, 8);
+            ctx.fillStyle = "#292d27";
+            ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            ctx.fillStyle = "#797f74";
+            ctx.fillRect(platform.x, platform.y, platform.width, 3);
+            ctx.fillStyle = "#6aaea8";
+            ctx.fillRect(platform.x + 5, platform.y + 3, platform.width - 10, 1);
+            ctx.fillStyle = "#9b9f96";
+            ctx.fillRect(platform.x + 10, platform.y + 12, 2, 4);
+            ctx.fillRect(platform.x + platform.width - 12, platform.y + 12, 2, 4);
+            ctx.fillStyle = "#474d44";
+            ctx.fillRect(platform.x + 16, platform.y + platform.height - 7, platform.width - 32, 2);
+          }
+        }
+
+        function drawHazards() {
+          for (const hazard of hazards) {
+            const bounds = getHazardBounds(hazard);
+            const spikes = Math.max(2, Math.floor(bounds.width / 12));
+            ctx.fillStyle = "rgb(196 137 94 / 14%)";
+            ctx.fillRect(bounds.x - 4, bounds.y - 3, bounds.width + 8, bounds.height + 6);
+            ctx.fillStyle = "#b8785f";
+            ctx.beginPath();
+            ctx.moveTo(bounds.x, bounds.y + bounds.height);
+            for (let index = 0; index < spikes; index += 1) {
+              const left = bounds.x + index * bounds.width / spikes;
+              const right = bounds.x + (index + 1) * bounds.width / spikes;
+              ctx.lineTo((left + right) / 2, bounds.y);
+              ctx.lineTo(right, bounds.y + bounds.height);
+            }
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#e0ad88";
+            ctx.fillRect(bounds.x, bounds.y + bounds.height - 2, bounds.width, 2);
+          }
+        }
+
+        function drawPuzzle() {
+          for (let index = 0; index < doors.length; index += 1) {
+            const door = doors[index];
+            const centerX = door.x;
+            const panelHeight = door.bottom - door.top;
+            const panel = getDoorPanel(door, index);
+            ctx.fillStyle = "#252922";
+            ctx.fillRect(centerX - door.width / 2 - 4, door.top - 8, 4, door.bottom - door.top + 8);
+            ctx.fillRect(centerX + door.width / 2, door.top - 8, 4, door.bottom - door.top + 8);
+            ctx.fillStyle = "#596153";
+            ctx.fillRect(centerX - door.width / 2 - 5, door.top - 8, door.width + 10, 3);
+            ctx.fillStyle = doorProgress[index] > 0.05 ? "#59685c" : "#555b51";
+            ctx.fillRect(panel.left, panel.top, door.width, panelHeight);
+            ctx.fillStyle = "#899183";
+            ctx.fillRect(panel.left, panel.top, door.width, 3);
+            ctx.fillStyle = "#343a32";
+            ctx.fillRect(panel.left + 5, panel.top + 14, 2, Math.max(0, panelHeight - 28));
+            ctx.fillStyle = "#c4c8bd";
+            ctx.font = "9px ui-monospace, monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(`ECHO GATE ${door.id}`, centerX, door.top - 18);
+          }
+
+          for (const pressurePlate of switches) {
+            const pressed = switchStates[pressurePlate.id];
+            const plateY = pressurePlate.y - (pressed ? 4 : 7);
+            ctx.fillStyle = "#252922";
+            ctx.fillRect(pressurePlate.x - 4, pressurePlate.y - 2, SWITCH_WIDTH + 8, 4);
+            ctx.fillStyle = pressed ? "#9ac8bd" : "#777f73";
+            ctx.fillRect(pressurePlate.x, plateY, SWITCH_WIDTH, pressed ? 4 : 7);
+            ctx.fillStyle = pressed ? "#c8ded4" : "#4c554a";
+            ctx.fillRect(pressurePlate.x + 5, plateY, SWITCH_WIDTH - 10, 2);
+            ctx.fillStyle = pressed ? "#b8d7cb" : "#a4aa9d";
+            ctx.font = "8px ui-monospace, monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(pressurePlate.label, pressurePlate.x + SWITCH_WIDTH / 2, pressurePlate.y - 24);
+          }
+
+          for (let index = 1; index < checkpoints.length; index += 1) {
+            const checkpoint = checkpoints[index];
+            ctx.fillStyle = currentCheckpoint >= index ? "#9ac8bd" : "#697064";
+            ctx.fillRect(checkpoint.x - 2, checkpoint.surfaceY - 39, 3, 39);
+            ctx.fillRect(checkpoint.x + 1, checkpoint.surfaceY - 39, 21, 11);
+            ctx.fillStyle = "#20231e";
+            ctx.font = "7px ui-monospace, monospace";
+            ctx.textAlign = "left";
+            ctx.fillText("CHECKPOINT", checkpoint.x + 5, checkpoint.surfaceY - 31);
+          }
+        }
+
+        function drawExit() {
+          const x = EXIT_X;
+          const y = activeLevel.exitSurface - 54;
+          ctx.fillStyle = "#201e19";
+          ctx.fillRect(x - 33, y - 48, 66, 96);
+          ctx.strokeStyle = "#777f73";
+          ctx.lineWidth = 2;
+          ctx.strokeRect(x - 33, y - 48, 66, 96);
+          ctx.fillStyle = "#292d27";
+          ctx.fillRect(x - 24, y - 39, 48, 78);
+          ctx.strokeStyle = "#4b5248";
+          ctx.lineWidth = 1;
+          ctx.strokeRect(x - 24, y - 39, 48, 78);
+          ctx.fillStyle = "rgb(119 207 199 / 88%)";
+          ctx.fillRect(x - 18, y - 30, 2, 60);
+          ctx.fillStyle = "rgb(182 138 85 / 85%)";
+          ctx.fillRect(x + 13, y - 29, 5, 7);
+          ctx.fillStyle = "#c3c9bf";
+          ctx.font = "10px ui-monospace, monospace";
+          ctx.textAlign = "center";
+          ctx.fillText("EXIT", x, y - 53);
+        }
+
+        function drawActor(actor, echo = false) {
+          const x = Math.round(actor.x);
+          const y = Math.round(actor.y);
+          const step = actor.state === "run" ? Math.sin(actor.animationPhase) * 2 : 0;
+          ctx.save();
+          if (echo) {
+            ctx.globalAlpha = 0.55;
+            ctx.setLineDash([3, 2]);
+            ctx.strokeStyle = "#c6c1d4";
+            ctx.strokeRect(x - 14, y - 17, 28, 34);
+          }
+          ctx.fillStyle = echo ? "#a9aec0" : "rgb(85 217 209 / 15%)";
+          ctx.fillRect(x - 17, y - 19, 34, 38);
+          ctx.fillStyle = echo ? "#aaaec1" : "#70d9d2";
+          ctx.fillRect(x - 12, y - 15, 24, 28);
+          ctx.fillStyle = echo ? "#343744" : "#25373a";
+          ctx.fillRect(x - 9, y - 11, 18, 7);
+          ctx.fillStyle = echo ? "#e2dfec" : "#b8f4ed";
+          ctx.fillRect(x - 7 + actor.facing, y - 8, 14, 2);
+          ctx.fillStyle = echo ? "#858ba2" : "#4b8e8a";
+          ctx.fillRect(x - 10, y + 10 + step, 8, 7);
+          ctx.fillRect(x + 2, y + 10 - step, 8, 7);
+          ctx.restore();
+        }
+
+        function render() {
+          ctx.clearRect(0, 0, WIDTH, HEIGHT);
+          ctx.save();
+          ctx.translate(-Math.round(cameraX), 0);
+          drawBackground();
+          drawPlatforms();
+          drawPuzzle();
+          drawHazards();
+          drawExit();
+          const echoPose = getEchoPose();
+          if (echoPose) drawActor(echoPose, true);
+          drawActor({ ...player, state: player.grounded ? (Math.abs(player.vx) > 18 ? "run" : "idle") : "air", animationPhase: runAnimationTime });
+          ctx.restore();
+        }
+
+        function frame(time) {
+          animationFrameId = 0;
+          if (screen !== "playing") return;
+          const delta = lastFrame === 0 ? 0 : Math.min((time - lastFrame) / 1000, 0.034);
+          lastFrame = time;
+          update(delta);
+          render();
+          scheduleFrame();
+        }
+
+        document.querySelector("#start-button").addEventListener("click", showLevelSelect);
+        document.querySelector("#selection-back-button").addEventListener("click", showTitle);
+        document.querySelector("#levels-button").addEventListener("click", showLevelSelect);
+        document.querySelector("#restart-button").addEventListener("click", () => startRun(currentLevelIndex));
+        document.querySelector("#play-again-button").addEventListener("click", () => startRun(currentLevelIndex));
+        document.querySelector("#continue-button").addEventListener("click", () => {
+          if (currentLevelIndex + 1 < levels.length) startRun(currentLevelIndex + 1);
+          else showLevelSelect();
+        });
+        document.querySelector("#back-button").addEventListener("click", showLevelSelect);
+        levelGrid.addEventListener("click", (event) => {
+          const button = event.target.closest("button[data-level-index]");
+          if (!button || button.disabled) return;
+          const levelIndex = Number(button.dataset.levelIndex);
+          if (Number.isInteger(levelIndex) && isLevelUnlocked(levelIndex)) startRun(levelIndex);
+        });
+        window.addEventListener("keydown", (event) => {
+          const key = event.key;
+          if (screen === "title") return;
+          if (screen !== "playing") return;
+          if (["ArrowLeft", "ArrowRight", " ", "Spacebar", "Backspace"].includes(key)) event.preventDefault();
+          if (event.repeat && ["r", "e", "backspace"].includes(key.toLowerCase())) return;
+          if (key.toLowerCase() === "r") {
+            if (recording) stopRecording();
+            else beginRecording();
+            return;
+          }
+          if (key.toLowerCase() === "e") {
+            playRecording();
+            return;
+          }
+          if (key === "Backspace") {
+            resetPuzzle();
+            return;
+          }
+          if (key === " " || key === "Spacebar") {
+            if (!event.repeat) keys.add("jump");
+          } else {
+            keys.add(key);
+          }
+        });
+        window.addEventListener("keyup", (event) => keys.delete(event.key));
+        window.addEventListener("blur", () => keys.clear());
+      })();
+    </script>
+  </body>
+</html>

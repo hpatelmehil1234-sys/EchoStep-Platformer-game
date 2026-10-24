@@ -1,0 +1,1 @@
+- [Phaser camera framing](phaser-camera-follow-offset.md) — negative follow offsets shift the runner left on screen, keeping more of the route visible ahead.

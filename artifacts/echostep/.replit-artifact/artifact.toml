@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "EchoStep"
+description = "A browser-playable futuristic puzzle platformer foundation for a college hackathon, with keyboard movement, jumping, collisions, a neon lab level, restart, and a victory screen."
+version = "1.0.0"
+id = "artifacts/echostep"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24135
+
+[services.development]
+run = "pnpm --filter @workspace/echostep run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/echostep", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/echostep/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24135"
+BASE_PATH = "/"
