@@ -50,7 +50,7 @@ The level selector displays the ten primary trials; bonus archive chambers are n
 
 ## Compatibility
 
-Use a current browser with Canvas 2D support, such as a recent version of Firefox, Chrome, Edge, or Safari. The game is designed for keyboard play on desktop and scales to narrow screens. No account or network connection is needed.
+Use a current browser with Canvas 2D support, such as a recent version of Firefox, Chrome, Edge, or Safari. The game uses a 960 × 540 logical 16:9 viewport, scaled proportionally to the available browser area, and is designed for keyboard play on desktop and narrow screens. No account or network connection is needed.
 
 ## Project structure
 

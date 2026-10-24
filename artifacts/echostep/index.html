@@ -268,7 +268,15 @@
       .button-quiet { min-height: 38px; gap: 8px; padding: 0 12px; border-color: #4a5048; color: var(--muted); background: #20231e; font-size: 11px; }
       .button-quiet:hover { border-color: var(--mint); color: var(--ink); background: #292d27; }
       .restart-icon { font-size: 17px; line-height: 1; }
-      .stage-frame { position: relative; width: min(100%, calc(min(62vh, 650px) * 1.7778)); aspect-ratio: 16 / 9; align-self: center; overflow: hidden; border: 1px solid #403c45; background: #171915; }
+      .stage-frame {
+        position: relative;
+        width: min(100%, calc(min(62dvh, 650px) * 1.77778), calc(max(0px, 100dvh - 360px) * 1.77778));
+        aspect-ratio: 16 / 9;
+        align-self: center;
+        overflow: hidden;
+        background: #171915;
+        box-shadow: inset 0 0 0 1px #403c45;
+      }
       .game-canvas { display: block; width: 100%; height: 100%; }
       .controls { display: flex; min-height: 58px; align-items: center; gap: 18px; }
       .controls .control-group { gap: 9px; }
@@ -329,7 +337,7 @@
         .title-controls { margin-top: 28px; }
         .lab-art { width: 100%; max-width: none; justify-self: stretch; }
         .game-layout { padding-top: 22px; }
-        .stage-frame { width: 100%; }
+        .stage-frame { width: min(100%, calc(max(0px, 100dvh - 360px) * 1.77778)); }
         .controls { flex-wrap: wrap; min-height: 52px; gap: 10px; }
         .selection-heading { align-items: flex-start; flex-direction: column; gap: 14px; }
         .level-select { padding: 42px 0; }
@@ -810,7 +818,7 @@
         .shell { padding: 0 18px; }
         .console-wordmark { display: none; }
         .title-screen { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; gap: 12px; padding: 18px 0; }
-        .title-copy { min-height: 430px; padding: 28px 24px; }
+        .title-copy { min-height: 0; padding: 28px 24px; }
         .title-copy .eyebrow { margin-top: 66px; }
         .panel-readouts { top: 20px; right: 20px; }
         .lab-art { width: 100%; aspect-ratio: 1.42; }
@@ -826,7 +834,7 @@
         .brand { min-width: 0; padding: 8px 10px; }
         .topbar { min-height: 58px; }
         .audio-settings-toggle { min-height: 34px; }
-        .title-copy { min-height: 420px; padding: 24px 20px; }
+        .title-copy { min-height: 0; padding: 24px 20px; }
         .panel-readouts { position: static; align-self: flex-end; margin-bottom: 12px; }
         .panel-caution { top: 18px; left: 20px; }
         .title-copy .eyebrow { margin-top: 0; }
