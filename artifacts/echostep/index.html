@@ -511,6 +511,7 @@
         const RESPAWN_Y = 690;
         const MAX_RECORDING_SECONDS = 12;
         const SWITCH_WIDTH = 58;
+        const RED_ECHO_DELAY = 1.2;
         const archiveLevels = [
           {
             id: "first-echo", number: 1, title: "First Echo", difficulty: "Easy",
@@ -774,98 +775,202 @@
             ],
             exit: { minY: 406, maxY: 500 },
           },
-          createTrial({
-            id: "split-paths", number: 7, title: "Split Paths", difficulty: "Medium–Hard",
-            description: "Choose a stepped upper route or a lower bridge, then echo the switch on the high path.",
-            hint: "Both routes meet again. The upper branch contains Plate A; record it before descending to the gate.",
-            worldWidth: 1710, exitX: 1610,
+          {
+            id: "split-paths", number: 7, title: "Moving Bridge Gauntlet", difficulty: "Expert",
+            description: "Carry your momentum across three sliding bridges and four timed vertical lasers to the final echo barrier.",
+            hint: "Plate A is on the start pad. Record a still hold with R, then press E to hold the final barrier open; replay E as needed. Lasers start ON and cycle 2 seconds ON / 2 seconds OFF. Wait for an OFF window, then sprint and jump.",
+            worldWidth: 3390, exitX: 3270, exitSurface: 500,
             platforms: [
-              { x: 0, y: 500, width: 350, height: 28 },
-              { x: 340, y: 430, width: 185, height: 22 },
-              { x: 545, y: 390, width: 205, height: 22 },
-              { x: 365, y: 480, width: 150, height: 18 },
-              { x: 535, y: 470, width: 190, height: 18 },
-              { x: 760, y: 500, width: 950, height: 28 },
+              { x: 0, y: 500, width: 145, height: 28 },
+              { x: 250, y: 465, width: 54, height: 22 },
+              { x: 520, y: 430, width: 54, height: 22 },
+              { x: 790, y: 465, width: 54, height: 22 },
+              { x: 850, y: 465, width: 100, height: 18, movement: { minX: 850, maxX: 980, speed: 210 } },
+              { x: 1150, y: 500, width: 220, height: 28 },
+              { x: 1430, y: 465, width: 54, height: 22 },
+              { x: 1700, y: 430, width: 54, height: 22 },
+              { x: 1970, y: 465, width: 54, height: 22 },
+              { x: 2030, y: 465, width: 100, height: 18, movement: { minX: 2030, maxX: 2170, speed: 230 } },
+              { x: 2330, y: 430, width: 54, height: 22 },
+              { x: 2600, y: 465, width: 54, height: 22 },
+              { x: 2660, y: 465, width: 100, height: 18, movement: { minX: 2660, maxX: 2820, speed: 260 } },
+              { x: 2980, y: 465, width: 54, height: 22 },
+              { x: 3040, y: 500, width: 350, height: 28 },
             ],
-            switches: [{ id: "A", x: 615, y: 390, label: "PLATE A / FORK" }],
-            doors: [{ id: "A", x: 1270, top: 250, bottom: 500, width: 28, switchId: "A", checkpointX: 1380 }],
-            checkpoints: [1410],
-          }),
-          createTrial({
-            id: "multi-step-puzzle", number: 8, title: "Multi-Step Puzzle", difficulty: "Hard",
-            description: "Combine a gap, a moving patrol, a checkpoint, and two separate echo recordings.",
-            hint: "Clear Plate A and the patrol first. At the checkpoint, record Plate B and cross the final gate.",
-            worldWidth: 2090, exitX: 1995,
-            platforms: [
-              { x: 0, y: 500, width: 700, height: 28 },
-              { x: 735, y: 455, width: 140, height: 22 },
-              { x: 900, y: 500, width: 1190, height: 28 },
-            ],
-            switches: [
-              { id: "A", x: 220, y: 500, label: "PLATE A / ENTRY" },
-              { id: "B", x: 1230, y: 500, label: "PLATE B / EXIT BAY" },
-            ],
-            doors: [
-              { id: "A", x: 570, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 680 },
-              { id: "B", x: 1640, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1750 },
-            ],
-            checkpoints: [710, 1780],
-            hazards: [{ x: 1030, y: 465, width: 48, height: 23, motion: { axis: "x", distance: 100, period: 4.8 } }],
-          }),
-          createTrial({
-            id: "advanced-echo", number: 9, title: "Advanced Echo", difficulty: "Hard",
-            description: "Plan three short echo holds, with calm checkpoints separating each timing challenge.",
-            hint: "Each checkpoint starts a new bay and clears the previous echo. Use one recording per plate.",
-            worldWidth: 2380, exitX: 2280,
-            platforms: [
-              { x: 0, y: 500, width: 630, height: 28 },
-              { x: 670, y: 455, width: 140, height: 22 },
-              { x: 840, y: 415, width: 155, height: 22 },
-              { x: 1025, y: 500, width: 1355, height: 28 },
-            ],
-            switches: [
-              { id: "A", x: 220, y: 500, label: "PLATE A / FIRST" },
-              { id: "B", x: 875, y: 415, label: "PLATE B / HIGH" },
-              { id: "C", x: 1690, y: 500, label: "PLATE C / LAST" },
-            ],
-            doors: [
-              { id: "A", x: 500, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 610 },
-              { id: "B", x: 1370, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1480 },
-              { id: "C", x: 2020, top: 255, bottom: 500, width: 28, switchId: "C", checkpointX: 2130 },
-            ],
-            checkpoints: [640, 1510, 2160],
-            hazards: [{ x: 1870, y: 465, width: 46, height: 23, motion: { axis: "x", distance: 75, period: 3.8 } }],
-          }),
-          createTrial({
-            id: "final-trial", number: 10, title: "The Final Trial", difficulty: "Expert",
-            description: "The complete EchoStep exam: three gates, careful jumps, patrols, and checkpoint planning.",
-            hint: "Work bay by bay. Each checkpoint resets the echo; read the patrols, record each plate, and keep moving.",
-            worldWidth: 3010, exitX: 2910,
-            platforms: [
-              { x: 0, y: 500, width: 650, height: 28 },
-              { x: 680, y: 455, width: 125, height: 22 },
-              { x: 835, y: 415, width: 155, height: 22 },
-              { x: 1020, y: 500, width: 650, height: 28 },
-              { x: 1700, y: 455, width: 135, height: 22 },
-              { x: 1865, y: 415, width: 160, height: 22 },
-              { x: 2055, y: 500, width: 955, height: 28 },
-            ],
-            switches: [
-              { id: "A", x: 220, y: 500, label: "PLATE A / ENTRY" },
-              { id: "B", x: 875, y: 415, label: "PLATE B / HIGH BAY" },
-              { id: "C", x: 1915, y: 415, label: "PLATE C / FINAL BAY" },
-            ],
-            doors: [
-              { id: "A", x: 500, top: 255, bottom: 500, width: 28, switchId: "A", checkpointX: 610 },
-              { id: "B", x: 1420, top: 255, bottom: 500, width: 28, switchId: "B", checkpointX: 1530 },
-              { id: "C", x: 2510, top: 255, bottom: 500, width: 28, switchId: "C", checkpointX: 2620 },
-            ],
-            checkpoints: [640, 1560, 2650],
+            switches: [{ id: "A", x: 52, y: 500, label: "PLATE A / START" }],
+            doors: [{ id: "A", label: "FINAL BARRIER", x: 3160, top: 250, bottom: 500, width: 28, switchId: "A", checkpointX: 3220 }],
             hazards: [
-              { x: 1090, y: 465, width: 48, height: 23, motion: { axis: "x", distance: 82, period: 4.5 } },
-              { x: 2180, y: 465, width: 48, height: 23, motion: { axis: "x", distance: 92, period: 4.1 } },
+              { type: "laser", x: 350, y: 80, width: 8, height: 450, cycle: { on: 2000, off: 2000 } },
+              { type: "laser", x: 1560, y: 80, width: 8, height: 450, cycle: { on: 2000, off: 2000 } },
+              { type: "laser", x: 2470, y: 80, width: 8, height: 450, cycle: { on: 2000, off: 2000 } },
+              { type: "laser", x: 2940, y: 80, width: 8, height: 450, cycle: { on: 2000, off: 2000 } },
             ],
-          }),
+            sections: [
+              { id: "A", left: 0, right: 1150, title: "07 / MOVING BRIDGE GAUNTLET — ENTRY", hint: "Record a still hold on Plate A. Time the first vertical laser and jump the narrow rising platforms to Bridge 1." },
+              { id: "B", left: 1150, right: 2330, title: "07 / MOVING BRIDGE GAUNTLET — MIDCOURSE", hint: "Use the midpoint checkpoint, clear two precision jumps, and ride Bridge 2 across the mandatory gap." },
+              { id: "C", left: 2330, right: 3390, title: "07 / MOVING BRIDGE GAUNTLET — FINAL RUN", hint: "Time the last two lasers around Bridge 3, land on the final narrow platforms, and replay the start echo as needed to pass the final barrier." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 1727, surfaceY: 430, section: 1 },
+            ],
+            exit: { minY: 406, maxY: 500 },
+          },
+          {
+            id: "multi-step-puzzle", number: 8, title: "Jump Trigger Gauntlet", difficulty: "Expert",
+            description: "Chain three automatic launch plates into four widely spaced sliding-platform crossings.",
+            hint: "Step onto or land on a glowing launch plate to trigger a normal-height automatic jump. Board the sliding platforms near their endpoints, and use the midpoint checkpoint before the final crossings.",
+            worldWidth: 3450, exitX: 3340, exitSurface: 500,
+            platforms: [
+              { x: 0, y: 500, width: 200, height: 28 },
+              { x: 394, y: 465, width: 48, height: 20 },
+              { x: 620, y: 465, width: 90, height: 18, movement: { minX: 620, maxX: 700, speed: 150 } },
+              { x: 960, y: 430, width: 120, height: 20 },
+              { x: 1230, y: 430, width: 90, height: 18, movement: { minX: 1230, maxX: 1340, speed: 175 } },
+              { x: 1630, y: 465, width: 64, height: 20 },
+              { x: 1900, y: 430, width: 90, height: 18, movement: { minX: 1900, maxX: 2050, speed: 195 } },
+              { x: 2300, y: 430, width: 64, height: 20 },
+              { x: 2580, y: 465, width: 90, height: 18, movement: { minX: 2580, maxX: 2680, speed: 215 } },
+              { x: 2980, y: 500, width: 470, height: 28 },
+            ],
+            switches: [],
+            doors: [],
+            launchPlates: [
+              { x: 125, y: 500, width: 48 },
+              { x: 394, y: 465, width: 48 },
+              { x: 1030, y: 430, width: 48 },
+            ],
+            sections: [
+              { id: "A", left: 0, right: 1100, title: "08 / JUMP TRIGGER GAUNTLET — LAUNCH", hint: "Step onto or land on the glowing plate to trigger an automatic jump; use it to board sliding platform 1. Land on the broad checkpoint station." },
+              { id: "B", left: 1100, right: 2300, title: "08 / JUMP TRIGGER GAUNTLET — CHAIN", hint: "The second launch plate sends you toward sliding platform 2. Continue over platform 3 to the next narrow ledge." },
+              { id: "C", left: 2300, right: 3450, title: "08 / JUMP TRIGGER GAUNTLET — FINAL GAP", hint: "Trigger the final launch plate, ride platform 4, and commit to the last jump to the exit." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 980, surfaceY: 430, section: 1 },
+              { x: 2310, surfaceY: 430, section: 2 },
+            ],
+            hazards: [],
+            exit: { minY: 406, maxY: 500 },
+          },
+          {
+            id: "advanced-echo", number: 9, title: "Inverted Gravity: Ceiling Trap", difficulty: "Expert",
+            description: "Invert gravity, navigate a spike-lined ceiling, solve three echo barriers, and restore normal gravity at the far end.",
+            hint: "Touch the amber INVERT pad to rise to the ceiling. Press Space to jump away from the ceiling over spikes, and record each A/B/C plate with R before using E to hold its barrier open. After Barrier C, touch the cyan RESTORE pad and fall safely to the exit.",
+            worldWidth: 2700, exitX: 2580, exitSurface: 500,
+            platforms: [
+              { x: 0, y: 500, width: 2700, height: 28 },
+              { x: 0, y: 180, width: 540, height: 20 },
+              { x: 730, y: 180, width: 390, height: 20 },
+              { x: 1350, y: 180, width: 410, height: 20 },
+              { x: 1990, y: 180, width: 220, height: 20 },
+              { x: 2280, y: 180, width: 180, height: 20 },
+            ],
+            switches: [
+              { id: "A", x: 340, y: 200, label: "PLATE A / FIRST" },
+              { id: "B", x: 870, y: 200, label: "PLATE B / SECOND" },
+              { id: "C", x: 1490, y: 200, label: "PLATE C / FINAL" },
+            ],
+            doors: [
+              { id: "A", x: 650, top: 65, bottom: 530, width: 28, switchId: "A", checkpointX: 760 },
+              { id: "B", x: 1220, top: 65, bottom: 530, width: 28, switchId: "B", checkpointX: 1310 },
+              { id: "C", x: 1870, top: 65, bottom: 530, width: 28, switchId: "C", checkpointX: 1970 },
+            ],
+            gravityPlates: [
+              { id: "invert", x: 150, y: 500, width: 58, action: "invert", label: "INVERT GRAVITY" },
+              { id: "restore", x: 2335, y: 200, width: 58, action: "restore", label: "RESTORE GRAVITY" },
+            ],
+            hazards: [
+              { type: "ceiling-spikes", x: 240, y: 200, width: 55, height: 34 },
+              { type: "ceiling-spikes", x: 930, y: 200, width: 70, height: 34 },
+              { type: "ceiling-spikes", x: 1600, y: 200, width: 75, height: 34 },
+              { type: "ceiling-spikes", x: 2040, y: 200, width: 70, height: 34 },
+            ],
+            sections: [
+              { id: "A", left: 0, right: 730, title: "09 / INVERTED GRAVITY — A / ORIENTATION", hint: "Touch the amber pad to invert gravity and land on the ceiling. Press Space to jump away from its underside and clear the first spikes; record Plate A and replay to open Barrier A." },
+              { id: "B", left: 730, right: 1350, title: "09 / INVERTED GRAVITY — B / CEILING TRAP", hint: "The checkpoint preserves inverted gravity. Record Plate B on the safe ceiling and open Barrier B before continuing." },
+              { id: "C", left: 1350, right: 2700, title: "09 / INVERTED GRAVITY — C / RESTORATION", hint: "Use the last safe ceiling stations to record Plate C and open Barrier C. Touch the cyan restore pad afterward to return to the floor and reach the exit." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 800, surfaceY: 200, section: 1, gravityDirection: -1 },
+              { x: 1400, surfaceY: 200, section: 2, gravityDirection: -1 },
+              { x: 2010, surfaceY: 200, section: 2, gravityDirection: -1 },
+            ],
+            exit: { minY: 406, maxY: 500 },
+          },
+          {
+            id: "final-trial", number: 10, title: "The Red Echo: Gravity Pursuit", difficulty: "Expert",
+            description: "Outrun a 1.2-second delayed red echo through reversed pressure gates, sliding platforms, spikes, and gravity-flip chambers.",
+            hint: "The red echo follows your path 1.2 seconds later. Reach Plate 1, then Plate 2; Barrier 2 opens before Barrier 1. Amber pads invert gravity and cyan pads restore it.",
+            worldWidth: 5650, exitX: 5480, exitSurface: 500, redEcho: true,
+            platforms: [
+              { x: 0, y: 500, width: 570, height: 28 },
+              { x: 610, y: 465, width: 70, height: 18, movement: { minX: 610, maxX: 650, speed: 95 } },
+              { x: 760, y: 465, width: 180, height: 20 },
+              { x: 980, y: 465, width: 75, height: 18, movement: { minX: 980, maxX: 1040, speed: 110 } },
+              { x: 1120, y: 500, width: 610, height: 28 },
+              { x: 1730, y: 500, width: 900, height: 28 },
+              { x: 1720, y: 160, width: 240, height: 20 },
+              { x: 2000, y: 160, width: 75, height: 18, movement: { minX: 2000, maxX: 2045, speed: 80 } },
+              { x: 2160, y: 160, width: 200, height: 20 },
+              { x: 2500, y: 160, width: 230, height: 20 },
+              { x: 2780, y: 160, width: 70, height: 18, movement: { minX: 2780, maxX: 2840, speed: 95 } },
+              { x: 2950, y: 160, width: 220, height: 20 },
+              { x: 3210, y: 160, width: 80, height: 18, movement: { minX: 3210, maxX: 3250, speed: 90 } },
+              { x: 3340, y: 160, width: 160, height: 20 },
+              { x: 3340, y: 500, width: 410, height: 28 },
+              { x: 3790, y: 465, width: 75, height: 18, movement: { minX: 3790, maxX: 3860, speed: 125 } },
+              { x: 3980, y: 430, width: 100, height: 20 },
+              { x: 4140, y: 465, width: 75, height: 18, movement: { minX: 4140, maxX: 4220, speed: 145 } },
+              { x: 4340, y: 500, width: 300, height: 28 },
+              { x: 4640, y: 465, width: 75, height: 18, movement: { minX: 4640, maxX: 4700, speed: 155 } },
+              { x: 4810, y: 465, width: 100, height: 20 },
+              { x: 4980, y: 500, width: 670, height: 28 },
+            ],
+            switches: [
+              { id: "A", x: 350, y: 500, label: "PLATE 1 / RED" },
+              { id: "B", x: 820, y: 465, label: "PLATE 2 / RED" },
+            ],
+            doors: [
+              { id: "B", label: "BARRIER 2", x: 1400, top: 60, bottom: 530, width: 28, switchId: "B" },
+              { id: "A", label: "BARRIER 1", x: 1600, top: 60, bottom: 530, width: 28, switchId: "A" },
+            ],
+            gravityPlates: [
+              { id: "invert-1", x: 1800, y: 500, width: 58, action: "invert", label: "INVERT" },
+              { id: "restore-1", x: 2300, y: 180, width: 58, action: "restore", label: "RESTORE" },
+              { id: "invert-2", x: 2580, y: 500, width: 58, action: "invert", label: "INVERT" },
+              { id: "restore-2", x: 3370, y: 180, width: 58, action: "restore", label: "RESTORE" },
+            ],
+            sections: [
+              { id: "A", left: 0, right: 1120, title: "10 / THE RED ECHO — OPENING CHASE", hint: "Move steadily to learn the 1.2-second pursuit delay. Step or land on Plate 1, then Plate 2; each opens only its matching barrier while the player or past echo holds it." },
+              { id: "B", left: 1120, right: 1730, title: "10 / THE RED ECHO — REVERSED GATES", hint: "Plate 2 opens Barrier 2 first; Plate 1 opens Barrier 1 after it. Use the past-movement echo to hold each plate while you move." },
+              { id: "C", left: 1730, right: 2630, title: "10 / THE RED ECHO — FIRST GRAVITY CHAMBER", hint: "Touch the amber floor pad to rise to the ceiling. Ride the narrow sliders, avoid underside spikes, and use the cyan pad to restore gravity." },
+              { id: "D", left: 2630, right: 3450, title: "10 / THE RED ECHO — SECOND GRAVITY CHAMBER", hint: "Invert again at the floor pad, cross the ceiling sliders, then restore gravity before dropping to the checkpoint." },
+              { id: "E", left: 3450, right: 5650, title: "10 / THE RED ECHO — FINAL ESCAPE", hint: "Time the final moving-platform chain and floor spikes. The red echo keeps following your route 1.2 seconds later all the way to the exit." },
+            ],
+            checkpoints: [
+              { x: 90, surfaceY: 500, section: 0 },
+              { x: 1750, surfaceY: 500, section: 2 },
+              { x: 2220, surfaceY: 180, section: 2, gravityDirection: -1 },
+              { x: 3440, surfaceY: 500, section: 4 },
+              { x: 4500, surfaceY: 500, section: 4 },
+              { x: 4850, surfaceY: 465, section: 4 },
+            ],
+            hazards: [
+              { type: "spikes", x: 190, y: 477, width: 55, height: 23 },
+              { type: "spikes", x: 1170, y: 477, width: 55, height: 23 },
+              { type: "ceiling-spikes", x: 1840, y: 180, width: 38, height: 28 },
+              { type: "ceiling-spikes", x: 2250, y: 180, width: 36, height: 28 },
+              { type: "spikes", x: 2700, y: 477, width: 45, height: 23 },
+              { type: "ceiling-spikes", x: 2600, y: 180, width: 38, height: 28 },
+              { type: "ceiling-spikes", x: 3130, y: 180, width: 38, height: 28 },
+              { type: "spikes", x: 3650, y: 477, width: 55, height: 23 },
+              { type: "spikes", x: 4400, y: 477, width: 55, height: 23 },
+              { type: "spikes", x: 5150, y: 477, width: 48, height: 23 },
+            ],
+            exit: { minY: 406, maxY: 500 },
+          },
           ...archiveLevels.map((level, index) => ({
             ...level,
             number: index + 11,
@@ -881,6 +986,9 @@
         let switches = activeLevel.switches;
         let doors = activeLevel.doors;
         let hazards = activeLevel.hazards || [];
+        let launchPlates = activeLevel.launchPlates || [];
+        let launchPlateStates = launchPlates.map(() => false);
+        let gravityPlates = activeLevel.gravityPlates || [];
         let sections = activeLevel.sections;
         let checkpoints = activeLevel.checkpoints;
 
@@ -956,6 +1064,10 @@
         let nextDoorCheckpoint = 0;
         let runAnimationTime = 0;
         let hazardClock = 0;
+        let gravityDirection = 1;
+        let gravityPlateStates = [];
+        let redEchoElapsed = 0;
+        let redEchoHistory = [];
         const keys = new Set();
 
         function loadAudioSettings() {
@@ -1523,20 +1635,32 @@
           switches = activeLevel.switches;
           doors = activeLevel.doors;
           hazards = activeLevel.hazards || [];
+          launchPlates = activeLevel.launchPlates || [];
+          launchPlateStates = launchPlates.map(() => false);
+          gravityPlates = activeLevel.gravityPlates || [];
+          gravityPlateStates = gravityPlates.map(() => false);
+          gravityDirection = 1;
+          redEchoElapsed = 0;
+          redEchoHistory = [];
           sections = activeLevel.sections;
           checkpoints = activeLevel.checkpoints;
+          for (const platform of platforms) {
+            if (platform.movement) platform.x = platform.movement.minX;
+          }
         }
 
         function spawnAt(checkpoint) {
+          gravityDirection = checkpoint.gravityDirection || 1;
           return {
             x: checkpoint.x,
-            y: checkpoint.surfaceY - 33 / 2,
+            y: checkpoint.surfaceY - gravityDirection * 33 / 2,
             width: 21,
             height: 33,
             vx: 0,
             vy: 0,
             facing: 1,
             grounded: true,
+            gravityDirection,
           };
         }
 
@@ -1568,6 +1692,7 @@
             vy: player.vy,
             facing: player.facing,
             grounded: player.grounded,
+            gravityDirection,
             state,
             animationPhase: state === "run" ? runAnimationTime : 0,
           };
@@ -1631,12 +1756,16 @@
           statusLabel.textContent = `${String(activeLevel.number).padStart(2, "0")} / ${activeLevel.title}`;
           const checkpoint = checkpoints[currentCheckpoint];
           player = spawnAt(checkpoint);
+          redEchoElapsed = 0;
+          redEchoHistory = activeLevel.redEcho ? [capturePose(0)] : [];
           recording = null;
           recordingElapsed = 0;
           echoPlayback = null;
           switchPressed = false;
           switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
           doorProgress = doors.map(() => 0);
+          launchPlateStates = launchPlates.map(() => false);
+          gravityPlateStates = gravityPlates.map(() => false);
           nextDoorCheckpoint = doors.findIndex((door) => door.checkpointX > checkpoints[currentCheckpoint].x);
           cameraX = Math.max(0, Math.min(WORLD_WIDTH - WIDTH, checkpoints[currentCheckpoint].x - WIDTH * 0.45));
           jumpBuffer = 0;
@@ -1682,6 +1811,8 @@
           switchPressed = false;
           switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
           doorProgress = doors.map(() => 0);
+          launchPlateStates = launchPlates.map(() => false);
+          gravityPlateStates = gravityPlates.map(() => false);
           currentCheckpoint = 0;
           nextDoorCheckpoint = 0;
           setRecordingUI("idle", "No recording yet", `R to record · up to ${MAX_RECORDING_SECONDS} seconds`);
@@ -1695,6 +1826,8 @@
           coyoteTime = 0;
           runAnimationTime = 0;
           hazardClock = 0;
+          redEchoElapsed = 0;
+          redEchoHistory = activeLevel.redEcho ? [capturePose(0)] : [];
           won = false;
           renderAudioSettings();
           startAudio();
@@ -1771,9 +1904,24 @@
           };
         }
 
+        function isHazardActive(hazard) {
+          if (!hazard.cycle) return true;
+          const cycleDuration = hazard.cycle.on + hazard.cycle.off;
+          return ((hazardClock * 1000 + (hazard.cycle.phase || 0)) % cycleDuration) < hazard.cycle.on;
+        }
+
+        function getMovingPlatformX(platform, elapsed) {
+          const { minX, maxX, speed } = platform.movement;
+          const distance = maxX - minX;
+          if (distance <= 0 || speed <= 0) return minX;
+          const travel = (elapsed * speed) % (distance * 2);
+          return minX + (travel <= distance ? travel : distance * 2 - travel);
+        }
+
         function update(delta) {
           hazardClock += delta;
           const wasGrounded = player.grounded;
+          if (activeLevel.redEcho) redEchoElapsed += delta;
           const left = keys.has("ArrowLeft") || keys.has("a") || keys.has("A");
           const right = keys.has("ArrowRight") || keys.has("d") || keys.has("D");
           if (keys.has("jump")) {
@@ -1793,16 +1941,29 @@
           }
 
           if (jumpBuffer > 0 && coyoteTime > 0) {
-            player.vy = -JUMP_SPEED;
+            player.vy = -JUMP_SPEED * gravityDirection;
             player.grounded = false;
             coyoteTime = 0;
             jumpBuffer = 0;
             playEffect("jump");
           }
 
+          for (const platform of platforms) {
+            if (!platform.movement) continue;
+            const previousX = platform.x;
+            platform.x = getMovingPlatformX(platform, hazardClock);
+            const playerSurface = player.y + gravityDirection * player.height / 2;
+            const platformSurface = platform.y + (gravityDirection < 0 ? platform.height : 0);
+            const wasStandingOnPlatform = player.grounded
+              && Math.abs(playerSurface - platformSurface) <= 1
+              && player.x + player.width / 2 > previousX
+              && player.x - player.width / 2 < previousX + platform.width;
+            if (wasStandingOnPlatform) player.x += platform.x - previousX;
+          }
+
           const oldX = player.x;
           const oldY = player.y;
-          player.vy = Math.min(player.vy + 1450 * delta, 1050);
+          player.vy = Math.max(-1050, Math.min(player.vy + 1450 * gravityDirection * delta, 1050));
           const nextY = player.y + player.vy * delta;
           const nextX = Math.max(player.width / 2, Math.min(WORLD_WIDTH - player.width / 2, player.x + player.vx * delta));
           const sweptTop = Math.min(oldY, nextY) - player.height / 2;
@@ -1836,17 +1997,22 @@
             const oldBottom = oldY + player.height / 2;
             const newTop = player.y - player.height / 2;
             const newBottom = player.y + player.height / 2;
-            if (player.vy >= 0 && oldBottom <= panel.top + LANDING_TOLERANCE && newBottom >= panel.top) {
+            if (gravityDirection > 0 && player.vy >= 0
+              && oldBottom <= panel.top + LANDING_TOLERANCE && newBottom >= panel.top) {
               player.y = panel.top - player.height / 2;
               player.vy = 0;
               player.grounded = true;
-            } else if (player.vy < 0 && oldTop >= panel.bottom && newTop < panel.bottom) {
+            } else if ((gravityDirection > 0 && player.vy < 0
+              && oldTop >= panel.bottom && newTop < panel.bottom)
+              || (gravityDirection < 0 && player.vy <= 0
+                && oldTop >= panel.bottom - LANDING_TOLERANCE && newTop <= panel.bottom)) {
               player.y = panel.bottom + player.height / 2;
               player.vy = 0;
+              player.grounded = true;
             }
           }
 
-          if (player.vy >= 0) {
+          if (gravityDirection > 0 && player.vy >= 0) {
             for (const platform of platforms) {
               const crossesTop = oldY + player.height / 2 <= platform.y + LANDING_TOLERANCE && player.y + player.height / 2 >= platform.y;
               const overlapsX = player.x + player.width / 2 > platform.x && player.x - player.width / 2 < platform.x + platform.width;
@@ -1857,10 +2023,26 @@
                 break;
               }
             }
+          } else if (gravityDirection < 0 && player.vy <= 0) {
+            for (const platform of platforms) {
+              const underside = platform.y + platform.height;
+              const crossesUnderside = oldY - player.height / 2 >= underside - LANDING_TOLERANCE
+                && player.y - player.height / 2 <= underside;
+              const overlapsX = player.x + player.width / 2 > platform.x
+                && player.x - player.width / 2 < platform.x + platform.width;
+              if (crossesUnderside && overlapsX) {
+                player.y = underside + player.height / 2;
+                player.vy = 0;
+                player.grounded = true;
+                break;
+              }
+            }
           }
 
           let hazardHit = false;
+          let ghostHit = false;
           for (const hazard of hazards) {
+            if (!isHazardActive(hazard)) continue;
             const bounds = getHazardBounds(hazard);
             if (player.x + player.width / 2 > bounds.x
               && player.x - player.width / 2 < bounds.x + bounds.width
@@ -1872,7 +2054,20 @@
             }
           }
 
-          if (player.y > RESPAWN_Y) {
+          if (!hazardHit && activeLevel.redEcho) {
+            const delayedPose = getRedEchoPose(redEchoElapsed - RED_ECHO_DELAY);
+            if (delayedPose
+              && player.x + player.width / 2 > delayedPose.x - delayedPose.width / 2
+              && player.x - player.width / 2 < delayedPose.x + delayedPose.width / 2
+              && player.y + player.height / 2 > delayedPose.y - delayedPose.height / 2
+              && player.y - player.height / 2 < delayedPose.y + delayedPose.height / 2) {
+              player.y = RESPAWN_Y + 1;
+              hazardHit = true;
+              ghostHit = true;
+            }
+          }
+
+          if (player.y > RESPAWN_Y || (gravityDirection < 0 && player.y + player.height / 2 < 0)) {
             const interruptedRecording = recording !== null;
             const interruptedEcho = echoPlayback !== null;
             if (interruptedRecording) {
@@ -1886,6 +2081,8 @@
             const checkpoint = checkpoints[currentCheckpoint];
             player.x = checkpoint.x;
             player = spawnAt(checkpoint);
+            redEchoElapsed = 0;
+            redEchoHistory = activeLevel.redEcho ? [capturePose(0)] : [];
             player.vx = 0;
             player.vy = 0;
             player.grounded = false;
@@ -1895,14 +2092,20 @@
             switchStates = Object.fromEntries(switches.map((pressurePlate) => [pressurePlate.id, false]));
             switchPressed = false;
             doorProgress = doors.map(() => 0);
+            launchPlateStates = launchPlates.map(() => false);
+            gravityPlateStates = gravityPlates.map(() => false);
             if (interruptedEcho && !interruptedRecording) {
               setRecordingUI(recordedEcho.length > 0 ? "ready" : "idle",
                 recordedEcho.length > 0 ? "Echo stopped at checkpoint" : "No recording yet",
                 recordedEcho.length > 0 ? `${recordedDuration.toFixed(1)}s · E to play` : "R to record · up to 12 seconds");
             }
             setPuzzleMessage(
-              hazardHit
-                ? "A hazard caught you. Restored at the last checkpoint; your completed recording is safe."
+              ghostHit
+                ? "Game Over — the Red Echo caught you. Restarted at your latest checkpoint."
+                : hazardHit
+                ? activeLevel.redEcho
+                  ? "A spike caught you. Restarted at your latest checkpoint."
+                  : "A hazard caught you. Restored at the last checkpoint; your completed recording is safe."
                 : interruptedRecording
                 ? "Recording canceled after a fall. Restored at the last checkpoint."
                 : "You fell. Restored at the last checkpoint; your completed recording is safe.",
@@ -1912,6 +2115,39 @@
           }
 
           if (player.grounded && !wasGrounded) playEffect("land");
+          if (gravityDirection > 0) {
+            launchPlates.forEach((plate, index) => {
+              const touching = isOnSurface(player, plate, gravityDirection);
+              if (touching && !launchPlateStates[index]) {
+                player.vy = -JUMP_SPEED;
+                player.grounded = false;
+                coyoteTime = 0;
+                jumpBuffer = 0;
+              }
+              launchPlateStates[index] = touching;
+            });
+          } else {
+            launchPlateStates = launchPlates.map(() => false);
+          }
+
+          gravityPlates.forEach((plate, index) => {
+            const touching = isOnSurface(player, plate, gravityDirection);
+            if (touching && !gravityPlateStates[index]) {
+              const targetDirection = plate.action === "invert" ? -1 : 1;
+              if (gravityDirection !== targetDirection) {
+                gravityDirection = targetDirection;
+                player.gravityDirection = gravityDirection;
+                player.vy = 0;
+                player.grounded = false;
+                coyoteTime = 0;
+                jumpBuffer = 0;
+                setPuzzleMessage(targetDirection < 0
+                  ? "Gravity inverted. Move carefully along the ceiling."
+                  : "Normal gravity restored. Drop safely to the exit.", false);
+              }
+            }
+            gravityPlateStates[index] = touching;
+          });
           if (Math.abs(player.vx) > 18 && player.grounded) runAnimationTime += delta * 12;
           if (recording) {
             recordingElapsed = Math.min(MAX_RECORDING_SECONDS, recordingElapsed + delta);
@@ -1932,7 +2168,8 @@
           let stateChanged = false;
           let activeMessage = "";
           for (const pressurePlate of switches) {
-            const held = isOnSwitch(player, pressurePlate) || (echoPose !== null && isOnSwitch(echoPose, pressurePlate));
+            const playerOnPlate = isOnSwitch(player, pressurePlate);
+            const held = playerOnPlate || (echoPose !== null && isOnSwitch(echoPose, pressurePlate));
             if (held !== switchStates[pressurePlate.id]) {
               stateChanged = true;
               switchStates[pressurePlate.id] = held;
@@ -1952,18 +2189,21 @@
               && player.x - player.width / 2 < door.x + door.width / 2
               && player.y + player.height / 2 > door.top
               && player.y - player.height / 2 < door.bottom;
-            const doorTarget = switchStates[door.switchId] || (realPlayerInDoorway && doorProgress[index] > 0) ? 1 : 0;
+            const doorTarget = activeLevel.redEcho
+              ? (switchStates[door.switchId] ? 1 : 0)
+              : (switchStates[door.switchId] || (realPlayerInDoorway && doorProgress[index] > 0) ? 1 : 0);
             doorProgress[index] = approach(doorProgress[index], doorTarget, delta * 5);
           }
 
           while (currentCheckpoint < checkpoints.length - 1
             && player.grounded
             && player.x >= checkpoints[currentCheckpoint + 1].x
-            && Math.abs(player.y + player.height / 2 - checkpoints[currentCheckpoint + 1].surfaceY) <= 1) {
+            && Math.abs(player.y + gravityDirection * player.height / 2 - checkpoints[currentCheckpoint + 1].surfaceY) <= 1) {
             currentCheckpoint += 1;
             const checkpoint = checkpoints[currentCheckpoint];
             stageTitle.textContent = sections[checkpoint.section].title;
-            if (nextDoorCheckpoint < doors.length && checkpoint.x >= doors[nextDoorCheckpoint].checkpointX) {
+            if (nextDoorCheckpoint < doors.length
+              && checkpoint.x >= doors[nextDoorCheckpoint].checkpointX) {
               const hasNextDoor = nextDoorCheckpoint + 1 < doors.length;
               recordedEcho = [];
               recordedDuration = 0;
@@ -1977,6 +2217,16 @@
                 false,
               );
               nextDoorCheckpoint += 1;
+            } else if (activeLevel.redEcho) {
+              setPuzzleMessage("Checkpoint activated. Your respawn point is updated.", switchPressed);
+            }
+          }
+
+          if (activeLevel.redEcho) {
+            redEchoHistory.push(capturePose(redEchoElapsed));
+            const oldestNeeded = redEchoElapsed - RED_ECHO_DELAY - 0.1;
+            while (redEchoHistory.length > 2 && redEchoHistory[1].time < oldestNeeded) {
+              redEchoHistory.shift();
             }
           }
 
@@ -1994,8 +2244,16 @@
           return actor.grounded
             && actor.x + actor.width / 2 > pressurePlate.x
             && actor.x - actor.width / 2 < pressurePlate.x + SWITCH_WIDTH
-            && actor.y + actor.height / 2 >= pressurePlate.y - 6
-            && actor.y + actor.height / 2 <= pressurePlate.y + 8;
+            && actor.y + (actor.gravityDirection || 1) * actor.height / 2 >= pressurePlate.y - 6
+            && actor.y + (actor.gravityDirection || 1) * actor.height / 2 <= pressurePlate.y + 8;
+        }
+
+        function isOnSurface(actor, plate, direction) {
+          const width = plate.width || SWITCH_WIDTH;
+          return actor.grounded
+            && actor.x + actor.width / 2 > plate.x
+            && actor.x - actor.width / 2 < plate.x + width
+            && Math.abs(actor.y + direction * actor.height / 2 - plate.y) <= 8;
         }
 
         function getEchoPose() {
@@ -2017,6 +2275,31 @@
             height: player.height,
             facing: amount < 0.5 ? before.facing : after.facing,
             grounded: amount < 0.5 ? before.grounded : after.grounded,
+            gravityDirection: amount < 0.5 ? before.gravityDirection : after.gravityDirection,
+            state: amount < 0.5 ? before.state : after.state,
+            animationPhase: before.animationPhase + (after.animationPhase - before.animationPhase) * amount,
+          };
+        }
+
+        function getRedEchoPose(targetTime) {
+          if (targetTime < 0 || redEchoHistory.length < 2) return null;
+          let index = 0;
+          while (index < redEchoHistory.length - 2 && redEchoHistory[index + 1].time < targetTime) index += 1;
+          const before = redEchoHistory[index];
+          const after = redEchoHistory[Math.min(index + 1, redEchoHistory.length - 1)];
+          if (targetTime > after.time) return null;
+          const span = after.time - before.time;
+          const amount = span > 0 ? Math.max(0, Math.min(1, (targetTime - before.time) / span)) : 0;
+          return {
+            x: before.x + (after.x - before.x) * amount,
+            y: before.y + (after.y - before.y) * amount,
+            vx: before.vx + (after.vx - before.vx) * amount,
+            vy: before.vy + (after.vy - before.vy) * amount,
+            width: player.width,
+            height: player.height,
+            facing: amount < 0.5 ? before.facing : after.facing,
+            grounded: amount < 0.5 ? before.grounded : after.grounded,
+            gravityDirection: amount < 0.5 ? before.gravityDirection : after.gravityDirection,
             state: amount < 0.5 ? before.state : after.state,
             animationPhase: before.animationPhase + (after.animationPhase - before.animationPhase) * amount,
           };
@@ -2050,15 +2333,16 @@
         }
 
         function drawBackground() {
-          ctx.fillStyle = "#171915";
+          const redEchoLevel = activeLevel.redEcho;
+          ctx.fillStyle = redEchoLevel ? "#1b1114" : "#171915";
           ctx.fillRect(0, 0, WORLD_WIDTH, HEIGHT);
-          ctx.fillStyle = "#20231e";
+          ctx.fillStyle = redEchoLevel ? "#281519" : "#20231e";
           ctx.fillRect(0, 78, WORLD_WIDTH, 312);
-          ctx.fillStyle = "#343a32";
+          ctx.fillStyle = redEchoLevel ? "#51232a" : "#343a32";
           ctx.fillRect(0, 78, WORLD_WIDTH, 7);
-          ctx.fillStyle = "#11130f";
+          ctx.fillStyle = redEchoLevel ? "#120d0f" : "#11130f";
           ctx.fillRect(0, 390, WORLD_WIDTH, 150);
-          ctx.fillStyle = "#393e36";
+          ctx.fillStyle = redEchoLevel ? "#5a2830" : "#393e36";
           ctx.fillRect(0, 390, WORLD_WIDTH, 3);
 
           for (const x of [84, 450, 905, 1405, 1885, 2340, 2710]) {
@@ -2069,7 +2353,7 @@
           }
 
           for (const section of sections) {
-            ctx.fillStyle = "#9ba194";
+            ctx.fillStyle = redEchoLevel ? "#bc8187" : "#9ba194";
             ctx.font = "10px ui-monospace, monospace";
             ctx.textAlign = "left";
             ctx.fillText(section.title, section.left + 36, 150);
@@ -2113,13 +2397,22 @@
 
         function drawPlatforms() {
           for (const platform of platforms) {
+            const moving = Boolean(platform.movement);
+            if (moving) {
+              ctx.fillStyle = "rgb(112 190 164 / 20%)";
+              ctx.fillRect(platform.movement.minX, platform.y + platform.height + 3,
+                platform.movement.maxX - platform.movement.minX + platform.width, 2);
+              ctx.fillStyle = "#6d806f";
+              ctx.fillRect(platform.movement.minX, platform.y + platform.height + 1, 3, 6);
+              ctx.fillRect(platform.movement.maxX + platform.width - 3, platform.y + platform.height + 1, 3, 6);
+            }
             ctx.fillStyle = "rgb(0 0 0 / 16%)";
             ctx.fillRect(platform.x + 2, platform.y + 8, platform.width - 4, 8);
-            ctx.fillStyle = "#292d27";
+            ctx.fillStyle = moving ? "#294239" : "#292d27";
             ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
-            ctx.fillStyle = "#797f74";
+            ctx.fillStyle = moving ? "#a4d5bd" : "#797f74";
             ctx.fillRect(platform.x, platform.y, platform.width, 3);
-            ctx.fillStyle = "#6aaea8";
+            ctx.fillStyle = moving ? "#8ce0c0" : "#6aaea8";
             ctx.fillRect(platform.x + 5, platform.y + 3, platform.width - 10, 1);
             ctx.fillStyle = "#9b9f96";
             ctx.fillRect(platform.x + 10, platform.y + 12, 2, 4);
@@ -2133,22 +2426,61 @@
           for (const hazard of hazards) {
             const bounds = getHazardBounds(hazard);
             if (hazard.type === "laser") {
+              const active = isHazardActive(hazard);
+              const vertical = bounds.height > bounds.width;
               ctx.save();
-              ctx.shadowColor = "#ff244f";
-              ctx.shadowBlur = 18;
-              ctx.fillStyle = "rgb(255 36 79 / 34%)";
-              ctx.fillRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
-              ctx.shadowBlur = 7;
-              ctx.fillStyle = "#ff244f";
-              ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
-              ctx.shadowBlur = 0;
-              ctx.fillStyle = "#fff1f4";
-              if (bounds.width >= bounds.height) {
-                ctx.fillRect(bounds.x, bounds.y + bounds.height * 0.35, bounds.width, Math.max(2, bounds.height * 0.3));
+              if (active) {
+                ctx.shadowColor = "#ff244f";
+                ctx.shadowBlur = 18;
+                ctx.fillStyle = "rgb(255 36 79 / 34%)";
+                ctx.fillRect(bounds.x - 4, bounds.y - 4, bounds.width + 8, bounds.height + 8);
+                ctx.shadowBlur = 7;
+                ctx.fillStyle = "#ff244f";
+                ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = "#fff1f4";
+                if (vertical) {
+                  ctx.fillRect(bounds.x + bounds.width * 0.35, bounds.y, Math.max(2, bounds.width * 0.3), bounds.height);
+                } else {
+                  ctx.fillRect(bounds.x, bounds.y + bounds.height * 0.35, bounds.width, Math.max(2, bounds.height * 0.3));
+                }
               } else {
-                ctx.fillRect(bounds.x + bounds.width * 0.35, bounds.y, Math.max(2, bounds.width * 0.3), bounds.height);
+                ctx.fillStyle = "rgb(255 36 79 / 9%)";
+                ctx.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+              }
+              if (vertical) {
+                ctx.shadowBlur = active ? 9 : 0;
+                ctx.shadowColor = "#ff244f";
+                ctx.fillStyle = active ? "#ff244f" : "#713744";
+                ctx.fillRect(bounds.x - 5, bounds.y - 7, bounds.width + 10, 7);
+                ctx.fillRect(bounds.x - 5, bounds.y + bounds.height, bounds.width + 10, 7);
+              } else {
+                ctx.shadowBlur = active ? 9 : 0;
+                ctx.shadowColor = "#ff244f";
+                ctx.fillStyle = active ? "#ff244f" : "#713744";
+                ctx.fillRect(bounds.x - 7, bounds.y - 5, 7, bounds.height + 10);
+                ctx.fillRect(bounds.x + bounds.width, bounds.y - 5, 7, bounds.height + 10);
               }
               ctx.restore();
+              continue;
+            }
+            if (hazard.type === "ceiling-spikes") {
+              const spikes = Math.max(3, Math.floor(bounds.width / 14));
+              ctx.fillStyle = "rgb(224 88 78 / 17%)";
+              ctx.fillRect(bounds.x - 4, bounds.y - 3, bounds.width + 8, bounds.height + 6);
+              ctx.fillStyle = "#d87867";
+              ctx.beginPath();
+              ctx.moveTo(bounds.x, bounds.y);
+              for (let index = 0; index < spikes; index += 1) {
+                const left = bounds.x + index * bounds.width / spikes;
+                const right = bounds.x + (index + 1) * bounds.width / spikes;
+                ctx.lineTo((left + right) / 2, bounds.y + bounds.height);
+                ctx.lineTo(right, bounds.y);
+              }
+              ctx.closePath();
+              ctx.fill();
+              ctx.fillStyle = "#f1aa8c";
+              ctx.fillRect(bounds.x, bounds.y, bounds.width, 2);
               continue;
             }
             const spikes = Math.max(2, Math.floor(bounds.width / 12));
@@ -2181,7 +2513,9 @@
             ctx.fillRect(centerX + door.width / 2, door.top - 8, 4, door.bottom - door.top + 8);
             ctx.fillStyle = "#596153";
             ctx.fillRect(centerX - door.width / 2 - 5, door.top - 8, door.width + 10, 3);
-            ctx.fillStyle = doorProgress[index] > 0.05 ? "#59685c" : "#555b51";
+            ctx.fillStyle = doorProgress[index] > 0.05
+              ? "#59685c"
+              : activeLevel.redEcho ? "#792733" : "#555b51";
             ctx.fillRect(panel.left, panel.top, door.width, panelHeight);
             ctx.fillStyle = "#899183";
             ctx.fillRect(panel.left, panel.top, door.width, 3);
@@ -2198,19 +2532,59 @@
             const plateY = pressurePlate.y - (pressed ? 4 : 7);
             ctx.fillStyle = "#252922";
             ctx.fillRect(pressurePlate.x - 4, pressurePlate.y - 2, SWITCH_WIDTH + 8, 4);
-            ctx.fillStyle = pressed ? "#9ac8bd" : "#777f73";
+            ctx.fillStyle = pressed
+              ? activeLevel.redEcho ? "#ff6977" : "#9ac8bd"
+              : activeLevel.redEcho ? "#8b4b50" : "#777f73";
             ctx.fillRect(pressurePlate.x, plateY, SWITCH_WIDTH, pressed ? 4 : 7);
-            ctx.fillStyle = pressed ? "#c8ded4" : "#4c554a";
+            ctx.fillStyle = pressed
+              ? activeLevel.redEcho ? "#ffd4d7" : "#c8ded4"
+              : "#4c554a";
             ctx.fillRect(pressurePlate.x + 5, plateY, SWITCH_WIDTH - 10, 2);
-            ctx.fillStyle = pressed ? "#b8d7cb" : "#a4aa9d";
+            ctx.fillStyle = pressed
+              ? activeLevel.redEcho ? "#ffb5bd" : "#b8d7cb"
+              : "#a4aa9d";
             ctx.font = "8px ui-monospace, monospace";
             ctx.textAlign = "center";
             ctx.fillText(pressurePlate.label, pressurePlate.x + SWITCH_WIDTH / 2, pressurePlate.y - 24);
           }
 
+          for (const plate of launchPlates) {
+            ctx.save();
+            ctx.shadowColor = "#ffd166";
+            ctx.shadowBlur = 12;
+            ctx.fillStyle = "rgb(255 209 102 / 30%)";
+            ctx.fillRect(plate.x - 3, plate.y - 8, plate.width + 6, 9);
+            ctx.fillStyle = "#ffd166";
+            ctx.fillRect(plate.x, plate.y - 5, plate.width, 5);
+            ctx.restore();
+            ctx.fillStyle = "#fff0b2";
+            ctx.font = "7px ui-monospace, monospace";
+            ctx.textAlign = "center";
+            ctx.fillText("AUTO-JUMP", plate.x + plate.width / 2, plate.y - 14);
+          }
+
+          for (const plate of gravityPlates) {
+            const inverted = plate.action === "invert";
+            const plateTop = inverted ? plate.y - 8 : plate.y;
+            ctx.save();
+            ctx.shadowColor = inverted ? "#e8a85d" : "#62d5e8";
+            ctx.shadowBlur = 11;
+            ctx.fillStyle = inverted ? "rgb(232 168 93 / 32%)" : "rgb(98 213 232 / 30%)";
+            ctx.fillRect(plate.x - 3, plateTop, plate.width + 6, 9);
+            ctx.fillStyle = inverted ? "#e8a85d" : "#62d5e8";
+            ctx.fillRect(plate.x, plateTop + 3, plate.width, 5);
+            ctx.restore();
+            ctx.fillStyle = inverted ? "#ffe0b1" : "#c5f7ff";
+            ctx.font = "7px ui-monospace, monospace";
+            ctx.textAlign = "center";
+            ctx.fillText(plate.label, plate.x + plate.width / 2, plate.y - 14);
+          }
+
           for (let index = 1; index < checkpoints.length; index += 1) {
             const checkpoint = checkpoints[index];
-            ctx.fillStyle = currentCheckpoint >= index ? "#9ac8bd" : "#697064";
+            ctx.fillStyle = currentCheckpoint >= index
+              ? activeLevel.redEcho ? "#ff6977" : "#9ac8bd"
+              : "#697064";
             ctx.fillRect(checkpoint.x - 2, checkpoint.surfaceY - 39, 3, 39);
             ctx.fillRect(checkpoint.x + 1, checkpoint.surfaceY - 39, 21, 11);
             ctx.fillStyle = "#20231e";
@@ -2243,28 +2617,41 @@
           ctx.fillText("EXIT", x, y - 53);
         }
 
-        function drawActor(actor, echo = false) {
+        function drawActor(actor, echo = false, redEcho = false) {
           const x = Math.round(actor.x);
           const y = Math.round(actor.y);
           const step = actor.state === "run" ? Math.sin(actor.animationPhase) * 2 : 0;
           ctx.save();
+          ctx.translate(x, y);
+          if (actor.gravityDirection < 0) ctx.scale(1, -1);
+          if (redEcho) {
+            ctx.globalAlpha = 0.82;
+            ctx.shadowColor = "#ff334d";
+            ctx.shadowBlur = 17;
+            ctx.fillStyle = "#f5364e";
+            ctx.fillRect(-12, -15, 24, 28);
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = "rgb(255 93 104 / 78%)";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-14, -17, 28, 34);
+          }
           if (echo) {
             ctx.globalAlpha = 0.55;
             ctx.setLineDash([3, 2]);
             ctx.strokeStyle = "#c6c1d4";
-            ctx.strokeRect(x - 14, y - 17, 28, 34);
+            ctx.strokeRect(-14, -17, 28, 34);
           }
-          ctx.fillStyle = echo ? "#a9aec0" : "rgb(85 217 209 / 15%)";
-          ctx.fillRect(x - 17, y - 19, 34, 38);
-          ctx.fillStyle = echo ? "#aaaec1" : "#70d9d2";
-          ctx.fillRect(x - 12, y - 15, 24, 28);
-          ctx.fillStyle = echo ? "#343744" : "#25373a";
-          ctx.fillRect(x - 9, y - 11, 18, 7);
-          ctx.fillStyle = echo ? "#e2dfec" : "#b8f4ed";
-          ctx.fillRect(x - 7 + actor.facing, y - 8, 14, 2);
-          ctx.fillStyle = echo ? "#858ba2" : "#4b8e8a";
-          ctx.fillRect(x - 10, y + 10 + step, 8, 7);
-          ctx.fillRect(x + 2, y + 10 - step, 8, 7);
+          ctx.fillStyle = redEcho ? "rgb(255 52 73 / 20%)" : echo ? "#a9aec0" : "rgb(85 217 209 / 15%)";
+          ctx.fillRect(-17, -19, 34, 38);
+          ctx.fillStyle = redEcho ? "#f5364e" : echo ? "#aaaec1" : "#70d9d2";
+          ctx.fillRect(-12, -15, 24, 28);
+          ctx.fillStyle = redEcho ? "#541822" : echo ? "#343744" : "#25373a";
+          ctx.fillRect(-9, -11, 18, 7);
+          ctx.fillStyle = redEcho ? "#ffe2e4" : echo ? "#e2dfec" : "#b8f4ed";
+          ctx.fillRect(-7 + actor.facing, -8, 14, 2);
+          ctx.fillStyle = redEcho ? "#a52739" : echo ? "#858ba2" : "#4b8e8a";
+          ctx.fillRect(-10, 10 + step, 8, 7);
+          ctx.fillRect(2, 10 - step, 8, 7);
           ctx.restore();
         }
 
@@ -2278,7 +2665,11 @@
           drawHazards();
           drawExit();
           const echoPose = getEchoPose();
+          const redEchoPose = activeLevel.redEcho
+            ? getRedEchoPose(redEchoElapsed - RED_ECHO_DELAY)
+            : null;
           if (echoPose) drawActor(echoPose, true);
+          if (redEchoPose) drawActor(redEchoPose, false, true);
           drawActor({ ...player, state: player.grounded ? (Math.abs(player.vx) > 18 ? "run" : "idle") : "air", animationPhase: runAnimationTime });
           ctx.restore();
         }
